@@ -1,0 +1,44 @@
+# Indonesia Daily News Briefing
+# Runs every day at 7:00 AM Canberra time
+#
+# Canberra is AEDT (UTC+11) in summer, AEST (UTC+10) in winter.
+# We use 20:00 UTC (= 7am AEDT) as the cron time.
+# During AEST months this will arrive at 6am — adjust if needed.
+# You can also add a second cron line at 21:00 UTC to cover AEST.
+
+name: Daily Indonesia News Briefing
+
+on:
+  schedule:
+    # 20:00 UTC = 07:00 AEDT (Canberra summer time)
+    - cron: "0 20 * * *"
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run news briefing pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SMTP_USE_TLS: "true"
+        run: python main.py
