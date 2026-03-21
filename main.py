@@ -9,7 +9,7 @@ Automated via: GitHub Actions cron (see .github/workflows/daily_news.yml)
 import os
 import sys
 import logging
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from src.scraper import fetch_all_headlines, headlines_to_text
 from src.summarizer import summarize_headlines
@@ -67,7 +67,7 @@ def main():
 
     # ── Step 3: Email ────────────────────────────────────────────
     logger.info("Step 3/3: Sending email...")
-    today = datetime.now().strftime("%A, %d %B %Y")
+    today = datetime.now(timezone(timedelta(hours=10))).strftime("%A, %d %B %Y")
     subject = f"Indonesia News Briefing — {today}"
 
     html_body = build_email_html(summary, all_headlines, today)
