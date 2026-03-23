@@ -63,11 +63,11 @@ def main():
 
     # ── Step 2: Summarize ────────────────────────────────────────
     logger.info("Step 2/3: Generating summary via Claude API...")
-    summary = summarize_headlines(headlines_text, ANTHROPIC_API_KEY, model=CLAUDE_MODEL)
+    today = datetime.now(timezone(timedelta(hours=10))).strftime("%A, %d %B %Y")
+    summary = summarize_headlines(headlines_text, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
 
     # ── Step 3: Email ────────────────────────────────────────────
     logger.info("Step 3/3: Sending email...")
-    today = datetime.now(timezone(timedelta(hours=10))).strftime("%A, %d %B %Y")
     subject = f"Indonesia News Briefing — {today}"
 
     html_body = build_email_html(summary, all_headlines, today)

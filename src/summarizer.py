@@ -10,20 +10,23 @@ logger = logging.getLogger(__name__)
 
 SUMMARY_PROMPT = """You are an expert news analyst covering Indonesia. You have been given today's headlines from major Indonesian news outlets, each with its URL.
 
+Today's date is {today_date}.
+
 Your task:
 1. Write a concise executive summary (3-5 paragraphs) of the most important news from Indonesia today, in English.
 2. Group related stories and identify the top themes.
 3. Note any stories that appear across multiple outlets (indicating high significance).
 4. Keep it factual and neutral. If headlines are in Bahasa Indonesia, translate the key points to English.
 5. IMPORTANT: When you mention a story, embed an HTML hyperlink to the relevant article using <a href="URL">descriptive text</a> format. For example: <a href="https://example.com/article">Indonesia's GDP grew by 5.2%</a>. Every key claim should link to its source article.
+6. Do NOT include any title, heading, or date header at the start of your summary. Just start directly with the first paragraph of content.
 
 Headlines:
 {headlines}
 
-Write the summary now in HTML-ready format with embedded <a> hyperlinks. Do not include any preamble like "Here is the summary" — just start with the content."""
+Write the summary now in HTML-ready format with embedded <a> hyperlinks. Do not include any preamble, title, or date heading — just start directly with the summary content."""
 
 
-def summarize_headlines(headlines_text: str, api_key: str, model: str = "claude-sonnet-4-20250514") -> str:
+def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "", model: str = "claude-sonnet-4-20250514") -> str:
     """
     Send headlines to Claude API and return an English summary.
 
@@ -47,7 +50,7 @@ def summarize_headlines(headlines_text: str, api_key: str, model: str = "claude-
             messages=[
                 {
                     "role": "user",
-                    "content": SUMMARY_PROMPT.format(headlines=headlines_text)
+                    "content": SUMMARY_PROMPT.format(headlines=headlines_text, today_date=today_date)
                 }
             ]
         )
