@@ -102,10 +102,13 @@ def send_email(
     Returns True on success, False on failure.
     """
     try:
+        # Support multiple recipients (comma-separated)
+        recipients = [e.strip() for e in to_email.split(",") if e.strip()]
+
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = from_email
-        msg["To"] = to_email
+        msg["To"] = ", ".join(recipients)
 
         # Plain text fallback
         plain_text = "Your email client does not support HTML. Please view this email in a modern client."
@@ -119,10 +122,10 @@ def send_email(
             server = smtplib.SMTP_SSL(smtp_host, smtp_port)
 
         server.login(smtp_user, smtp_password)
-        server.sendmail(from_email, to_email, msg.as_string())
+        server.sendmail(from_email, recipients, msg.as_string())
         server.quit()
 
-        logger.info(f"Email sent to {to_email}")
+        logger.info(f"Email sent to {', '.join(recipients)}")
         return True
 
     except Exception as e:
