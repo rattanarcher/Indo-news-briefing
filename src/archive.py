@@ -100,7 +100,7 @@ def save_to_excel(all_headlines: dict, categories: list[str], today_date: str, f
 
     Creates the file if it doesn't exist. Appends rows if it does.
 
-    Columns: Date | Source | Headline | Topic
+    Columns: Date | Topic | Headline | Link
     """
     # Flatten headlines into a list with source info
     flat_headlines = []
@@ -122,7 +122,7 @@ def save_to_excel(all_headlines: dict, categories: list[str], today_date: str, f
         ws.title = "Headlines Archive"
 
         # Style the header row
-        headers = ["Date", "Source", "Headline", "Topic"]
+        headers = ["Date", "Topic", "Headline", "Link"]
         header_font = Font(bold=True, color="FFFFFF", size=11)
         header_fill = PatternFill(start_color="C0392B", end_color="C0392B", fill_type="solid")
         thin_border = Border(
@@ -138,22 +138,26 @@ def save_to_excel(all_headlines: dict, categories: list[str], today_date: str, f
 
         # Set column widths
         ws.column_dimensions["A"].width = 22  # Date
-        ws.column_dimensions["B"].width = 18  # Source
+        ws.column_dimensions["B"].width = 22  # Topic
         ws.column_dimensions["C"].width = 80  # Headline
-        ws.column_dimensions["D"].width = 22  # Topic
+        ws.column_dimensions["D"].width = 50  # Link
 
         # Freeze header row
         ws.freeze_panes = "A2"
 
     # Append rows
+    link_font = Font(color="1A73E8", underline="single")
     for i, headline in enumerate(flat_headlines):
         category = categories[i] if i < len(categories) else "Uncategorised"
-        ws.append([
-            today_date,
-            headline["source"],
-            headline["title"],
-            category,
-        ])
+        row_num = ws.max_row + 1
+        ws.cell(row=row_num, column=1, value=today_date)
+        ws.cell(row=row_num, column=2, value=category)
+        ws.cell(row=row_num, column=3, value=headline["title"])
+
+        # Create clickable hyperlink in the Link column
+        link_cell = ws.cell(row=row_num, column=4, value=headline["url"])
+        link_cell.hyperlink = headline["url"]
+        link_cell.font = link_font
 
     # Auto-filter on all columns
     ws.auto_filter.ref = f"A1:D{ws.max_row}"
