@@ -4,7 +4,6 @@
 # Canberra is AEDT (UTC+11) in summer, AEST (UTC+10) in winter.
 # We use 20:00 UTC (= 7am AEDT) as the cron time.
 # During AEST months this will arrive at 6am — adjust if needed.
-# You can also add a second cron line at 21:00 UTC to cover AEST.
 
 name: Daily Indonesia News Briefing
 
@@ -17,6 +16,8 @@ on:
 jobs:
   briefing:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout repository
@@ -42,3 +43,11 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           SMTP_USE_TLS: "true"
         run: python main.py
+
+      - name: Commit updated headlines archive
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add headlines_archive.xlsx
+          git diff --cached --quiet || git commit -m "Update headlines archive — $(date -u +%Y-%m-%d)"
+          git push

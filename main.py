@@ -14,6 +14,7 @@ from datetime import datetime, timezone, timedelta
 from src.scraper import fetch_all_headlines, headlines_to_text
 from src.summarizer import summarize_headlines
 from src.emailer import build_email_html, send_email
+from src.archive import archive_headlines
 
 # ─── Configuration (all from environment variables) ─────────────────
 
@@ -62,12 +63,19 @@ def main():
     headlines_text = headlines_to_text(all_headlines)
 
     # ── Step 2: Summarize ────────────────────────────────────────
-    logger.info("Step 2/3: Generating summary via Claude API...")
+    logger.info("Step 2/4: Generating summary via Claude API...")
     today = datetime.now(timezone(timedelta(hours=10))).strftime("%A, %d %B %Y")
     summary = summarize_headlines(headlines_text, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
 
-    # ── Step 3: Email ────────────────────────────────────────────
-    logger.info("Step 3/3: Sending email...")
+    # ── Step 3: Archive to Excel ─────────────────────────────────
+    logger.info("Step 3/4: Categorising and archiving headlines...")
+    try:
+        archive_headlines(all_headlines, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
+    except Exception as e:
+        logger.error(f"Archiving failed (non-fatal): {e}")
+
+    # ── Step 4: Email ────────────────────────────────────────────
+    logger.info("Step 4/4: Sending email...")
     subject = f"Indonesia News Briefing — {today}"
 
     html_body = build_email_html(summary, all_headlines, today)
