@@ -7,9 +7,10 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 | Outlet | Method | Language |
 |--------|--------|----------|
 | Detik.com | RSS (HTML fallback) | Bahasa Indonesia |
-| Kompas.com | RSS (HTML fallback) | Bahasa Indonesia |
 | Tempo.co | RSS | Bahasa Indonesia |
+| Liputan6.com | RSS | Bahasa Indonesia |
 | Antara News | RSS | English |
+| Jakarta Post | HTML scrape | English |
 
 ## What You Get
 
