@@ -239,17 +239,11 @@ def fetch_antara() -> list[Headline]:
     return headlines
 
 
-def fetch_jakarta_post() -> list[Headline]:
-    """The Jakarta Post - English-language Indonesian newspaper, HTML scrape."""
-    return fetch_html(
-        url="https://www.thejakartapost.com/",
-        source_name="Jakarta Post",
-        selector={
-            "container": "a[href*='/news/'], a[href*='/opinion/'], a[href*='/world/'], a[href*='/business/']",
-            "title": None,
-            "link": None,
-        },
-        max_items=20,
+def fetch_cnn_indonesia() -> list[Headline]:
+    """CNN Indonesia - RSS feed available."""
+    return fetch_rss(
+        feed_url="https://www.cnnindonesia.com/nasional/rss",
+        source_name="CNN Indonesia"
     )
 
 
@@ -291,7 +285,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
-        ("Jakarta Post", fetch_jakarta_post),
+        ("CNN Indonesia", fetch_cnn_indonesia),
         ("Liputan6.com", fetch_liputan6),
     ]
 
@@ -305,13 +299,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
             fb = FALLBACK_SELECTORS[source_name]
             logger.info(f"RSS empty for {source_name}, trying HTML fallback...")
             headlines = fetch_html(fb["url"], source_name, fb["selector"])
-
-        # For HTML-scraped sources, filter by URL date
-        if source_name in ("Jakarta Post",) and headlines:
-            before = len(headlines)
-            headlines = filter_html_headlines_by_url_date(headlines)
-            if len(headlines) < before:
-                logger.info(f"Date-filtered {source_name}: {before} -> {len(headlines)} headlines")
 
         # Deduplicate by URL
         seen_urls = set()
