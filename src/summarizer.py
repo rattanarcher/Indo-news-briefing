@@ -12,17 +12,20 @@ SUMMARY_PROMPT = """You are an expert news analyst covering Indonesia. You have 
 
 Today's date is {today_date}.
 
-Write a 4-paragraph English-language executive summary structured as follows:
+Write a 5-paragraph English-language executive summary structured as follows:
 
-Paragraphs 1-2: Political news. Cover the most important political stories first — anything involving the president, cabinet, DPR/MPR, political parties, coalitions, elections, governance, state institutions, and political controversies. Describe what happened factually. Do not analyse or speculate on implications.
+Paragraphs 1-2: Political news. Cover the most important domestic political stories — anything involving the president, cabinet, DPR/MPR, political parties, coalitions, elections, governance, state institutions, and political controversies. Describe what happened factually. Do not analyse or speculate on implications.
 
-Paragraphs 3-4: Everything else. Cover the most important non-political stories across economy, security, energy, legal, social affairs, and other topics.
+Paragraph 3: Foreign policy and defence news. Cover stories involving Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, and security matters. Describe what happened factually.
+
+Paragraphs 4-5: Everything else. Cover the most important remaining stories across economy, energy, legal, social affairs, environment, health, and other topics.
 
 Rules:
 - Write in English. If headlines are in Bahasa Indonesia, translate the key points.
 - Be factual and descriptive. Report what happened, not what it means.
 - When you mention a story, embed an HTML hyperlink to the relevant article using <a href="URL">descriptive text</a> format. Every key claim should link to its source article.
-- Do NOT include any title, heading, section header, or date. Do NOT label paragraphs. Just write four flowing paragraphs.
+- Do NOT include any title, heading, section header, or date. Do NOT label paragraphs. Just write five flowing paragraphs.
+- If there are no foreign policy or defence stories on a given day, fold that paragraph into the political section and write four paragraphs total.
 - Start directly with the first paragraph.
 
 Headlines:

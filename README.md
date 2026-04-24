@@ -4,18 +4,18 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 
 ## Sources
 
-| Outlet | Method | Language |
-|--------|--------|----------|
-| Detik.com | RSS (HTML fallback) | Bahasa Indonesia |
-| Tempo.co | RSS | Bahasa Indonesia |
-| Liputan6.com | RSS | Bahasa Indonesia |
-| CNBC Indonesia | RSS | Bahasa Indonesia |
-| Antara News | RSS | English |
+| Outlet | RSS Feeds | Language |
+|--------|-----------|----------|
+| Detik.com | General (HTML fallback) | Bahasa Indonesia |
+| Tempo.co | Nasional + Internasional | Bahasa Indonesia |
+| Liputan6.com | General news | Bahasa Indonesia |
+| CNBC Indonesia | News + Markets | Bahasa Indonesia |
+| Antara News | General + Politik | English |
 
 ## What You Get
 
 **Daily email briefing** with:
-- **Executive summary** — 4-paragraph English summary leading with political news, followed by other key stories. All claims include clickable hyperlinks to source articles (AI-generated via Claude)
+- **Executive summary** — 5-paragraph English summary: political news first (2 paragraphs), then foreign policy and defence (1 paragraph), then other key stories (2 paragraphs). All claims include clickable hyperlinks to source articles (AI-generated via Claude)
 - **Appendix** — Every headline with a clickable link, grouped by source
 
 **Growing Excel archive** (`headlines_archive.xlsx`) with:
@@ -95,8 +95,8 @@ indo-news-briefing/
 
 ## Pipeline Steps
 
-1. **Scrape** — Fetch headlines from 5 Indonesian news sources via RSS (with HTML fallback), filtered to last 36 hours only
-2. **Summarise** — Send headlines to Claude API for a 4-paragraph English summary (politics first, then other news) with embedded hyperlinks
+1. **Scrape** — Fetch headlines from 5 Indonesian news sources (6 RSS feeds including Antara's dedicated politics feed), filtered to last 36 hours only
+2. **Summarise** — Send headlines to Claude API for a 5-paragraph English summary (politics → foreign policy/defence → other news) with embedded hyperlinks
 3. **Archive** — Send headlines to Claude API for topic categorisation, then append to Excel database
 4. **Email** — Format and send the briefing to all recipients via SMTP
 

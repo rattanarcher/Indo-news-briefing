@@ -218,15 +218,20 @@ def fetch_detik() -> list[Headline]:
 
 
 def fetch_tempo() -> list[Headline]:
-    """Tempo.co - RSS feed available."""
-    return fetch_rss(
+    """Tempo.co - RSS feeds for national and international news."""
+    national = fetch_rss(
         feed_url="https://rss.tempo.co/nasional",
         source_name="Tempo.co"
     )
+    international = fetch_rss(
+        feed_url="https://rss.tempo.co/internasional",
+        source_name="Tempo.co (Internasional)"
+    )
+    return national + international
 
 
 def fetch_antara() -> list[Headline]:
-    """Antara News - English section, RSS feed."""
+    """Antara News - English section, general news RSS feed."""
     headlines = fetch_rss(
         feed_url="https://en.antaranews.com/rss/news.xml",
         source_name="Antara News"
@@ -237,6 +242,14 @@ def fetch_antara() -> list[Headline]:
             source_name="Antara News"
         )
     return headlines
+
+
+def fetch_antara_politics() -> list[Headline]:
+    """Antara News - English politics feed for deeper political coverage."""
+    return fetch_rss(
+        feed_url="https://en.antaranews.com/rss/politik.xml",
+        source_name="Antara News (Politik)"
+    )
 
 
 def fetch_cnbc_indonesia() -> list[Headline]:
@@ -291,6 +304,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
+        ("Antara News (Politik)", fetch_antara_politics),
         ("CNBC Indonesia", fetch_cnbc_indonesia),
         ("Liputan6.com", fetch_liputan6),
     ]
