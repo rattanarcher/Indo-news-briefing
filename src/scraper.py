@@ -239,12 +239,18 @@ def fetch_antara() -> list[Headline]:
     return headlines
 
 
-def fetch_cnn_indonesia() -> list[Headline]:
-    """CNN Indonesia - RSS feed available."""
-    return fetch_rss(
-        feed_url="https://www.cnnindonesia.com/nasional/rss",
-        source_name="CNN Indonesia"
+def fetch_cnbc_indonesia() -> list[Headline]:
+    """CNBC Indonesia - RSS feed available."""
+    headlines = fetch_rss(
+        feed_url="https://www.cnbcindonesia.com/news/rss",
+        source_name="CNBC Indonesia"
     )
+    if not headlines:
+        headlines = fetch_rss(
+            feed_url="https://www.cnbcindonesia.com/market/rss",
+            source_name="CNBC Indonesia"
+        )
+    return headlines
 
 
 def fetch_liputan6() -> list[Headline]:
@@ -285,7 +291,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
-        ("CNN Indonesia", fetch_cnn_indonesia),
+        ("CNBC Indonesia", fetch_cnbc_indonesia),
         ("Liputan6.com", fetch_liputan6),
     ]
 

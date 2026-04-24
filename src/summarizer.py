@@ -12,18 +12,23 @@ SUMMARY_PROMPT = """You are an expert news analyst covering Indonesia. You have 
 
 Today's date is {today_date}.
 
-Your task:
-1. Write a concise executive summary (3-5 paragraphs) of the most important news from Indonesia today, in English.
-2. Group related stories and identify the top themes.
-3. Note any stories that appear across multiple outlets (indicating high significance).
-4. Keep it factual and neutral. If headlines are in Bahasa Indonesia, translate the key points to English.
-5. IMPORTANT: When you mention a story, embed an HTML hyperlink to the relevant article using <a href="URL">descriptive text</a> format. For example: <a href="https://example.com/article">Indonesia's GDP grew by 5.2%</a>. Every key claim should link to its source article.
-6. Do NOT include any title, heading, or date header at the start of your summary. Just start directly with the first paragraph of content.
+Write a 4-paragraph English-language executive summary structured as follows:
+
+Paragraphs 1-2: Political news. Cover the most important political stories first — anything involving the president, cabinet, DPR/MPR, political parties, coalitions, elections, governance, state institutions, and political controversies. Describe what happened factually. Do not analyse or speculate on implications.
+
+Paragraphs 3-4: Everything else. Cover the most important non-political stories across economy, security, energy, legal, social affairs, and other topics.
+
+Rules:
+- Write in English. If headlines are in Bahasa Indonesia, translate the key points.
+- Be factual and descriptive. Report what happened, not what it means.
+- When you mention a story, embed an HTML hyperlink to the relevant article using <a href="URL">descriptive text</a> format. Every key claim should link to its source article.
+- Do NOT include any title, heading, section header, or date. Do NOT label paragraphs. Just write four flowing paragraphs.
+- Start directly with the first paragraph.
 
 Headlines:
 {headlines}
 
-Write the summary now in HTML-ready format with embedded <a> hyperlinks. Do not include any preamble, title, or date heading — just start directly with the summary content."""
+Write the summary now in HTML-ready format with embedded <a> hyperlinks."""
 
 
 def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "", model: str = "claude-sonnet-4-20250514") -> str:
@@ -46,7 +51,7 @@ def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "",
 
         message = client.messages.create(
             model=model,
-            max_tokens=1500,
+            max_tokens=2500,
             messages=[
                 {
                     "role": "user",
