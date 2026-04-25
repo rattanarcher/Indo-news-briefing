@@ -4,13 +4,12 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 
 ## Sources
 
-| Outlet | RSS Feeds | Language |
-|--------|-----------|----------|
-| Detik.com | General (HTML fallback) | Bahasa Indonesia |
-| Tempo.co | Nasional + Internasional | Bahasa Indonesia |
-| Liputan6.com | General news | Bahasa Indonesia |
-| CNBC Indonesia | News + Markets | Bahasa Indonesia |
-| Antara News | General + Politik | English |
+| Outlet | Method | Language |
+|--------|--------|----------|
+| Detik.com | RSS (HTML fallback) | Bahasa Indonesia |
+| Tempo.co | RSS (Nasional + Dunia) | Bahasa Indonesia |
+| CNN Indonesia | HTML scrape (Nasional + Internasional) | Bahasa Indonesia |
+| Antara News | RSS (General + Politik) | English |
 
 ## What You Get
 
@@ -95,7 +94,7 @@ indo-news-briefing/
 
 ## Pipeline Steps
 
-1. **Scrape** — Fetch headlines from 5 Indonesian news sources (6 RSS feeds including Antara's dedicated politics feed), filtered to last 36 hours only
+1. **Scrape** — Fetch headlines from 4 Indonesian news sources (5 RSS feeds + 2 HTML scrapes), filtered to last 36 hours only
 2. **Summarise** — Send headlines to Claude API for a 5-paragraph English summary (politics → foreign policy/defence → other news) with embedded hyperlinks
 3. **Archive** — Send headlines to Claude API for topic categorisation, then append to Excel database
 4. **Email** — Format and send the briefing to all recipients via SMTP

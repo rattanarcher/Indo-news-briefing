@@ -1,8 +1,8 @@
 """
 Scraper module for Indonesian news headlines.
-Fetches from: Detik, Tempo, Antara News, Jakarta Post, Liputan6
+Fetches from: Detik, Tempo, Antara News, CNN Indonesia
 Uses RSS feeds where available, falls back to HTML scraping.
-Filters out articles older than 24 hours.
+Filters out articles older than 36 hours.
 """
 
 import feedparser
@@ -12,12 +12,10 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 import logging
-import json
 import re
 
 logger = logging.getLogger(__name__)
 
-# Request headers to avoid being blocked
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -25,7 +23,7 @@ HEADERS = {
     )
 }
 
-REQUEST_TIMEOUT = 15  # seconds
+REQUEST_TIMEOUT = 15
 
 
 @dataclass
@@ -40,27 +38,17 @@ class Headline:
 
 
 def parse_published_date(date_str: str) -> datetime | None:
-    """
-    Try to parse a publication date string into a timezone-aware datetime.
-    Handles RFC 2822 (common in RSS) and ISO 8601 formats.
-    Returns None if parsing fails.
-    """
+    """Parse a publication date string into a timezone-aware datetime."""
     if not date_str:
         return None
-
-    # Try RFC 2822 format (e.g., "Mon, 24 Mar 2026 07:00:00 +0700")
     try:
         return parsedate_to_datetime(date_str)
     except Exception:
         pass
-
-    # Try ISO 8601 format (e.g., "2026-03-24T07:00:00+07:00")
     try:
         return datetime.fromisoformat(date_str)
     except Exception:
         pass
-
-    # Try common formats
     for fmt in [
         "%Y-%m-%dT%H:%M:%SZ",
         "%Y-%m-%d %H:%M:%S",
@@ -74,20 +62,14 @@ def parse_published_date(date_str: str) -> datetime | None:
             return dt
         except ValueError:
             continue
-
     return None
 
 
 def is_recent(date_str: str, max_age_hours: int = 36) -> bool:
-    """
-    Check if a published date is within the last max_age_hours.
-    Returns True if date can't be parsed (benefit of the doubt).
-    Uses 36 hours instead of 24 to account for timezone differences.
-    """
+    """Check if a published date is within the last max_age_hours."""
     parsed = parse_published_date(date_str)
     if parsed is None:
-        return True  # Can't parse date, include it anyway
-
+        return True
     now = datetime.now(timezone.utc)
     age = now - parsed
     return age < timedelta(hours=max_age_hours)
@@ -109,32 +91,20 @@ def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date:
 
             if not title or not link:
                 continue
-
-            # Filter out old articles
             if filter_date and not is_recent(published):
                 continue
 
             headlines.append(Headline(
-                title=title,
-                url=link,
-                source=source_name,
-                published=published
+                title=title, url=link, source=source_name, published=published
             ))
         logger.info(f"Fetched {len(headlines)} headlines from {source_name} (RSS)")
     except Exception as e:
         logger.error(f"Error fetching RSS for {source_name}: {e}")
-
     return headlines
 
 
 def fetch_html(url: str, source_name: str, selector: dict, max_items: int = 15) -> list[Headline]:
-    """
-    Fetch headlines by scraping HTML.
-    selector dict should have:
-        - 'container': CSS selector for headline containers
-        - 'title': CSS selector for title within container (or None to use container text)
-        - 'link': CSS selector for link within container (or None if container is <a>)
-    """
+    """Fetch headlines by scraping HTML."""
     headlines = []
     try:
         resp = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
@@ -143,14 +113,12 @@ def fetch_html(url: str, source_name: str, selector: dict, max_items: int = 15) 
 
         items = soup.select(selector["container"])[:max_items]
         for item in items:
-            # Get title
             if selector.get("title"):
                 title_el = item.select_one(selector["title"])
                 title = title_el.get_text(strip=True) if title_el else ""
             else:
                 title = item.get_text(strip=True)
 
-            # Get link
             if selector.get("link"):
                 link_el = item.select_one(selector["link"])
                 link = link_el.get("href", "") if link_el else ""
@@ -160,57 +128,21 @@ def fetch_html(url: str, source_name: str, selector: dict, max_items: int = 15) 
                 a_tag = item.find("a")
                 link = a_tag.get("href", "") if a_tag else ""
 
-            # Ensure absolute URL
             if link and not link.startswith("http"):
                 link = url.rstrip("/") + "/" + link.lstrip("/")
 
             if title and link:
-                headlines.append(Headline(
-                    title=title,
-                    url=link,
-                    source=source_name
-                ))
+                headlines.append(Headline(title=title, url=link, source=source_name))
         logger.info(f"Fetched {len(headlines)} headlines from {source_name} (HTML)")
     except Exception as e:
         logger.error(f"Error scraping HTML for {source_name}: {e}")
-
     return headlines
-
-
-def filter_html_headlines_by_url_date(headlines: list[Headline]) -> list[Headline]:
-    """
-    For HTML-scraped headlines (no published date), try to extract date from URL.
-    Many Indonesian news sites embed the date in the URL, e.g.:
-    https://www.detik.com/news/berita/d-1234567/2026/03/24/headline
-    https://nasional.tempo.co/read/1234567/2026/03/24/headline
-    """
-    today = datetime.now(timezone(timedelta(hours=7)))  # WIB (Jakarta time)
-    today_str = today.strftime("%Y/%m/%d")
-    yesterday_str = (today - timedelta(days=1)).strftime("%Y/%m/%d")
-
-    # Also check date formats like /2026/03/24/ or /20260324/
-    today_compact = today.strftime("%Y%m%d")
-    yesterday_compact = (today - timedelta(days=1)).strftime("%Y%m%d")
-
-    filtered = []
-    for h in headlines:
-        # If any date-like pattern is in the URL, check it
-        date_match = re.search(r'/(\d{4})/(\d{2})/(\d{2})/', h.url)
-        if date_match:
-            url_date = f"{date_match.group(1)}/{date_match.group(2)}/{date_match.group(3)}"
-            if url_date == today_str or url_date == yesterday_str:
-                filtered.append(h)
-        else:
-            # No date in URL, include it (benefit of the doubt)
-            filtered.append(h)
-
-    return filtered
 
 
 # ─── Source definitions ─────────────────────────────────────────────
 
 def fetch_detik() -> list[Headline]:
-    """Detik.com - RSS feed available."""
+    """Detik.com - RSS feed with HTML fallback."""
     return fetch_rss(
         feed_url="https://rss.detik.com/index.php/detikcom",
         source_name="Detik.com"
@@ -218,20 +150,21 @@ def fetch_detik() -> list[Headline]:
 
 
 def fetch_tempo() -> list[Headline]:
-    """Tempo.co - RSS feeds for national and international news."""
+    """Tempo.co - Nasional + Dunia (international) RSS feeds."""
     national = fetch_rss(
         feed_url="https://rss.tempo.co/nasional",
         source_name="Tempo.co"
     )
-    international = fetch_rss(
-        feed_url="https://rss.tempo.co/internasional",
-        source_name="Tempo.co (Internasional)"
+    # Tempo's international feed is called "dunia", not "internasional"
+    dunia = fetch_rss(
+        feed_url="https://rss.tempo.co/dunia",
+        source_name="Tempo.co (Dunia)"
     )
-    return national + international
+    return national + dunia
 
 
 def fetch_antara() -> list[Headline]:
-    """Antara News - English section, general news RSS feed."""
+    """Antara News - English general news feed."""
     headlines = fetch_rss(
         feed_url="https://en.antaranews.com/rss/news.xml",
         source_name="Antara News"
@@ -245,36 +178,73 @@ def fetch_antara() -> list[Headline]:
 
 
 def fetch_antara_politics() -> list[Headline]:
-    """Antara News - English politics feed for deeper political coverage."""
-    return fetch_rss(
+    """Antara News - English politics feed."""
+    # Try English politik feed first
+    headlines = fetch_rss(
         feed_url="https://en.antaranews.com/rss/politik.xml",
         source_name="Antara News (Politik)"
     )
-
-
-def fetch_cnbc_indonesia() -> list[Headline]:
-    """CNBC Indonesia - RSS feed available."""
-    headlines = fetch_rss(
-        feed_url="https://www.cnbcindonesia.com/news/rss",
-        source_name="CNBC Indonesia"
-    )
+    # If English politik fails, try Bahasa international feed
     if not headlines:
         headlines = fetch_rss(
-            feed_url="https://www.cnbcindonesia.com/market/rss",
-            source_name="CNBC Indonesia"
+            feed_url="https://www.antaranews.com/rss/dunia-internasional.xml",
+            source_name="Antara (Internasional)"
         )
     return headlines
 
 
-def fetch_liputan6() -> list[Headline]:
-    """Liputan6.com - RSS feed available."""
-    return fetch_rss(
-        feed_url="https://feed.liputan6.com/rss/news",
-        source_name="Liputan6.com"
-    )
+def fetch_cnn_indonesia() -> list[Headline]:
+    """CNN Indonesia - HTML scrape of nasional and internasional sections."""
+    headlines = []
+
+    pages = [
+        "https://www.cnnindonesia.com/nasional",
+        "https://www.cnnindonesia.com/internasional",
+    ]
+
+    for page_url in pages:
+        try:
+            resp = requests.get(page_url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+
+            for a_tag in soup.find_all("a", href=True):
+                href = a_tag.get("href", "")
+
+                # Only match article links with CNN Indonesia URL pattern
+                if not re.search(r'/(?:nasional|internasional)/\d{14}-\d+-\d+/', href):
+                    continue
+
+                title = a_tag.get_text(strip=True)
+
+                # Skip nav items and very short text
+                if not title or len(title) < 15:
+                    continue
+
+                if not href.startswith("http"):
+                    href = "https://www.cnnindonesia.com" + href
+
+                headlines.append(Headline(
+                    title=title, url=href, source="CNN Indonesia"
+                ))
+
+            logger.info(f"Fetched headlines from {page_url}")
+        except Exception as e:
+            logger.error(f"Error scraping CNN Indonesia ({page_url}): {e}")
+
+    # Deduplicate by URL
+    seen = set()
+    unique = []
+    for h in headlines:
+        if h.url not in seen:
+            seen.add(h.url)
+            unique.append(h)
+
+    logger.info(f"Fetched {len(unique)} unique headlines from CNN Indonesia (HTML)")
+    return unique
 
 
-# Fallback HTML selectors in case RSS feeds break
+# Fallback HTML selectors
 FALLBACK_SELECTORS = {
     "Detik.com": {
         "url": "https://www.detik.com/",
@@ -296,17 +266,13 @@ FALLBACK_SELECTORS = {
 
 
 def fetch_all_headlines() -> dict[str, list[Headline]]:
-    """
-    Fetch headlines from all sources.
-    Returns a dict keyed by source name.
-    """
+    """Fetch headlines from all sources."""
     fetchers = [
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News (Politik)", fetch_antara_politics),
-        ("CNBC Indonesia", fetch_cnbc_indonesia),
-        ("Liputan6.com", fetch_liputan6),
+        ("CNN Indonesia", fetch_cnn_indonesia),
     ]
 
     all_headlines = {}
