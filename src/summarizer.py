@@ -12,26 +12,36 @@ SUMMARY_PROMPT = """You are an expert news analyst covering Indonesia. You have 
 
 Today's date is {today_date}.
 
-Write a 5-paragraph English-language executive summary structured as follows:
+Write an English-language executive summary structured into three sections, each with a section header in HTML <h3> tags. The structure for each section is: a short opening paragraph followed by supporting bullets.
 
-Paragraphs 1-2: Political news. Cover the most important domestic political stories — anything involving the president, cabinet, DPR/MPR, political parties, coalitions, elections, governance, state institutions, and political controversies. Describe what happened factually. Do not analyse or speculate on implications.
+SECTION 1: <h3>Domestic Politics</h3>
+- Lead paragraph (3-4 sentences) on the day's most significant political development. Focus on major political developments — actions by the president, cabinet, DPR/MPR, party leadership, coalition dynamics, governance, and consequential political controversies. Skip routine activities, ceremonial events, and minor regional matters.
+- Up to 7 supporting bullets covering other significant political stories. Each bullet is one sentence (which may run long if needed for context).
 
-Paragraph 3: Foreign policy and defence news. Cover stories involving Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, and security matters. Describe what happened factually.
+SECTION 2: <h3>Foreign Policy &amp; Defence</h3>
+- Lead paragraph (3-4 sentences) on the day's most significant foreign policy or defence story. Focus on Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, and security matters.
+- Up to 5 supporting bullets covering other significant foreign policy or defence stories.
+- If there are no foreign policy or defence stories, omit this section entirely.
 
-Paragraphs 4-5: Everything else. Cover the most important remaining stories across economy, energy, legal, social affairs, environment, health, and other topics.
+SECTION 3: <h3>Other</h3>
+- Lead paragraph (3-4 sentences) on the day's most significant non-political story across economy, energy, legal, social affairs, environment, health, and other topics.
+- Up to 5 supporting bullets covering other significant stories from these areas.
+
+Significance filter: Only include stories that represent major developments. A story qualifies if it (a) involves named senior officials or major institutions, (b) appears across multiple outlets, or (c) represents a substantive policy or political development. Filter out routine ministerial visits, ceremonial activities, individual crime cases, and minor regional incidents unless they have national significance.
 
 Rules:
 - Write in English. If headlines are in Bahasa Indonesia, translate the key points.
-- Be factual and descriptive. Report what happened, not what it means.
-- When you mention a story, embed an HTML hyperlink to the relevant article using <a href="URL">descriptive text</a> format. Every key claim should link to its source article.
-- Do NOT include any title, heading, section header, or date. Do NOT label paragraphs. Just write five flowing paragraphs.
-- If there are no foreign policy or defence stories on a given day, fold that paragraph into the political section and write four paragraphs total.
-- Start directly with the first paragraph.
+- Be factual and descriptive. Report what happened, not what it means. Do not analyse implications.
+- Embed HTML hyperlinks using <a href="URL">descriptive text</a> format. Lead paragraphs may contain multiple hyperlinks where claims warrant it. Each bullet should contain exactly one hyperlink anchored to its most important phrase.
+- Use HTML <h3> tags for the three section headers exactly as written above.
+- Use HTML <ul><li>...</li></ul> tags for the bullet lists.
+- Lead paragraphs go in HTML <p> tags.
+- Do not include any title, date, or preamble before the first <h3>.
 
 Headlines:
 {headlines}
 
-Write the summary now in HTML-ready format with embedded <a> hyperlinks."""
+Write the summary now in HTML-ready format."""
 
 
 def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "", model: str = "claude-sonnet-4-20250514") -> str:

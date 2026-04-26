@@ -16,10 +16,14 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str) -> str:
     """
     Build a nicely formatted HTML email with summary + appendix.
     """
-    # Convert summary paragraphs to HTML
-    summary_html = "".join(f"<p>{p.strip()}</p>" for p in summary.split("\n\n") if p.strip())
-    if not summary_html:
-        summary_html = f"<p>{summary}</p>"
+    # Summary now arrives with its own HTML tags (<h3>, <p>, <ul><li>)
+    # Pass through directly. If it doesn't look like HTML, wrap in <p>.
+    summary_html = summary.strip()
+    if not summary_html.startswith("<"):
+        # Fallback for plain text - wrap paragraphs
+        summary_html = "".join(
+            f"<p>{p.strip()}</p>" for p in summary_html.split("\n\n") if p.strip()
+        )
 
     # Build appendix
     appendix_sections = []
@@ -49,6 +53,18 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str) -> str:
     <style>
         .summary-section a {{ color: #1a73e8; text-decoration: underline; }}
         .summary-section a:hover {{ color: #c0392b; }}
+        .summary-section h3 {{
+            font-size: 16px;
+            color: #c0392b;
+            margin: 18px 0 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #ddd;
+            font-family: Georgia, serif;
+        }}
+        .summary-section h3:first-child {{ margin-top: 0; }}
+        .summary-section p {{ margin: 0 0 10px; line-height: 1.55; }}
+        .summary-section ul {{ margin: 0 0 14px; padding-left: 22px; }}
+        .summary-section li {{ margin-bottom: 6px; line-height: 1.5; }}
     </style>
     </head>
     <body style="font-family: Georgia, 'Times New Roman', serif; max-width:680px; margin:0 auto; padding:20px; color:#222;">
