@@ -6,12 +6,13 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 
 | Outlet | Method | Language |
 |--------|--------|----------|
-| Detik.com | RSS (HTML fallback) | Bahasa Indonesia |
+| Detik.com | RSS → HTML → Browser fallback chain | Bahasa Indonesia |
 | Tempo.co | RSS (Nasional + Dunia) | Bahasa Indonesia |
 | Republika | RSS | Bahasa Indonesia |
 | Kompas.com | Browser scrape (Nasional) | Bahasa Indonesia |
 | CNN Indonesia | Browser scrape (Nasional) | Bahasa Indonesia |
-| Antara News | RSS (General + Politik/Internasional) | English / Bahasa |
+| Antara News | RSS (General) | English |
+| Antara News International | RSS | Bahasa Indonesia |
 
 ## What You Get
 

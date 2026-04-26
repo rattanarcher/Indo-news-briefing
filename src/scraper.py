@@ -177,20 +177,12 @@ def fetch_antara() -> list[Headline]:
     return headlines
 
 
-def fetch_antara_politics() -> list[Headline]:
-    """Antara News - English politics feed."""
-    # Try English politik feed first
-    headlines = fetch_rss(
-        feed_url="https://en.antaranews.com/rss/politik.xml",
-        source_name="Antara News (Politik)"
+def fetch_antara_international() -> list[Headline]:
+    """Antara News - Bahasa international feed (covers foreign affairs, diplomacy, defence)."""
+    return fetch_rss(
+        feed_url="https://www.antaranews.com/rss/dunia-internasional.xml",
+        source_name="Antara News International"
     )
-    # If English politik fails, try Bahasa international feed
-    if not headlines:
-        headlines = fetch_rss(
-            feed_url="https://www.antaranews.com/rss/dunia-internasional.xml",
-            source_name="Antara (Internasional)"
-        )
-    return headlines
 
 
 def fetch_republika() -> list[Headline]:
@@ -226,7 +218,11 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
     """Fetch headlines from all sources."""
     # Lazy import browser scrapers so the module still loads if Playwright is missing
     try:
-        from src.scraper_browser import fetch_kompas_browser, fetch_cnn_indonesia_browser
+        from src.scraper_browser import (
+            fetch_kompas_browser,
+            fetch_cnn_indonesia_browser,
+            fetch_detik_browser,
+        )
         browser_available = True
     except ImportError as e:
         logger.warning(f"Playwright not available, skipping browser-based scrapers: {e}")
@@ -236,7 +232,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
-        ("Antara News (Politik)", fetch_antara_politics),
+        ("Antara News International", fetch_antara_international),
         ("Republika", fetch_republika),
     ]
 
@@ -256,6 +252,11 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
             fb = FALLBACK_SELECTORS[source_name]
             logger.info(f"RSS empty for {source_name}, trying HTML fallback...")
             headlines = fetch_html(fb["url"], source_name, fb["selector"])
+
+        # Detik special case: if both RSS and HTML failed, try browser scraper
+        if not headlines and source_name == "Detik.com" and browser_available:
+            logger.info(f"RSS and HTML both failed for Detik, trying browser scraper...")
+            headlines = fetch_detik_browser()
 
         # Deduplicate by URL
         seen_urls = set()

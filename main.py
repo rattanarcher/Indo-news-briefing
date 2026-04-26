@@ -28,7 +28,7 @@ EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
 USE_TLS = os.environ.get("SMTP_USE_TLS", "true").lower() == "true"
 
 # Optional: override Claude model
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 
 
 def main():

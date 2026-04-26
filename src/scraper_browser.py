@@ -132,7 +132,7 @@ def fetch_kompas_browser() -> list[Headline]:
 def fetch_cnn_indonesia_browser() -> list[Headline]:
     """
     CNN Indonesia - browser-based scrape of cnnindonesia.com/nasional.
-    URLs follow pattern: cnnindonesia.com/nasional/YYYYMMDDHHMMSS-XX-XXXXXXX/slug
+    URLs typically follow pattern: cnnindonesia.com/nasional/YYYYMMDDHHMMSS-XX-XXXXXXX/slug
     """
     headlines = []
     p = browser = context = None
@@ -141,13 +141,20 @@ def fetch_cnn_indonesia_browser() -> list[Headline]:
         p, browser, context = _launch_browser()
         page = context.new_page()
 
-        page.goto("https://www.cnnindonesia.com/nasional", timeout=30000, wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
+        page.goto("https://www.cnnindonesia.com/nasional", timeout=45000, wait_until="domcontentloaded")
+        # Wait longer for lazy-loaded content (CNN Indonesia loads articles via JS)
+        page.wait_for_timeout(8000)
+
+        # Scroll down to trigger any lazy-loading
+        try:
+            page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
+            page.wait_for_timeout(2000)
+        except Exception:
+            pass
 
         anchors = page.query_selector_all("a[href]")
 
-        # CNN Indonesia URLs embed timestamp: /nasional/20260425143000-12-1234567/slug
-        # The first 8 chars of timestamp are YYYYMMDD
+        # Date for filtering
         today = datetime.now(timezone(timedelta(hours=7)))
         today_compact = today.strftime("%Y%m%d")
         yesterday_compact = (today - timedelta(days=1)).strftime("%Y%m%d")
@@ -158,12 +165,18 @@ def fetch_cnn_indonesia_browser() -> list[Headline]:
                 href = a.get_attribute("href") or ""
                 title = (a.inner_text() or "").strip()
 
-                # Match CNN Indonesia article URL pattern
-                ts_match = re.search(r'/nasional/(\d{14})-\d+-\d+/', href)
+                # More permissive URL matching - catch /nasional/ articles with any digit pattern
+                # Original strict pattern: /nasional/YYYYMMDDHHMMSS-XX-XXXXXXX/
+                # Permissive pattern: any /nasional/ URL with at least 8 consecutive digits
+                if "cnnindonesia.com/nasional/" not in href:
+                    continue
+
+                # Try strict pattern first to extract date
+                ts_match = re.search(r'/nasional/(\d{8,14})', href)
                 if not ts_match:
                     continue
 
-                # Filter by date (first 8 digits of timestamp)
+                # Filter by date (first 8 digits should be YYYYMMDD)
                 article_date = ts_match.group(1)[:8]
                 if article_date not in (today_compact, yesterday_compact):
                     continue
@@ -203,8 +216,83 @@ def fetch_cnn_indonesia_browser() -> list[Headline]:
     return headlines
 
 
+# ─── Detik (national news) ───────────────────────────────────────────
+
+def fetch_detik_browser() -> list[Headline]:
+    """
+    Detik.com - browser-based scrape of news.detik.com.
+    URLs follow pattern: news.detik.com/berita/d-XXXXXXX/headline-slug
+    or detik.com/news/berita/d-XXXXXXX/...
+    """
+    headlines = []
+    p = browser = context = None
+
+    try:
+        p, browser, context = _launch_browser()
+        page = context.new_page()
+
+        page.goto("https://news.detik.com/", timeout=30000, wait_until="domcontentloaded")
+        # Allow JS to populate article links
+        page.wait_for_timeout(3000)
+
+        anchors = page.query_selector_all("a[href]")
+
+        seen_urls = set()
+        for a in anchors:
+            try:
+                href = a.get_attribute("href") or ""
+                title = (a.inner_text() or "").strip()
+
+                # Detik article URLs contain /d-XXXXXXX/ where X is a numeric article ID
+                if not re.search(r'detik\.com/[^/]+/[^/]*/?d-\d+/', href):
+                    continue
+
+                # Skip non-article patterns (videos, photos, etc.)
+                if any(skip in href for skip in ["/video/", "/foto-", "/dvideo/"]):
+                    continue
+
+                # Skip empty titles, very short text, or duplicates
+                if not title or len(title) < 15:
+                    continue
+                if href in seen_urls:
+                    continue
+                seen_urls.add(href)
+
+                # Ensure absolute URL
+                if not href.startswith("http"):
+                    href = "https://news.detik.com" + href
+
+                headlines.append(Headline(
+                    title=title,
+                    url=href,
+                    source="Detik.com",
+                ))
+            except Exception:
+                continue
+
+        logger.info(f"Fetched {len(headlines)} headlines from Detik.com (browser)")
+
+    except Exception as e:
+        logger.error(f"Browser scrape failed for Detik: {e}")
+    finally:
+        try:
+            if context:
+                context.close()
+            if browser:
+                browser.close()
+            if p:
+                p.stop()
+        except Exception:
+            pass
+
+    return headlines
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    print("\n--- Detik ---")
+    for h in fetch_detik_browser():
+        print(f"  {h.title}\n    {h.url}")
     print("\n--- Kompas ---")
     for h in fetch_kompas_browser():
         print(f"  {h.title}\n    {h.url}")
