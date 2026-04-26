@@ -10,7 +10,6 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 | Tempo.co | RSS (Nasional + Dunia) | Bahasa Indonesia |
 | Republika | RSS | Bahasa Indonesia |
 | Kompas.com | Browser scrape (Nasional) | Bahasa Indonesia |
-| CNN Indonesia | Browser scrape (Nasional) | Bahasa Indonesia |
 | Antara News | RSS (General) | English |
 | Antara News International | RSS | Bahasa Indonesia |
 

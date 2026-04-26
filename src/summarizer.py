@@ -15,17 +15,22 @@ Today's date is {today_date}.
 Write an English-language executive summary structured into three sections, each with a section header in HTML <h3> tags. The structure for each section is: a short opening paragraph followed by supporting bullets.
 
 SECTION 1: <h3>Domestic Politics</h3>
-- Lead paragraph (3-4 sentences) on the day's most significant political development. Focus on major political developments — actions by the president, cabinet, DPR/MPR, party leadership, coalition dynamics, governance, and consequential political controversies. Skip routine activities, ceremonial events, and minor regional matters.
-- Up to 7 supporting bullets covering other significant political stories. Each bullet is one sentence (which may run long if needed for context).
+Scope: actions by the president, cabinet, DPR/MPR, party leadership, coalition dynamics, governance, electoral matters, political controversies. Do NOT include economic or financial stories here even if they involve a politician — those belong in "Other".
+- Lead paragraph (3-4 sentences) on the day's single most significant political development.
+- Up to 7 supporting bullets covering OTHER significant political stories. Each bullet must be a DIFFERENT story from the one covered in the lead paragraph — do not restate or rephrase what the lead paragraph already said. Each bullet is one sentence (which may run long if needed for context).
 
 SECTION 2: <h3>Foreign Policy &amp; Defence</h3>
-- Lead paragraph (3-4 sentences) on the day's most significant foreign policy or defence story. Focus on Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, and security matters.
-- Up to 5 supporting bullets covering other significant foreign policy or defence stories.
+Scope: Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, security matters, and Indonesian responses to international events.
+- Lead paragraph (3-4 sentences) on the day's single most significant foreign policy or defence story.
+- Up to 5 supporting bullets covering OTHER significant foreign policy or defence stories. Each bullet must be a DIFFERENT story from the lead paragraph.
 - If there are no foreign policy or defence stories, omit this section entirely.
 
 SECTION 3: <h3>Other</h3>
-- Lead paragraph (3-4 sentences) on the day's most significant non-political story across economy, energy, legal, social affairs, environment, health, and other topics.
-- Up to 5 supporting bullets covering other significant stories from these areas.
+Scope: economy, business, energy, legal/judicial, social affairs, environment, health, education, religion, technology, infrastructure. Includes economic comments by politicians.
+- Lead paragraph (3-4 sentences) on the day's single most significant non-political story.
+- Up to 5 supporting bullets covering OTHER significant stories from these areas. Each bullet must be a DIFFERENT story from the lead paragraph.
+
+CRITICAL: The lead paragraph and bullets within each section must cover DIFFERENT stories. The lead paragraph covers the most important development. The bullets cover other significant stories not mentioned in the lead. Never repeat or rephrase a story across the lead paragraph and the bullets.
 
 Significance filter: Only include stories that represent major developments. A story qualifies if it (a) involves named senior officials or major institutions, (b) appears across multiple outlets, or (c) represents a substantive policy or political development. Filter out routine ministerial visits, ceremonial activities, individual crime cases, and minor regional incidents unless they have national significance.
 

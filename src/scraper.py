@@ -220,7 +220,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
     try:
         from src.scraper_browser import (
             fetch_kompas_browser,
-            fetch_cnn_indonesia_browser,
             fetch_detik_browser,
         )
         browser_available = True
@@ -239,7 +238,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
     if browser_available:
         fetchers.extend([
             ("Kompas.com", fetch_kompas_browser),
-            ("CNN Indonesia", fetch_cnn_indonesia_browser),
         ])
 
     all_headlines = {}
