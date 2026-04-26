@@ -8,8 +8,10 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 |--------|--------|----------|
 | Detik.com | RSS (HTML fallback) | Bahasa Indonesia |
 | Tempo.co | RSS (Nasional + Dunia) | Bahasa Indonesia |
-| CNN Indonesia | HTML scrape (Nasional + Internasional) | Bahasa Indonesia |
-| Antara News | RSS (General + Politik) | English |
+| Republika | RSS | Bahasa Indonesia |
+| Kompas.com | Browser scrape (Nasional) | Bahasa Indonesia |
+| CNN Indonesia | Browser scrape (Nasional) | Bahasa Indonesia |
+| Antara News | RSS (General + Politik/Internasional) | English / Bahasa |
 
 ## What You Get
 
@@ -30,6 +32,7 @@ Automated daily scraper that collects headlines from major Indonesian news outle
 git clone https://github.com/rattanarcher/Indo-news-briefing.git
 cd Indo-news-briefing
 pip install -r requirements.txt
+playwright install chromium
 ```
 
 ### 2. Configure environment

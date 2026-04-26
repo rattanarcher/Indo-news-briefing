@@ -193,55 +193,12 @@ def fetch_antara_politics() -> list[Headline]:
     return headlines
 
 
-def fetch_cnn_indonesia() -> list[Headline]:
-    """CNN Indonesia - HTML scrape of nasional and internasional sections."""
-    headlines = []
-
-    pages = [
-        "https://www.cnnindonesia.com/nasional",
-        "https://www.cnnindonesia.com/internasional",
-    ]
-
-    for page_url in pages:
-        try:
-            resp = requests.get(page_url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "html.parser")
-
-            for a_tag in soup.find_all("a", href=True):
-                href = a_tag.get("href", "")
-
-                # Only match article links with CNN Indonesia URL pattern
-                if not re.search(r'/(?:nasional|internasional)/\d{14}-\d+-\d+/', href):
-                    continue
-
-                title = a_tag.get_text(strip=True)
-
-                # Skip nav items and very short text
-                if not title or len(title) < 15:
-                    continue
-
-                if not href.startswith("http"):
-                    href = "https://www.cnnindonesia.com" + href
-
-                headlines.append(Headline(
-                    title=title, url=href, source="CNN Indonesia"
-                ))
-
-            logger.info(f"Fetched headlines from {page_url}")
-        except Exception as e:
-            logger.error(f"Error scraping CNN Indonesia ({page_url}): {e}")
-
-    # Deduplicate by URL
-    seen = set()
-    unique = []
-    for h in headlines:
-        if h.url not in seen:
-            seen.add(h.url)
-            unique.append(h)
-
-    logger.info(f"Fetched {len(unique)} unique headlines from CNN Indonesia (HTML)")
-    return unique
+def fetch_republika() -> list[Headline]:
+    """Republika Online - general RSS feed covering nasional and internasional."""
+    return fetch_rss(
+        feed_url="https://www.republika.co.id/rss/",
+        source_name="Republika"
+    )
 
 
 # Fallback HTML selectors
@@ -267,13 +224,27 @@ FALLBACK_SELECTORS = {
 
 def fetch_all_headlines() -> dict[str, list[Headline]]:
     """Fetch headlines from all sources."""
+    # Lazy import browser scrapers so the module still loads if Playwright is missing
+    try:
+        from src.scraper_browser import fetch_kompas_browser, fetch_cnn_indonesia_browser
+        browser_available = True
+    except ImportError as e:
+        logger.warning(f"Playwright not available, skipping browser-based scrapers: {e}")
+        browser_available = False
+
     fetchers = [
         ("Detik.com", fetch_detik),
         ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News (Politik)", fetch_antara_politics),
-        ("CNN Indonesia", fetch_cnn_indonesia),
+        ("Republika", fetch_republika),
     ]
+
+    if browser_available:
+        fetchers.extend([
+            ("Kompas.com", fetch_kompas_browser),
+            ("CNN Indonesia", fetch_cnn_indonesia_browser),
+        ])
 
     all_headlines = {}
 
