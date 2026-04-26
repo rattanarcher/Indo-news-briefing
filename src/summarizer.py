@@ -15,7 +15,7 @@ Today's date is {today_date}.
 Write an English-language executive summary structured into three sections, each with a section header in HTML <h3> tags. The structure for each section is: a short opening paragraph followed by supporting bullets.
 
 SECTION 1: <h3>Domestic Politics</h3>
-Scope: actions by the president, cabinet, DPR/MPR, party leadership, coalition dynamics, governance, electoral matters, political controversies. Do NOT include economic or financial stories here even if they involve a politician — those belong in "Other".
+Scope: actions by the president, cabinet, DPR/MPR, party leadership, coalition dynamics, governance, electoral matters, political controversies. Do NOT include economic, financial, or business stories here even if they involve a politician — those belong in "Other". For example, a DPR member commenting on the rupiah exchange rate or GDP growth is an "Other" (economy) story, not a "Domestic Politics" story.
 - Lead paragraph (3-4 sentences) on the day's single most significant political development.
 - Up to 7 supporting bullets covering OTHER significant political stories. Each bullet must be a DIFFERENT story from the one covered in the lead paragraph — do not restate or rephrase what the lead paragraph already said. Each bullet is one sentence (which may run long if needed for context).
 
@@ -37,7 +37,10 @@ Significance filter: Only include stories that represent major developments. A s
 Rules:
 - Write in English. If headlines are in Bahasa Indonesia, translate the key points.
 - Be factual and descriptive. Report what happened, not what it means. Do not analyse implications.
-- Embed HTML hyperlinks using <a href="URL">descriptive text</a> format. Lead paragraphs may contain multiple hyperlinks where claims warrant it. Each bullet should contain exactly one hyperlink anchored to its most important phrase.
+- Embed HTML hyperlinks using <a href="URL">descriptive text</a> format.
+- Lead paragraph hyperlink rule: each distinct factual claim in the lead paragraph that comes from a specific article MUST be hyperlinked to that article. If a lead paragraph mentions three separate stories (e.g. "X did A, while Y said B, and Z proposed C"), all three must be hyperlinked. Do not leave any sourced claim without a link in the lead paragraph.
+- Bullet hyperlink rule: each bullet contains exactly one hyperlink anchored to its most important phrase.
+- Hyperlinks should anchor to substantive phrases (e.g. "raised interest rates by 25 basis points") not vague ones (e.g. "thanking them").
 - Use HTML <h3> tags for the three section headers exactly as written above.
 - Use HTML <ul><li>...</li></ul> tags for the bullet lists.
 - Lead paragraphs go in HTML <p> tags.
