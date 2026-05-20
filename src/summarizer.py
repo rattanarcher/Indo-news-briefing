@@ -38,8 +38,9 @@ Rules:
 - Write in English. If headlines are in Bahasa Indonesia, translate the key points.
 - Be factual and descriptive. Report what happened, not what it means. Do not analyse implications.
 - Embed HTML hyperlinks using <a href="URL">descriptive text</a> format.
-- Lead paragraph hyperlink rule: each distinct factual claim in the lead paragraph that comes from a specific article MUST be hyperlinked to that article. If a lead paragraph mentions three separate stories (e.g. "X did A, while Y said B, and Z proposed C"), all three must be hyperlinked. Do not leave any sourced claim without a link in the lead paragraph.
-- Bullet hyperlink rule: each bullet contains exactly one hyperlink anchored to its most important phrase.
+- ABSOLUTE HYPERLINK RULE: Every single factual claim drawn from a specific headline MUST be hyperlinked to that headline's URL. This applies equally in lead paragraphs and bullets. There are NO exceptions. If you mention a person doing something, an institution announcing something, or any event from the headlines, the relevant phrase MUST be wrapped in an <a href> tag.
+- A bullet or sentence may contain TWO or more hyperlinks if it covers two or more distinct stories. There is no upper limit on hyperlinks. Stories must not be mentioned without a link.
+- Self-check before finishing: re-read each paragraph and bullet. For each verb phrase describing an action ("X said", "Y launched", "Z met"), confirm there is a hyperlink attached. If not, add one.
 - Hyperlinks should anchor to substantive phrases (e.g. "raised interest rates by 25 basis points") not vague ones (e.g. "thanking them").
 - Use HTML <h3> tags for the three section headers exactly as written above.
 - Use HTML <ul><li>...</li></ul> tags for the bullet lists.
