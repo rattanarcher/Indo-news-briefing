@@ -40,7 +40,12 @@ Rules:
 - Embed HTML hyperlinks using <a href="URL">descriptive text</a> format.
 - ABSOLUTE HYPERLINK RULE: Every single factual claim drawn from a specific headline MUST be hyperlinked to that headline's URL. This applies equally in lead paragraphs and bullets. There are NO exceptions. If you mention a person doing something, an institution announcing something, or any event from the headlines, the relevant phrase MUST be wrapped in an <a href> tag.
 - A bullet or sentence may contain TWO or more hyperlinks if it covers two or more distinct stories. There is no upper limit on hyperlinks. Stories must not be mentioned without a link.
-- Self-check before finishing: re-read each paragraph and bullet. For each verb phrase describing an action ("X said", "Y launched", "Z met"), confirm there is a hyperlink attached. If not, add one.
+- ANCHOR LENGTH RULE: Each hyperlink anchor must be SHORT — ideally 3 to 7 words, never more than 10. Anchor only the core noun phrase or key action, not the whole clause or sentence. The surrounding sentence context stays as plain, unlinked text.
+  - Good: PSI said it is ready to welcome <a href="URL">former President Jokowi</a> when he tours the regions.
+  - Bad: <a href="URL">PSI said it is ready to welcome former President Jokowi in the regions when he tours Indonesia</a>.
+  - Good: The DPR <a href="URL">established 68 priority bills</a> in its National Legislation Program.
+  - Bad: <a href="URL">The DPR established 68 priority bills in its National Legislation Program</a>.
+- Self-check before finishing: re-read each paragraph and bullet. For each verb phrase describing an action ("X said", "Y launched", "Z met"), confirm there is a SHORT hyperlink attached. If a link is longer than 10 words, shorten it to just the key phrase.
 - Hyperlinks should anchor to substantive phrases (e.g. "raised interest rates by 25 basis points") not vague ones (e.g. "thanking them").
 - Use HTML <h3> tags for the three section headers exactly as written above.
 - Use HTML <ul><li>...</li></ul> tags for the bullet lists.
