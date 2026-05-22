@@ -15,6 +15,7 @@ from src.scraper import fetch_all_headlines, headlines_to_text
 from src.summarizer import summarize_headlines
 from src.emailer import build_email_html, send_email
 from src.archive import archive_headlines
+from src.subscribers import build_recipient_list
 
 # ─── Configuration (all from environment variables) ─────────────────
 
@@ -25,6 +26,7 @@ SMTP_USER = os.environ.get("SMTP_USER", "")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
 EMAIL_FROM = os.environ.get("EMAIL_FROM", SMTP_USER)
 EMAIL_TO = os.environ.get("EMAIL_TO", SMTP_USER)
+SUBSCRIBER_CSV_URL = os.environ.get("SUBSCRIBER_CSV_URL", "")
 USE_TLS = os.environ.get("SMTP_USE_TLS", "true").lower() == "true"
 
 # Optional: override Claude model
@@ -80,13 +82,16 @@ def main():
 
     html_body = build_email_html(summary, all_headlines, today)
 
+    # Combine core recipients with Google Sheet subscribers
+    recipients = build_recipient_list(EMAIL_TO, SUBSCRIBER_CSV_URL)
+
     success = send_email(
         smtp_host=SMTP_HOST,
         smtp_port=SMTP_PORT,
         smtp_user=SMTP_USER,
         smtp_password=SMTP_PASSWORD,
         from_email=EMAIL_FROM,
-        to_email=EMAIL_TO,
+        to_email=recipients,
         subject=subject,
         html_body=html_body,
         use_tls=USE_TLS,

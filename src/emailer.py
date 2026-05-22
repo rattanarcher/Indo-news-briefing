@@ -124,7 +124,9 @@ def send_email(
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"] = from_email
-        msg["To"] = ", ".join(recipients)
+        # Address the visible "To" to the sender itself; put all real
+        # recipients in BCC so subscribers cannot see each other's emails.
+        msg["To"] = from_email
 
         # Plain text fallback
         plain_text = "Your email client does not support HTML. Please view this email in a modern client."
@@ -138,10 +140,12 @@ def send_email(
             server = smtplib.SMTP_SSL(smtp_host, smtp_port)
 
         server.login(smtp_user, smtp_password)
+        # sendmail's recipient list is the actual delivery (BCC behaviour) -
+        # these addresses do not appear in the message headers.
         server.sendmail(from_email, recipients, msg.as_string())
         server.quit()
 
-        logger.info(f"Email sent to {', '.join(recipients)}")
+        logger.info(f"Email sent to {len(recipients)} recipient(s) via BCC")
         return True
 
     except Exception as e:

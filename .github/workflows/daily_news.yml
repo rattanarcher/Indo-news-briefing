@@ -44,6 +44,7 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SUBSCRIBER_CSV_URL: ${{ secrets.SUBSCRIBER_CSV_URL }}
           SMTP_USE_TLS: "true"
         run: python main.py
 
