@@ -48,30 +48,17 @@ def fetch_subscriber_emails(csv_url: str) -> list[str]:
             logger.warning("Subscriber CSV is empty")
             return []
 
-        # Find the email column by header name
-        header = [h.strip().lower() for h in rows[0]]
-        email_col_idx = None
-        for i, col_name in enumerate(header):
-            if "email" in col_name:
-                email_col_idx = i
-                break
-
-        # If no header match, scan all columns for the first that looks like emails
+        # Scan EVERY cell in EVERY row (except header) for anything that
+        # looks like an email address. This is robust to whatever the
+        # column is named - Google Form question headers can be long or
+        # oddly formatted, so we don't rely on matching the header.
         emails = []
-        if email_col_idx is not None:
-            for row in rows[1:]:
-                if len(row) > email_col_idx:
-                    candidate = row[email_col_idx].strip()
-                    if EMAIL_PATTERN.match(candidate):
-                        emails.append(candidate.lower())
-        else:
-            logger.warning("No email column found in subscriber CSV, scanning all cells")
-            for row in rows[1:]:
-                for cell in row:
-                    candidate = cell.strip()
-                    if EMAIL_PATTERN.match(candidate):
-                        emails.append(candidate.lower())
-                        break
+        for row in rows[1:]:  # skip header row
+            for cell in row:
+                candidate = cell.strip()
+                if EMAIL_PATTERN.match(candidate):
+                    emails.append(candidate.lower())
+                    break  # one email per row is enough
 
         # Deduplicate while preserving order
         seen = set()
