@@ -77,6 +77,12 @@ python main.py
 5. You can also trigger it manually from the **Actions** tab → **Run workflow**
 6. The `headlines_archive.xlsx` file is automatically committed back to the repo after each run
 
+## Testing New Features
+
+The repo has two workflows. **Daily Indonesia News Briefing** is the real one — scheduled, sends to all subscribers, archives to Excel. **TEST - News Briefing** runs the exact same code but with safe test inputs: manual trigger only, sends only to the developer's own email, skips archiving, and never commits to the repo.
+
+To test a change: edit the code, push it, then run the **TEST - News Briefing** workflow from the Actions tab. The test email arrives only to you. Once satisfied, the scheduled daily run picks up the same code automatically. Both workflows always run whatever code is in `main` — the test workflow is a safe way to trigger a run, not an isolated code branch.
+
 ## Project Structure
 
 ```
@@ -89,7 +95,8 @@ indo-news-briefing/
 │   └── archive.py                   # AI topic categorisation + Excel archive
 ├── headlines_archive.xlsx           # Growing headline database (auto-updated)
 ├── .github/workflows/
-│   └── daily_news.yml               # GitHub Actions cron + auto-commit
+│   ├── daily_news.yml               # GitHub Actions cron + auto-commit
+│   └── test_news.yml                # Manual test run (self only, no archive)
 ├── .env.example                     # Environment variable template
 ├── requirements.txt                 # Python dependencies
 └── README.md

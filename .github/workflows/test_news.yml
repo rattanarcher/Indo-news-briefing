@@ -1,0 +1,54 @@
+# TEST — Indonesia News Briefing
+#
+# This is the TEST version of the daily briefing pipeline.
+# It runs the SAME code as daily_news.yml, but with safe test inputs:
+#   - Manual trigger only (never scheduled)
+#   - Sends ONLY to cytosine12@gmail.com (ignores the core list and subscribers)
+#   - Skips the Excel archive step entirely (ARCHIVE_ENABLED=false)
+#   - Does NOT commit anything back to the repo
+#
+# Use this to test new features or prompt changes before they reach subscribers.
+
+name: TEST - News Briefing
+
+on:
+  workflow_dispatch: # Manual trigger ONLY - no schedule
+
+jobs:
+  test-briefing:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browser
+        run: playwright install --with-deps chromium
+
+      - name: Run news briefing pipeline (TEST MODE)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          # TEST OVERRIDES — send only to self, no subscribers, no archiving
+          EMAIL_TO: "cytosine12@gmail.com"
+          SUBSCRIBER_CSV_URL: ""
+          ARCHIVE_ENABLED: "false"
+          SMTP_USE_TLS: "true"
+        run: python main.py
+
+      # NOTE: no archive commit step - test runs never touch the repo

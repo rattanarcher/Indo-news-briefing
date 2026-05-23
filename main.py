@@ -32,6 +32,10 @@ USE_TLS = os.environ.get("SMTP_USE_TLS", "true").lower() == "true"
 # Optional: override Claude model
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
 
+# Archiving: set ARCHIVE_ENABLED=false to skip the Excel archive step
+# (used by the test workflow so test runs don't touch the archive)
+ARCHIVE_ENABLED = os.environ.get("ARCHIVE_ENABLED", "true").lower() == "true"
+
 
 def main():
     logging.basicConfig(
@@ -70,11 +74,14 @@ def main():
     summary = summarize_headlines(headlines_text, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
 
     # ── Step 3: Archive to Excel ─────────────────────────────────
-    logger.info("Step 3/4: Categorising and archiving headlines...")
-    try:
-        archive_headlines(all_headlines, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
-    except Exception as e:
-        logger.error(f"Archiving failed (non-fatal): {e}")
+    if ARCHIVE_ENABLED:
+        logger.info("Step 3/4: Categorising and archiving headlines...")
+        try:
+            archive_headlines(all_headlines, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
+        except Exception as e:
+            logger.error(f"Archiving failed (non-fatal): {e}")
+    else:
+        logger.info("Step 3/4: Archiving SKIPPED (ARCHIVE_ENABLED=false, test mode)")
 
     # ── Step 4: Email ────────────────────────────────────────────
     logger.info("Step 4/4: Sending email...")
