@@ -16,6 +16,7 @@ from src.summarizer import summarize_headlines
 from src.emailer import build_email_html, send_email
 from src.archive import archive_headlines
 from src.subscribers import build_recipient_list
+from src.weekly_review import generate_weekly_review
 
 # ─── Configuration (all from environment variables) ─────────────────
 
@@ -35,6 +36,11 @@ CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
 # Archiving: set ARCHIVE_ENABLED=false to skip the Excel archive step
 # (used by the test workflow so test runs don't touch the archive)
 ARCHIVE_ENABLED = os.environ.get("ARCHIVE_ENABLED", "true").lower() == "true"
+
+# Weekly review: set FORCE_WEEKLY=true to generate the "What Happened
+# Last Week" section even when today is not Monday (used by the test
+# workflow so the Monday format can be tested any day)
+FORCE_WEEKLY = os.environ.get("FORCE_WEEKLY", "false").lower() == "true"
 
 
 def main():
@@ -70,8 +76,34 @@ def main():
 
     # ── Step 2: Summarize ────────────────────────────────────────
     logger.info("Step 2/4: Generating summary via Claude API...")
-    today = datetime.now(timezone(timedelta(hours=10))).strftime("%A, %d %B %Y")
+    now_canberra = datetime.now(timezone(timedelta(hours=10)))
+    today = now_canberra.strftime("%A, %d %B %Y")
+    is_monday = now_canberra.weekday() == 0  # Monday == 0
+    # The Monday format (header + weekly box) shows on real Mondays, or
+    # any day when FORCE_WEEKLY is set (test workflow).
+    monday_format = is_monday or FORCE_WEEKLY
     summary = summarize_headlines(headlines_text, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
+
+    # ── Step 2b: Weekly review (Mondays, or when FORCE_WEEKLY set) ────
+    weekly_review = ""
+    if monday_format:
+        if FORCE_WEEKLY and not is_monday:
+            logger.info("FORCE_WEEKLY set — generating weekly review on a non-Monday (test mode)")
+        else:
+            logger.info("Today is Monday — generating 'What Happened Last Week' review...")
+        try:
+            # The review covers the 7 days ending yesterday
+            week_end = now_canberra - timedelta(days=1)
+            weekly_review = generate_weekly_review(
+                ANTHROPIC_API_KEY, end_date=week_end, model=CLAUDE_MODEL
+            )
+            if weekly_review:
+                logger.info("Weekly review generated and will be added to the briefing")
+            else:
+                logger.warning("Weekly review empty — 'What Happened Last Week' box will be omitted")
+        except Exception as e:
+            logger.error(f"Weekly review failed (non-fatal): {e}")
+            weekly_review = ""
 
     # ── Step 3: Archive to Excel ─────────────────────────────────
     if ARCHIVE_ENABLED:
@@ -85,9 +117,13 @@ def main():
 
     # ── Step 4: Email ────────────────────────────────────────────
     logger.info("Step 4/4: Sending email...")
-    subject = f"Indonesia News Briefing — {today}"
+    if monday_format:
+        subject = f"Monday Briefing — {today}"
+    else:
+        subject = f"Indonesia News Briefing — {today}"
 
-    html_body = build_email_html(summary, all_headlines, today)
+    html_body = build_email_html(summary, all_headlines, today,
+                                 weekly_review=weekly_review, is_monday=monday_format)
 
     # Combine core recipients with Google Sheet subscribers
     recipients = build_recipient_list(EMAIL_TO, SUBSCRIBER_CSV_URL)

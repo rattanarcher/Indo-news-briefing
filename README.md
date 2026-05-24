@@ -90,9 +90,12 @@ indo-news-briefing/
 ├── main.py                          # Pipeline orchestrator (4 steps)
 ├── src/
 │   ├── scraper.py                   # Headline fetcher (RSS + HTML fallback)
+│   ├── scraper_browser.py           # Playwright browser scrapers (Kompas)
 │   ├── summarizer.py                # Claude API summarization with hyperlinks
 │   ├── emailer.py                   # HTML email builder + SMTP sender
-│   └── archive.py                   # AI topic categorisation + Excel archive
+│   ├── archive.py                   # AI topic categorisation + Excel archive
+│   ├── subscribers.py               # Google Sheet subscriber list
+│   └── weekly_review.py             # Monday "What Happened Last Week" (web search)
 ├── headlines_archive.xlsx           # Growing headline database (auto-updated)
 ├── .github/workflows/
 │   ├── daily_news.yml               # GitHub Actions cron + auto-commit

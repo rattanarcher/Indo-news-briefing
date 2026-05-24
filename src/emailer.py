@@ -12,9 +12,14 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
-def build_email_html(summary: str, all_headlines: dict, date_str: str) -> str:
+def build_email_html(summary: str, all_headlines: dict, date_str: str,
+                     weekly_review: str = "", is_monday: bool = False) -> str:
     """
     Build a nicely formatted HTML email with summary + appendix.
+
+    On Mondays, weekly_review (HTML paragraphs) is prepended as a
+    "What Happened Last Week" section and the header changes to
+    "Monday Briefing".
     """
     # Summary now arrives with its own HTML tags (<h3>, <p>, <ul><li>)
     # Pass through directly. If it doesn't look like HTML, wrap in <p>.
@@ -46,6 +51,23 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str) -> str:
     total_count = sum(len(v) for v in all_headlines.values())
     source_count = sum(1 for v in all_headlines.values() if v)
 
+    # Monday-specific header and weekly review section
+    header_title = "Monday Briefing" if is_monday else "Indonesia Daily News Briefing"
+
+    weekly_review_block = ""
+    if is_monday and weekly_review.strip():
+        review_html = weekly_review.strip()
+        if not review_html.startswith("<"):
+            review_html = "".join(
+                f"<p>{p.strip()}</p>" for p in review_html.split("\n\n") if p.strip()
+            )
+        weekly_review_block = f"""
+        <div class="summary-section" style="background:#f4f0e8; border-left:4px solid #8a6d3b; padding:16px 20px; margin-bottom:28px;">
+            <h2 style="margin:0 0 12px; font-size:18px; color:#333;">What Happened Last Week</h2>
+            {review_html}
+        </div>
+        """
+
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -71,12 +93,14 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str) -> str:
 
         <div style="border-bottom:3px solid #c0392b; padding-bottom:12px; margin-bottom:24px;">
             <h1 style="margin:0; font-size:24px; color:#c0392b;">
-                Indonesia Daily News Briefing
+                {header_title}
             </h1>
             <p style="margin:4px 0 0; color:#888; font-size:14px;">
                 {date_str} &middot; {total_count} headlines from {source_count} sources
             </p>
         </div>
+
+        {weekly_review_block}
 
         <div class="summary-section" style="background:#fafafa; border-left:4px solid #c0392b; padding:16px 20px; margin-bottom:28px;">
             <h2 style="margin:0 0 12px; font-size:18px; color:#333;">Key Stories Today</h2>

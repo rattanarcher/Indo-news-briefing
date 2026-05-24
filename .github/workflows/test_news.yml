@@ -5,6 +5,8 @@
 #   - Manual trigger only (never scheduled)
 #   - Sends ONLY to cytosine12@gmail.com (ignores the core list and subscribers)
 #   - Skips the Excel archive step entirely (ARCHIVE_ENABLED=false)
+#   - Forces the Monday weekly review on (FORCE_WEEKLY=true) so the
+#     "What Happened Last Week" section can be tested any day
 #   - Does NOT commit anything back to the repo
 #
 # Use this to test new features or prompt changes before they reach subscribers.
@@ -48,6 +50,7 @@ jobs:
           EMAIL_TO: "cytosine12@gmail.com"
           SUBSCRIBER_CSV_URL: ""
           ARCHIVE_ENABLED: "false"
+          FORCE_WEEKLY: "true"
           SMTP_USE_TLS: "true"
         run: python main.py
 
