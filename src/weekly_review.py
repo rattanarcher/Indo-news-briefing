@@ -36,14 +36,19 @@ Step 3 - Then run a general web search on each thread to check for the latest de
 
 Step 4 - Write two paragraphs (about 4-6 sentences each) covering the 3 threads. Be factual and descriptive; report what happened and how each thread developed over the week. Do not speculate on future implications.
 
-Hyperlink rule: Embed hyperlinks using <a href="URL">short anchor</a>, 3-7 word anchors. Every distinct story mentioned must have a hyperlink. Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable where it best supports the claim.
+CRITICAL OUTPUT RULE: Your final output must contain ONLY the two paragraphs, each wrapped in a <p> tag. Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p>". Anything you need to say about your process belongs in tool calls, never in the final text.
 
-Output: only the two paragraphs, each in a <p> tag. No heading, no preamble.
+HYPERLINK RULES:
+- Embed hyperlinks using <a href="URL">anchor text</a>, with anchors of 3-7 words.
+- Every distinct story or development mentioned must have a hyperlink.
+- Every direct quote MUST be hyperlinked. If you quote a phrase such as "deep state" or "not to take too much initiative", the quoted phrase itself must be wrapped in an <a href> tag pointing to the article that reported it.
+- Every specific, distinctive claim - a named figure, a statistic, a specific announcement - must be hyperlinked to its source.
+- Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable where it best supports the claim.
 
 Headlines for the week:
 {headlines}
 
-Write the two paragraphs now."""
+Produce the final output now. Start immediately with "<p>" - no preamble, no narration."""
 
 
 def _load_week(archive_path: str, end_date: datetime):
@@ -149,6 +154,20 @@ def generate_weekly_review(api_key: str, end_date: datetime,
             if not text.strip():
                 logger.warning("Weekly review: empty text in final response, skipping")
                 return ""
+
+            # Safety net: strip any preamble/narration before the first
+            # <p> tag. During tool use Claude sometimes emits process
+            # narration as text; the real roundup starts at the first <p>.
+            text = text.strip()
+            p_start = text.find("<p>")
+            if p_start > 0:
+                logger.info(f"Weekly review: stripped {p_start} chars of preamble before <p>")
+                text = text[p_start:]
+            # Also trim anything after the last closing </p>
+            p_end = text.rfind("</p>")
+            if p_end != -1:
+                text = text[:p_end + 4]
+
             logger.info(f"Weekly review generated ({len(text)} chars)")
             return text.strip()
 
