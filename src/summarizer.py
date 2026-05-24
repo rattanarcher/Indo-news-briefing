@@ -78,7 +78,7 @@ def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "",
 
         message = client.messages.create(
             model=model,
-            max_tokens=2500,
+            max_tokens=5000,
             messages=[
                 {
                     "role": "user",
