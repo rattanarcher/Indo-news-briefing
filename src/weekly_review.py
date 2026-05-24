@@ -20,8 +20,14 @@ logger = logging.getLogger(__name__)
 
 ARCHIVE_FILE = "headlines_archive.xlsx"
 
-# Topics surfaced first in the headline block (researcher's focus areas)
+# Topics included in the weekly review (researcher's focus areas).
+# Only these three are scanned - other topics are excluded to keep the
+# prompt small and within the API rate limit.
 PRIORITY_TOPICS = ["Politics", "Foreign Affairs", "Defence/Security"]
+
+# Maximum headlines kept per topic (most recent first). Capping the
+# prompt size keeps the weekly request well under the API rate limit.
+MAX_PER_TOPIC = 60
 
 
 WEEKLY_PROMPT = """You are an expert news analyst covering Indonesia. Below are the headlines collected over the past week ({date_range}), grouped by topic, each with publication day and URL.
@@ -71,18 +77,36 @@ def _load_week(archive_path: str, end_date: datetime):
 
 
 def _build_headlines_block(week: pd.DataFrame) -> str:
-    """Format the week's headlines grouped by topic, priority topics first."""
-    other = [t for t in week["Topic"].unique() if t not in PRIORITY_TOPICS]
+    """
+    Format the week's headlines for the prompt.
+
+    Only the three priority topics are included. Each topic is capped at
+    MAX_PER_TOPIC most-recent headlines to keep the prompt within the API
+    rate limit. Topics with fewer headlines simply include all of them.
+    """
     lines = []
-    for topic in PRIORITY_TOPICS + sorted(other):
+    total_kept = 0
+    for topic in PRIORITY_TOPICS:
         sub = week[week["Topic"] == topic].sort_values("Date_parsed")
         if len(sub) == 0:
             continue
-        lines.append(f"\n=== {topic} ({len(sub)} headlines) ===")
+
+        # Keep the most recent MAX_PER_TOPIC headlines for this topic
+        full_count = len(sub)
+        if full_count > MAX_PER_TOPIC:
+            sub = sub.tail(MAX_PER_TOPIC)
+
+        kept = len(sub)
+        total_kept += kept
+        note = f" (showing {kept} most recent of {full_count})" if full_count > kept else f" ({kept} headlines)"
+        lines.append(f"\n=== {topic}{note} ===")
+
         for _, r in sub.iterrows():
             day = r["Date_parsed"].strftime("%a %d")
             headline = str(r["Headline"]).replace("\n", " ").strip()
             lines.append(f"[{day}] {headline} | {r['Link']}")
+
+    logger.info(f"Weekly review: {total_kept} headlines included after per-topic cap")
     return "\n".join(lines)
 
 

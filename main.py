@@ -8,6 +8,7 @@ Automated via: GitHub Actions cron (see .github/workflows/daily_news.yml)
 
 import os
 import sys
+import time
 import logging
 from datetime import datetime, timezone, timedelta
 
@@ -92,6 +93,12 @@ def main():
         else:
             logger.info("Today is Monday — generating 'What Happened Last Week' review...")
         try:
+            # Pause before the weekly review so the API's per-minute token
+            # window resets after the daily summary call. The weekly review
+            # is a large request; running it immediately can trip the rate limit.
+            logger.info("Pausing 60s before weekly review (rate limit headroom)...")
+            time.sleep(60)
+
             # The review covers the 7 days ending yesterday
             week_end = now_canberra - timedelta(days=1)
             weekly_review = generate_weekly_review(
