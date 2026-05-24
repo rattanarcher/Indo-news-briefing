@@ -50,7 +50,17 @@ def _load_week(archive_path: str, end_date: datetime):
     """Load archive, return the 7-day slice ending on end_date and the start date."""
     df = pd.read_excel(archive_path)
     df["Date_parsed"] = pd.to_datetime(df["Date"], format="%A, %d %B %Y", errors="coerce")
+
+    # The archive dates are timezone-naive. end_date arrives timezone-aware
+    # (Canberra time). Strip the tzinfo so pandas can compare them - we only
+    # care about the calendar date, not the time or zone.
+    if end_date.tzinfo is not None:
+        end_date = end_date.replace(tzinfo=None)
+    # Normalise to midnight so the whole end day is included
+    end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
+
     start = end_date - timedelta(days=6)
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
     mask = (df["Date_parsed"] >= start) & (df["Date_parsed"] <= end_date)
     return df[mask].copy(), start
 
