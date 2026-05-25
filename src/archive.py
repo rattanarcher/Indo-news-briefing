@@ -14,22 +14,37 @@ logger = logging.getLogger(__name__)
 
 ARCHIVE_FILE = "headlines_archive.xlsx"
 
-# The three buckets used to group the email appendix. Each fine-grained
-# category that the AI assigns is mapped to one of these.
-APPENDIX_BUCKETS = ["Domestic Politics", "Foreign Policy & Defence", "Other"]
+# The sections shown in the email appendix. Headlines whose category
+# does not map to one of these are still archived to Excel, but are not
+# shown in the email (keeps the briefing readable).
+APPENDIX_BUCKETS = [
+    "Domestic Politics",
+    "Foreign Policy & Defence",
+    "Economy & Business",
+    "Legal & Judiciary",
+]
 
-# Maps the AI's fine-grained categories to the three appendix buckets.
-# Any category not listed here falls through to "Other".
+# Maps the AI's fine-grained categories to the four appendix sections.
+# Any category NOT listed here is archived but omitted from the email.
 _BUCKET_MAP = {
     "Politics": "Domestic Politics",
     "Foreign Affairs": "Foreign Policy & Defence",
     "Defence/Security": "Foreign Policy & Defence",
+    "Economy": "Economy & Business",
+    "Business": "Economy & Business",
+    "Energy": "Economy & Business",
+    "Legal/Judiciary": "Legal & Judiciary",
+    "Crime": "Legal & Judiciary",
 }
 
 
-def bucket_for_category(category: str) -> str:
-    """Map a fine-grained category to one of the three appendix buckets."""
-    return _BUCKET_MAP.get(category, "Other")
+def bucket_for_category(category: str) -> str | None:
+    """
+    Map a fine-grained category to one of the four appendix sections.
+    Returns None if the category is not shown in the email (it is still
+    archived to Excel, just omitted from the briefing).
+    """
+    return _BUCKET_MAP.get(category)
 
 CATEGORIZE_PROMPT = """You are a news categorisation assistant. Given a list of Indonesian news headlines, assign each one a topic category.
 

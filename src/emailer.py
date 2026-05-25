@@ -31,7 +31,7 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
             f"<p>{p.strip()}</p>" for p in summary_html.split("\n\n") if p.strip()
         )
 
-    # Build appendix - grouped by the three topic buckets.
+    # Build appendix - grouped into the four topic sections.
     # categories is a flat list aligned with the headlines flattened
     # source-by-source (same order archive.categorize_all produces).
     from src.archive import bucket_for_category, APPENDIX_BUCKETS
@@ -42,15 +42,24 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
         for h in headlines:
             flat.append(h)
 
-    # Group headlines into the three buckets
+    # Group headlines into the four sections. Headlines whose category
+    # does not map to a section (Health, Education, Sports, etc.) are
+    # skipped here - they are still in the Excel archive, just not the email.
     buckets = {b: [] for b in APPENDIX_BUCKETS}
+    skipped = 0
     for i, h in enumerate(flat):
         if categories and i < len(categories):
             bucket = bucket_for_category(categories[i])
         else:
-            # No category available (categorisation failed) - default bucket
-            bucket = "Other"
+            # No category available (categorisation failed entirely)
+            bucket = None
+        if bucket is None:
+            skipped += 1
+            continue
         buckets[bucket].append(h)
+
+    if skipped:
+        logger.info(f"Appendix: {skipped} headlines omitted from email (not in the four sections)")
 
     appendix_sections = []
     for bucket in APPENDIX_BUCKETS:
