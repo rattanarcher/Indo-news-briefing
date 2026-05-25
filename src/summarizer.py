@@ -58,7 +58,7 @@ Headlines:
 Write the summary now in HTML-ready format."""
 
 
-def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "", model: str = "claude-sonnet-4-20250514") -> str:
+def summarize_headlines(headlines_text: str, api_key: str, today_date: str = "", model: str = "claude-sonnet-4-5") -> str:
     """
     Send headlines to Claude API and return an English summary.
 

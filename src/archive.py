@@ -14,6 +14,23 @@ logger = logging.getLogger(__name__)
 
 ARCHIVE_FILE = "headlines_archive.xlsx"
 
+# The three buckets used to group the email appendix. Each fine-grained
+# category that the AI assigns is mapped to one of these.
+APPENDIX_BUCKETS = ["Domestic Politics", "Foreign Policy & Defence", "Other"]
+
+# Maps the AI's fine-grained categories to the three appendix buckets.
+# Any category not listed here falls through to "Other".
+_BUCKET_MAP = {
+    "Politics": "Domestic Politics",
+    "Foreign Affairs": "Foreign Policy & Defence",
+    "Defence/Security": "Foreign Policy & Defence",
+}
+
+
+def bucket_for_category(category: str) -> str:
+    """Map a fine-grained category to one of the three appendix buckets."""
+    return _BUCKET_MAP.get(category, "Other")
+
 CATEGORIZE_PROMPT = """You are a news categorisation assistant. Given a list of Indonesian news headlines, assign each one a topic category.
 
 Choose the most appropriate single category for each headline. Use short, consistent category names in English such as:
@@ -32,7 +49,7 @@ Example response:
 Respond with ONLY the JSON array. No preamble, no markdown backticks, no explanation."""
 
 
-def categorize_headlines(headlines_list: list[dict], api_key: str, model: str = "claude-sonnet-4-20250514") -> list[str]:
+def categorize_headlines(headlines_list: list[dict], api_key: str, model: str = "claude-sonnet-4-5") -> list[str]:
     """
     Send headlines to Claude API for topic categorisation.
 
@@ -166,24 +183,33 @@ def save_to_excel(all_headlines: dict, categories: list[str], today_date: str, f
     logger.info(f"Saved {len(flat_headlines)} headlines to {filepath} (total rows: {ws.max_row - 1})")
 
 
-def archive_headlines(all_headlines: dict, api_key: str, today_date: str, model: str = "claude-sonnet-4-20250514", filepath: str = ARCHIVE_FILE):
+def categorize_all(all_headlines: dict, api_key: str, model: str = "claude-sonnet-4-5") -> list[str]:
     """
-    Full archive pipeline: flatten headlines → categorise via AI → save to Excel.
+    Categorise every headline. Returns a flat list of category strings
+    in the same order as the flattened headlines (source by source).
+    This is separated from archiving so the result can also be reused
+    to group the email appendix.
     """
-    # Flatten for categorisation
     flat_headlines = []
     for source, headlines in all_headlines.items():
         for h in headlines:
-            flat_headlines.append({
-                "title": h.title,
-                "source": source,
-            })
+            flat_headlines.append({"title": h.title, "source": source})
 
-    # Get AI categories
     logger.info(f"Categorising {len(flat_headlines)} headlines...")
-    categories = categorize_headlines(flat_headlines, api_key, model=model)
+    return categorize_headlines(flat_headlines, api_key, model=model)
 
-    # Save to Excel
+
+def archive_headlines(all_headlines: dict, api_key: str, today_date: str,
+                      model: str = "claude-sonnet-4-5", filepath: str = ARCHIVE_FILE,
+                      categories: list[str] = None):
+    """
+    Archive pipeline: categorise via AI (unless categories supplied) → save to Excel.
+
+    If categories is provided (already computed elsewhere), it is reused
+    instead of making another API call.
+    """
+    if categories is None:
+        categories = categorize_all(all_headlines, api_key, model=model)
+
     save_to_excel(all_headlines, categories, today_date, filepath=filepath)
-
     return categories

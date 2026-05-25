@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 def build_email_html(summary: str, all_headlines: dict, date_str: str,
-                     weekly_review: str = "", is_monday: bool = False) -> str:
+                     weekly_review: str = "", is_monday: bool = False,
+                     categories: list = None) -> str:
     """
     Build a nicely formatted HTML email with summary + appendix.
 
@@ -30,26 +31,44 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
             f"<p>{p.strip()}</p>" for p in summary_html.split("\n\n") if p.strip()
         )
 
-    # Build appendix
-    appendix_sections = []
+    # Build appendix - grouped by the three topic buckets.
+    # categories is a flat list aligned with the headlines flattened
+    # source-by-source (same order archive.categorize_all produces).
+    from src.archive import bucket_for_category, APPENDIX_BUCKETS
+
+    # Flatten headlines in the same order the categories were computed
+    flat = []
     for source, headlines in all_headlines.items():
-        if not headlines:
+        for h in headlines:
+            flat.append(h)
+
+    # Group headlines into the three buckets
+    buckets = {b: [] for b in APPENDIX_BUCKETS}
+    for i, h in enumerate(flat):
+        if categories and i < len(categories):
+            bucket = bucket_for_category(categories[i])
+        else:
+            # No category available (categorisation failed) - default bucket
+            bucket = "Other"
+        buckets[bucket].append(h)
+
+    appendix_sections = []
+    for bucket in APPENDIX_BUCKETS:
+        items_list = buckets[bucket]
+        if not items_list:
             continue
         items = "".join(
             f'<li><a href="{h.url}" style="color:#1a73e8; text-decoration:none;">{h.title}</a></li>'
-            for h in headlines
+            for h in items_list
         )
         appendix_sections.append(f"""
         <h3 style="color:#333; border-bottom:1px solid #ddd; padding-bottom:4px; margin-top:20px;">
-            {source}
+            {bucket}
         </h3>
         <ul style="line-height:1.8;">{items}</ul>
         """)
 
     appendix_html = "".join(appendix_sections) if appendix_sections else "<p>No headlines available.</p>"
-
-    total_count = sum(len(v) for v in all_headlines.values())
-    source_count = sum(1 for v in all_headlines.values() if v)
 
     # Monday-specific header and weekly review section
     header_title = "Monday Briefing" if is_monday else "Indonesia Daily News Briefing"
@@ -96,7 +115,7 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
                 {header_title}
             </h1>
             <p style="margin:4px 0 0; color:#888; font-size:14px;">
-                {date_str} &middot; {total_count} headlines from {source_count} sources
+                {date_str}
             </p>
         </div>
 

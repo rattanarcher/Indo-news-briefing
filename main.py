@@ -15,7 +15,7 @@ from datetime import datetime, timezone, timedelta
 from src.scraper import fetch_all_headlines, headlines_to_text
 from src.summarizer import summarize_headlines
 from src.emailer import build_email_html, send_email
-from src.archive import archive_headlines
+from src.archive import archive_headlines, categorize_all
 from src.subscribers import build_recipient_list
 from src.weekly_review import generate_weekly_review
 
@@ -112,15 +112,25 @@ def main():
             logger.error(f"Weekly review failed (non-fatal): {e}")
             weekly_review = ""
 
-    # ── Step 3: Archive to Excel ─────────────────────────────────
+    # ── Step 3: Categorise + Archive ─────────────────────────────
+    # Categorise headlines once. The result is used both for the Excel
+    # archive and to group the email appendix by topic.
+    logger.info("Step 3/4: Categorising headlines...")
+    try:
+        categories = categorize_all(all_headlines, ANTHROPIC_API_KEY, model=CLAUDE_MODEL)
+    except Exception as e:
+        logger.error(f"Categorisation failed (non-fatal): {e}")
+        categories = []
+
     if ARCHIVE_ENABLED:
-        logger.info("Step 3/4: Categorising and archiving headlines...")
+        logger.info("Archiving headlines to Excel...")
         try:
-            archive_headlines(all_headlines, ANTHROPIC_API_KEY, today_date=today, model=CLAUDE_MODEL)
+            archive_headlines(all_headlines, ANTHROPIC_API_KEY, today_date=today,
+                              model=CLAUDE_MODEL, categories=categories or None)
         except Exception as e:
             logger.error(f"Archiving failed (non-fatal): {e}")
     else:
-        logger.info("Step 3/4: Archiving SKIPPED (ARCHIVE_ENABLED=false, test mode)")
+        logger.info("Archiving SKIPPED (ARCHIVE_ENABLED=false, test mode)")
 
     # ── Step 4: Email ────────────────────────────────────────────
     logger.info("Step 4/4: Sending email...")
@@ -130,7 +140,8 @@ def main():
         subject = f"Indonesia News Briefing — {today}"
 
     html_body = build_email_html(summary, all_headlines, today,
-                                 weekly_review=weekly_review, is_monday=monday_format)
+                                 weekly_review=weekly_review, is_monday=monday_format,
+                                 categories=categories)
 
     # Combine core recipients with Google Sheet subscribers
     recipients = build_recipient_list(EMAIL_TO, SUBSCRIBER_CSV_URL)
