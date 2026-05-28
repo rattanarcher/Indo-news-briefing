@@ -123,7 +123,7 @@ def main():
         logger.info("Generating 'Expert Commentary This Week' review...")
         try:
             commentary_review = generate_commentary_review(
-                ANTHROPIC_API_KEY, model=CLAUDE_MODEL
+                ANTHROPIC_API_KEY, end_date=now_canberra, model=CLAUDE_MODEL
             )
             if commentary_review:
                 logger.info("Commentary review generated and will be added to the briefing")

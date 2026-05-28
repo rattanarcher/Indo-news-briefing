@@ -28,7 +28,12 @@ import anthropic
 
 logger = logging.getLogger(__name__)
 
-COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your task is to survey expert commentary on Indonesia published in the last 7 days and write a short "Expert Commentary This Week" section for a Monday briefing.
+COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your task is to survey expert commentary on Indonesia and write a short "Expert Commentary This Week" section for a Monday briefing.
+
+DATE WINDOW — THIS IS A HARD REQUIREMENT:
+Only include pieces published on or after {cutoff_date} (i.e. within the last 7 days, up to and including today, {today_date}). A piece published before {cutoff_date} must be excluded, no matter how relevant or high quality it is.
+
+You MUST confirm each piece's publication date before including it. The publication date usually appears in the article page (in the byline, dateline, or page metadata) and sometimes in the search result. If, after fetching the full article, you still cannot positively confirm that it was published on or after {cutoff_date}, you must EXCLUDE it. Do not guess, and do not give a piece the benefit of the doubt. When the date is uncertain, the piece is out. It is far better to omit a recent piece whose date you cannot confirm than to include a stale one.
 
 You have web_search and web_fetch tools. Use them to discover and read candidate pieces from these five outlets:
 
@@ -63,10 +68,10 @@ Selection criteria, in this order of priority:
 4. Outlet diversity. Where two candidate pieces are otherwise comparable, prefer the one from an outlet not already represented in your selection. Do not sacrifice substantive significance to diversify.
 
 Process:
-1. Fetch the three index pages and run all five searches to build a pool of candidate pieces published in the last 7 days.
+1. Fetch the three index pages and run all five searches to build a pool of candidate pieces.
 2. From the pool, shortlist 7-8 that look most promising based on titles, outlets, authors, and dates. Do not read all of them in full.
 3. Use web_fetch to read the full text of only the shortlisted pieces.
-4. Discard any that turn out to be republished older content (more than 7 days old), paywalled excerpts, podcast episode notes (especially Indonesia at Melbourne's "Talking Indonesia" series), Bahasa-language pieces, or fail the Indonesia-link requirement on closer inspection.
+4. For each shortlisted piece, confirm its publication date from the article page. Discard any published before {cutoff_date}, any whose date you cannot confirm, and any that are paywalled excerpts, podcast episode notes (especially Indonesia at Melbourne's "Talking Indonesia" series), Bahasa-language pieces, or fail the Indonesia-link requirement on closer inspection.
 5. From the remaining set, select up to 5 most consequential.
 6. Write one paragraph per selected piece.
 
@@ -83,15 +88,29 @@ If after searching you find no qualifying pieces at all, output exactly the text
 Begin."""
 
 
-def generate_commentary_review(api_key: str,
+def generate_commentary_review(api_key: str, end_date,
                                model: str = "claude-sonnet-4-5") -> str:
     """
     Generate the "Expert Commentary This Week" section.
+
+    end_date: a datetime (today, Canberra time). Only commentary published
+    within the 7 days ending on end_date is eligible.
 
     Returns the HTML string (up to five <p> paragraphs) on success, or an
     empty string on any failure or if no qualifying pieces were found
     (caller silently omits the section).
     """
+    from datetime import timedelta
+
+    # Strip timezone for clean date formatting, compute the 7-day cutoff
+    today = end_date.replace(tzinfo=None) if getattr(end_date, "tzinfo", None) else end_date
+    cutoff = today - timedelta(days=7)
+    cutoff_date = cutoff.strftime("%d %B %Y")
+    today_date = today.strftime("%d %B %Y")
+    logger.info(f"Commentary review: window {cutoff_date} to {today_date}")
+
+    prompt = COMMENTARY_PROMPT.format(cutoff_date=cutoff_date, today_date=today_date)
+
     try:
         client = anthropic.Anthropic(api_key=api_key)
 
@@ -100,7 +119,7 @@ def generate_commentary_review(api_key: str,
             {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 14},
         ]
 
-        messages = [{"role": "user", "content": COMMENTARY_PROMPT}]
+        messages = [{"role": "user", "content": prompt}]
 
         # Loop while the API pauses for long-running server-side tools.
         # Cap allows 5 searches + 3 index fetches + ~8 shortlist fetches

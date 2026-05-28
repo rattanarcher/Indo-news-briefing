@@ -4,7 +4,7 @@ Weekly review module.
 Generates the "What Happened Last Week" section that appears at the top of
 the Monday briefing. Reads the headlines archive for the past 7 days, asks
 Claude to identify the 3 main threads, fetch the archive articles, run web
-searches for the latest developments, and write a two-paragraph retrospective.
+searches for the latest developments, and write a three-paragraph retrospective.
 
 This module is only invoked on Mondays. If anything fails, the caller should
 skip the weekly section and continue with the normal daily briefing.
@@ -32,7 +32,7 @@ MAX_PER_TOPIC = 60
 
 WEEKLY_PROMPT = """You are an expert news analyst covering Indonesia. Below are the headlines collected over the past week ({date_range}), grouped by topic, each with publication day and URL.
 
-Your task: write a TWO-paragraph retrospective titled "What Happened Last Week" for the top of a Monday briefing.
+Your task: write a THREE-paragraph retrospective titled "What Happened Last Week" for the top of a Monday briefing.
 
 Step 1 - From the headlines, identify the 3 most important threads of the week. Prefer threads that recurred across multiple days. If you cannot find 3 multi-day threads, select the 3 most consequential individual stories instead.
 
@@ -40,9 +40,9 @@ Step 2 - For each thread, fetch and read the most relevant archive article URLs 
 
 Step 3 - Then run a general web search on each thread to check for the latest developments, including anything that happened after the archived articles.
 
-Step 4 - Write two paragraphs (about 4-6 sentences each) covering the 3 threads. Be factual and descriptive; report what happened and how each thread developed over the week. Do not speculate on future implications.
+Step 4 - Write three paragraphs (about 4-6 sentences each), ONE paragraph per thread, in order of importance. Be factual and descriptive; report what happened and how each thread developed over the week. Do not speculate on future implications. If you could only identify two substantive threads, write two paragraphs rather than padding with a weak third.
 
-CRITICAL OUTPUT RULE: Your final output must contain ONLY the two paragraphs, each wrapped in a <p> tag. Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p>". Anything you need to say about your process belongs in tool calls, never in the final text.
+CRITICAL OUTPUT RULE: Your final output must contain ONLY the paragraphs, each wrapped in a <p> tag (normally three). Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p>". Anything you need to say about your process belongs in tool calls, never in the final text.
 
 HYPERLINK RULES:
 - Embed hyperlinks using <a href="URL">anchor text</a>, with anchors of 3-7 words.
@@ -113,7 +113,7 @@ def _build_headlines_block(week: pd.DataFrame) -> str:
 def generate_weekly_review(api_key: str, end_date: datetime,
                            model: str = "claude-sonnet-4-5") -> str:
     """
-    Generate the two-paragraph weekly review.
+    Generate the three-paragraph weekly review.
 
     Returns the HTML string (two <p> paragraphs) on success, or an empty
     string on any failure - the caller then skips the weekly section.
