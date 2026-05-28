@@ -32,14 +32,21 @@ COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your t
 
 You have web_search and web_fetch tools. Use them to discover and read candidate pieces from these five outlets:
 
-Index pages to fetch directly (use web_fetch on each to see recent articles):
+Use BOTH discovery methods below to build the widest possible candidate pool. Fetching an index page can miss recent articles that have scrolled down the page, so always run the searches as well, even for sources you also fetch directly.
+
+Index pages to fetch directly (use web_fetch on each):
 - Fulcrum: https://fulcrum.sg/tag/indonesia/
 - CSIS Indonesia: https://www.csis.or.id/publications/commentaries/
 - Indonesia at Melbourne: https://indonesiaatmelbourne.unimelb.edu.au/
 
-Outlets to discover via web_search (these block direct fetching of index pages):
-- East Asia Forum: search "site:eastasiaforum.org Indonesia"
-- The Diplomat: search "site:thediplomat.com Indonesia"
+Searches to run (use web_search for each, to catch recent pieces the index fetches may miss, and to cover outlets that block direct fetching):
+- "site:eastasiaforum.org Indonesia"
+- "site:thediplomat.com Indonesia"
+- "site:fulcrum.sg Indonesia"
+- "site:csis.or.id Indonesia commentary"
+- "site:indonesiaatmelbourne.unimelb.edu.au Indonesia"
+
+Combine everything found through both methods into one candidate pool before shortlisting. Deduplicate by URL.
 
 Your goal: identify up to 5 of the most consequential pieces, read each one, then write a one-paragraph summary of each.
 
@@ -56,7 +63,7 @@ Selection criteria, in this order of priority:
 4. Outlet diversity. Where two candidate pieces are otherwise comparable, prefer the one from an outlet not already represented in your selection. Do not sacrifice substantive significance to diversify.
 
 Process:
-1. Fetch the three index pages and run the two searches to build a pool of candidate pieces published in the last 7 days.
+1. Fetch the three index pages and run all five searches to build a pool of candidate pieces published in the last 7 days.
 2. From the pool, shortlist 7-8 that look most promising based on titles, outlets, authors, and dates. Do not read all of them in full.
 3. Use web_fetch to read the full text of only the shortlisted pieces.
 4. Discard any that turn out to be republished older content (more than 7 days old), paywalled excerpts, podcast episode notes (especially Indonesia at Melbourne's "Talking Indonesia" series), Bahasa-language pieces, or fail the Indonesia-link requirement on closer inspection.
@@ -89,15 +96,16 @@ def generate_commentary_review(api_key: str,
         client = anthropic.Anthropic(api_key=api_key)
 
         tools = [
-            {"type": "web_search_20250305", "name": "web_search", "max_uses": 6},
-            {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 12},
+            {"type": "web_search_20250305", "name": "web_search", "max_uses": 8},
+            {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 14},
         ]
 
         messages = [{"role": "user", "content": COMMENTARY_PROMPT}]
 
         # Loop while the API pauses for long-running server-side tools.
-        # 20-iteration cap as agreed (discovery + shortlist fetches).
-        for _ in range(20):
+        # Cap allows 5 searches + 3 index fetches + ~8 shortlist fetches
+        # plus headroom. Raised from 20 to 24 after adding search backstops.
+        for _ in range(24):
             response = client.messages.create(
                 model=model,
                 max_tokens=6000,
@@ -140,7 +148,7 @@ def generate_commentary_review(api_key: str,
             logger.info(f"Commentary review generated ({len(text)} chars)")
             return text.strip()
 
-        logger.warning("Commentary review: tool loop did not converge in 20 iterations")
+        logger.warning("Commentary review: tool loop did not converge in 24 iterations")
         return ""
 
     except Exception as e:
