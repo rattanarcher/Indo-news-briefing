@@ -26,12 +26,24 @@ the section. Same graceful failure pattern as weekly_review.
 """
 
 import json
+import re
 import logging
 from datetime import datetime, timedelta
 
+import requests
+from bs4 import BeautifulSoup
 import anthropic
 
 logger = logging.getLogger(__name__)
+
+# For fetching candidate pages to read their machine-readable publish date
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+    )
+}
+TIMEOUT = 20
 
 COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your task is to survey recent expert commentary on Indonesia and return a structured list of candidate pieces for a Monday briefing's "Expert Commentary This Week" section.
 
@@ -81,6 +93,115 @@ If you find no qualifying pieces at all, return an empty JSON array: []
 Return the JSON array now."""
 
 
+def _date_from_url(url: str):
+    """
+    Extract a full publication date encoded in the URL path, e.g.
+    eastasiaforum.org/2026/05/22/... Returns datetime or None. No network
+    call — works even for sites that block fetching (EAF, The Diplomat).
+
+    Only the full /YYYY/MM/DD/ pattern is used. A month-only /YYYY/MM/ path
+    is deliberately NOT used here: guessing a day could wrongly drop a recent
+    piece, so those fall through to the metadata fetch instead.
+    """
+    if not url:
+        return None
+    m = re.search(r"/(\d{4})/(\d{2})/(\d{2})/", url)
+    if m:
+        try:
+            return datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except ValueError:
+            pass
+    return None
+
+
+def _parse_iso_date(s: str):
+    """Pull the first YYYY-MM-DD out of an ISO-ish string. Returns datetime or None."""
+    if not s:
+        return None
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", s)
+    if not m:
+        return None
+    try:
+        return datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    except ValueError:
+        return None
+
+
+def _fetch_published_date(url: str):
+    """
+    Fetch a candidate page and read its machine-readable publish date from
+    metadata. Tries, in order: article:published_time meta tag, JSON-LD
+    datePublished, itemprop=datePublished. Returns datetime or None.
+
+    This is deterministic and works even when the visible "Published" line
+    is buried in the page body where the model can't reliably read it.
+    """
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+    except Exception as e:
+        logger.info(f"date-extract: fetch failed for {url}: {e}")
+        return None
+
+    try:
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # 1. <meta property="article:published_time" content="2026-05-22T...">
+        m = soup.find("meta", attrs={"property": "article:published_time"})
+        if m and m.get("content"):
+            d = _parse_iso_date(m["content"])
+            if d:
+                return d
+
+        # 2. JSON-LD "datePublished": "2026-05-22..."
+        for script in soup.find_all("script", attrs={"type": "application/ld+json"}):
+            txt = script.string or script.get_text() or ""
+            mm = re.search(r'"datePublished"\s*:\s*"([^"]+)"', txt)
+            if mm:
+                d = _parse_iso_date(mm.group(1))
+                if d:
+                    return d
+
+        # 3. itemprop="datePublished"
+        m2 = soup.find(attrs={"itemprop": "datePublished"})
+        if m2:
+            val = m2.get("content") or m2.get("datetime") or m2.get_text()
+            d = _parse_iso_date(val)
+            if d:
+                return d
+    except Exception as e:
+        logger.info(f"date-extract: parse failed for {url}: {e}")
+
+    return None
+
+
+def _resolve_date(entry: dict):
+    """
+    Determine the authoritative publication date for an entry, in order:
+      1. Date encoded in the URL path (/YYYY/MM/DD/) — no network, immune to
+         bot-blocking. Covers EAF and The Diplomat.
+      2. Date read from page metadata via fetch. Covers slug-URL sites that
+         allow fetching (Fulcrum, CSIS, Indonesia at Melbourne).
+      3. The date the model reported, as a last resort.
+    Returns datetime or None (None = cannot confirm, so the piece is dropped).
+    """
+    url = str(entry.get("url", "")).strip()
+
+    # 1. URL path date (cheapest and most reliable where present)
+    d = _date_from_url(url)
+    if d:
+        return d
+
+    # 2. Page metadata
+    if url:
+        meta_date = _fetch_published_date(url)
+        if meta_date:
+            return meta_date
+
+    # 3. Model-reported date
+    return _parse_iso_date(str(entry.get("date", "")))
+
+
 def _build_html(entries: list[dict]) -> str:
     """Turn filtered entries into HTML <p> paragraphs with hyperlinks."""
     paragraphs = []
@@ -101,11 +222,10 @@ def _build_html(entries: list[dict]) -> str:
     return "".join(paragraphs)
 
 
-def _parse_and_filter(raw_text: str, cutoff: datetime) -> list[dict]:
+def _parse_entries(raw_text: str) -> list[dict]:
     """
-    Parse Claude's JSON output and keep only entries dated on/after cutoff.
-    Entries with an unparseable or "unknown" date are excluded (we never
-    surface a piece we cannot confirm is recent). Caps at 5.
+    Parse Claude's JSON output into a list of entry dicts. Pure (no network),
+    so it can be unit-tested. Returns [] on any parse failure.
     """
     text = raw_text.strip()
     # Strip markdown fences if present
@@ -125,26 +245,31 @@ def _parse_and_filter(raw_text: str, cutoff: datetime) -> list[dict]:
         return []
     if not isinstance(entries, list):
         return []
+    return [e for e in entries if isinstance(e, dict)]
 
+
+def _filter_by_date(entries: list[dict], cutoff: datetime) -> list[dict]:
+    """
+    Keep only entries published on or after cutoff. The authoritative date
+    comes from page metadata (via _resolve_date), falling back to the date
+    the model reported. Entries whose date cannot be confirmed at all are
+    excluded — we never surface a piece we cannot confirm is recent. Caps at 5.
+    """
     kept = []
     for e in entries:
-        if not isinstance(e, dict):
-            continue
-        date_str = str(e.get("date", "")).strip()
-        if not date_str or date_str.lower() == "unknown":
-            logger.info(f"Commentary review: dropped piece with no confirmed date: {e.get('url','?')}")
-            continue
-        try:
-            pub = datetime.strptime(date_str, "%Y-%m-%d")
-        except ValueError:
-            logger.info(f"Commentary review: dropped piece with unparseable date '{date_str}': {e.get('url','?')}")
+        pub = _resolve_date(e)
+        url = e.get("url", "?")
+        if pub is None:
+            logger.info(f"Commentary review: dropped piece with no confirmable date: {url}")
             continue
         if pub < cutoff:
-            logger.info(f"Commentary review: dropped stale piece dated {date_str}: {e.get('url','?')}")
+            logger.info(f"Commentary review: dropped stale piece dated {pub.strftime('%Y-%m-%d')}: {url}")
             continue
+        logger.info(f"Commentary review: kept piece dated {pub.strftime('%Y-%m-%d')}: {url}")
         kept.append(e)
-
-    return kept[:5]
+        if len(kept) >= 5:
+            break
+    return kept
 
 
 def generate_commentary_review(api_key: str, end_date,
@@ -195,9 +320,15 @@ def generate_commentary_review(api_key: str, end_date,
                 logger.warning("Commentary review: empty final text, omitting section")
                 return ""
 
-            entries = _parse_and_filter(raw, cutoff)
+            parsed = _parse_entries(raw)
+            if not parsed:
+                logger.info("Commentary review: no candidates returned, omitting section")
+                return ""
+            logger.info(f"Commentary review: {len(parsed)} candidates returned, verifying dates...")
+
+            entries = _filter_by_date(parsed, cutoff)
             if not entries:
-                logger.info("Commentary review: no recent qualifying pieces, omitting section")
+                logger.info("Commentary review: no recent qualifying pieces after date check, omitting section")
                 return ""
 
             html = _build_html(entries)

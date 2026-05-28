@@ -46,10 +46,11 @@ CRITICAL OUTPUT RULE: Your final output must contain ONLY the paragraphs, each w
 
 HYPERLINK RULES:
 - Embed hyperlinks using <a href="URL">anchor text</a>, with anchors of 3-7 words.
-- Every distinct story or development mentioned must have a hyperlink.
+- EVERY paragraph must contain at least one hyperlink. A paragraph with no hyperlink is not acceptable. If a thread was assembled mainly from web search rather than the archive, link to the most authoritative source you found for it.
+- Every distinct story or development mentioned should have a hyperlink.
 - Every direct quote MUST be hyperlinked. If you quote a phrase such as "deep state" or "not to take too much initiative", the quoted phrase itself must be wrapped in an <a href> tag pointing to the article that reported it.
 - Every specific, distinctive claim - a named figure, a statistic, a specific announcement - must be hyperlinked to its source.
-- Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable where it best supports the claim.
+- Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable and expected where the archive lacks a good source.
 
 Headlines for the week:
 {headlines}
