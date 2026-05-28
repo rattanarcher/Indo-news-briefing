@@ -2,90 +2,149 @@
 Commentary review module (Monday only).
 
 Surveys expert commentary on Indonesia from five major outlets over the
-past week, asks Claude to select up to 5 most consequential pieces and
-write one paragraph each for the Monday briefing.
+past week, selects up to 5 most consequential pieces, and writes one
+paragraph each for the Monday briefing.
 
-Discovery is done entirely through Claude's server-side web_search and
-web_fetch tools rather than raw HTTP scraping. This is deliberate: the
-commentary sites use bot protection that blocks plain requests calls but
-that Anthropic's fetch infrastructure can reach, and it avoids fragile
-site-specific HTML parsing that breaks on redesigns.
+Discovery and reading are done through Claude's server-side web_search and
+web_fetch tools. Claude returns structured JSON (one entry per candidate
+piece, including the publication date it read off each page). The DATE
+FILTERING is then done deterministically in Python, not left to Claude's
+judgement — prompt-based date enforcement proved unreliable (Claude would
+include stale pieces to fill the section even when told not to). Claude is
+good at reading a date off a page; Python is reliable at comparing it to a
+cutoff. So we split the work accordingly.
 
 Sources:
-    - East Asia Forum (eastasiaforum.org)      [via web_search]
-    - The Diplomat (thediplomat.com)           [via web_search]
-    - Fulcrum (fulcrum.sg)                      [via web_fetch of tag page]
-    - CSIS Indonesia (csis.or.id)               [via web_fetch of commentaries]
-    - Indonesia at Melbourne (unimelb.edu.au)   [via web_fetch of homepage]
+    - East Asia Forum (eastasiaforum.org)
+    - The Diplomat (thediplomat.com)
+    - Fulcrum (fulcrum.sg)
+    - CSIS Indonesia (csis.or.id)
+    - Indonesia at Melbourne (indonesiaatmelbourne.unimelb.edu.au)
 
 If anything fails, returns an empty string and the caller silently skips
 the section. Same graceful failure pattern as weekly_review.
 """
 
+import json
 import logging
+from datetime import datetime, timedelta
 
 import anthropic
 
 logger = logging.getLogger(__name__)
 
-COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your task is to survey expert commentary on Indonesia and write a short "Expert Commentary This Week" section for a Monday briefing.
+COMMENTARY_PROMPT = """You are an expert news analyst covering Indonesia. Your task is to survey recent expert commentary on Indonesia and return a structured list of candidate pieces for a Monday briefing's "Expert Commentary This Week" section.
 
-DATE WINDOW — THIS IS A HARD REQUIREMENT:
-Only include pieces published on or after {cutoff_date} (i.e. within the last 7 days, up to and including today, {today_date}). A piece published before {cutoff_date} must be excluded, no matter how relevant or high quality it is.
-
-You MUST confirm each piece's publication date before including it. The publication date usually appears in the article page (in the byline, dateline, or page metadata) and sometimes in the search result. If, after fetching the full article, you still cannot positively confirm that it was published on or after {cutoff_date}, you must EXCLUDE it. Do not guess, and do not give a piece the benefit of the doubt. When the date is uncertain, the piece is out. It is far better to omit a recent piece whose date you cannot confirm than to include a stale one.
-
-You have web_search and web_fetch tools. Use them to discover and read candidate pieces from these five outlets:
-
-Use BOTH discovery methods below to build the widest possible candidate pool. Fetching an index page can miss recent articles that have scrolled down the page, so always run the searches as well, even for sources you also fetch directly.
+You have web_search and web_fetch tools. Use BOTH discovery methods below to build the widest possible candidate pool. Fetching an index page can miss recent articles that have scrolled down the page, so always run the searches as well.
 
 Index pages to fetch directly (use web_fetch on each):
 - Fulcrum: https://fulcrum.sg/tag/indonesia/
 - CSIS Indonesia: https://www.csis.or.id/publications/commentaries/
 - Indonesia at Melbourne: https://indonesiaatmelbourne.unimelb.edu.au/
 
-Searches to run (use web_search for each, to catch recent pieces the index fetches may miss, and to cover outlets that block direct fetching):
+Searches to run (use web_search for each):
 - "site:eastasiaforum.org Indonesia"
 - "site:thediplomat.com Indonesia"
 - "site:fulcrum.sg Indonesia"
 - "site:csis.or.id Indonesia commentary"
 - "site:indonesiaatmelbourne.unimelb.edu.au Indonesia"
 
-Combine everything found through both methods into one candidate pool before shortlisting. Deduplicate by URL.
+Combine everything found into one candidate pool. Deduplicate by URL.
 
-Your goal: identify up to 5 of the most consequential pieces, read each one, then write a one-paragraph summary of each.
-
-If fewer than 5 qualifying pieces exist this week, write fewer paragraphs. Do not reach for marginal pieces to fill the section.
-
-Indonesia-link requirement: only consider pieces with a direct, substantive Indonesia focus. A piece that mentions Indonesia briefly while focused on ASEAN, China, or US policy does not qualify.
-
-Language requirement: only consider pieces written in English. CSIS Indonesia publishes in both English and Bahasa Indonesia - exclude the Bahasa pieces.
-
-Selection criteria, in this order of priority:
-1. Substantive policy or political significance. Pieces that engage seriously with major developments in one or more of these areas: domestic politics, government policy, defence policy, foreign policy, institutional changes, economic decisions. Light reviews, commemorative essays, podcast episodes, and general overviews do not qualify even when well written.
-2. Analytical depth over recap. Pieces that offer original argument, framing, or evaluation are preferred over those that mainly describe events the reader will already have seen in the daily news.
-3. Authoritative authorship. Pieces by established Indonesianists, named scholars, or senior policy figures are preferred where the substance is otherwise comparable.
-4. Outlet diversity. Where two candidate pieces are otherwise comparable, prefer the one from an outlet not already represented in your selection. Do not sacrifice substantive significance to diversify.
+Requirements for a candidate piece:
+- Indonesia-link: a direct, substantive Indonesia focus. A piece merely mentioning Indonesia while focused on ASEAN, China, or US policy does NOT qualify.
+- English language only. CSIS Indonesia publishes in both English and Bahasa Indonesia — exclude the Bahasa pieces.
+- Not a podcast episode note (especially Indonesia at Melbourne's "Talking Indonesia" series), not a paywalled excerpt, not republished older content.
+- Substantive policy or political significance: engages seriously with major developments in domestic politics, government policy, defence policy, foreign policy, institutional changes, or economic decisions. Light reviews, commemorative essays, and general overviews do not qualify.
 
 Process:
-1. Fetch the three index pages and run all five searches to build a pool of candidate pieces.
-2. From the pool, shortlist 7-8 that look most promising based on titles, outlets, authors, and dates. Do not read all of them in full.
-3. Use web_fetch to read the full text of only the shortlisted pieces.
-4. For each shortlisted piece, confirm its publication date from the article page. Discard any published before {cutoff_date}, any whose date you cannot confirm, and any that are paywalled excerpts, podcast episode notes (especially Indonesia at Melbourne's "Talking Indonesia" series), Bahasa-language pieces, or fail the Indonesia-link requirement on closer inspection.
-5. From the remaining set, select up to 5 most consequential.
-6. Write one paragraph per selected piece.
+1. Run the fetches and searches to build the candidate pool.
+2. Shortlist 7-8 promising pieces from titles/outlets/authors.
+3. web_fetch the full text of the shortlisted pieces.
+4. For EACH shortlisted piece, find its publication date on the page (look for "Published", a dateline, or page metadata). You MUST record this date.
+5. Keep the pieces that meet all the requirements above. Do not apply any date cutoff yourself — include every qualifying piece you find regardless of age, and report its true date. Date filtering happens downstream.
+6. Order the kept pieces by consequence, most significant first.
 
-Format for each paragraph:
-- Write 3-4 sentences in flowing prose. Weave the attribution naturally into the writing (for example: "Writing in East Asia Forum, [author] argues that...").
-- Hyperlink a short anchor (3-7 words) within the prose to the piece's URL. Anchor the link to a phrase that conveys what the piece is about, not to the author or outlet name.
-- Report what the piece argues and why it matters. Do not insert your own view.
-- Do not quote more than 10 words verbatim from any piece. Paraphrase.
+Output format — CRITICAL:
+Return ONLY a JSON array, nothing else. No preamble, no markdown fences, no narration. Each element is an object with exactly these fields:
+- "date": the publication date in strict ISO format "YYYY-MM-DD". If you genuinely cannot determine the date, use "unknown".
+- "url": the canonical article URL.
+- "outlet": the outlet name (e.g. "East Asia Forum", "Fulcrum", "CSIS Indonesia", "Indonesia at Melbourne", "The Diplomat").
+- "anchor": a 3-7 word phrase, drawn from what the piece argues, to be used as the hyperlink text.
+- "paragraph": a 3-4 sentence prose summary of the piece. Weave the attribution in naturally (e.g. "Writing in East Asia Forum, Edward Aspinall argues..."). Include the exact "anchor" phrase somewhere in this paragraph so it can be hyperlinked. Do NOT put any HTML in this field — plain prose only. Report what the piece argues and why it matters; do not insert your own view. Do not quote more than 10 words verbatim.
 
-Output: Up to 5 <p> paragraphs, in order of significance (most consequential first). No heading, no preamble, no narration of your process. Begin your output with the first <p> tag.
+Example of a single element:
+{{"date": "2026-05-22", "url": "https://eastasiaforum.org/...", "outlet": "East Asia Forum", "anchor": "Indonesia's defense partnership with the US", "paragraph": "Writing in East Asia Forum, ... argues that Indonesia's defense partnership with the US has triggered public anxiety ..."}}
 
-If after searching you find no qualifying pieces at all, output exactly the text NONE and nothing else.
+If you find no qualifying pieces at all, return an empty JSON array: []
 
-Begin."""
+Return the JSON array now."""
+
+
+def _build_html(entries: list[dict]) -> str:
+    """Turn filtered entries into HTML <p> paragraphs with hyperlinks."""
+    paragraphs = []
+    for e in entries:
+        prose = e.get("paragraph", "").strip()
+        anchor = e.get("anchor", "").strip()
+        url = e.get("url", "").strip()
+        if not prose or not url:
+            continue
+        # Hyperlink the anchor phrase within the prose, if present
+        if anchor and anchor in prose:
+            linked = f'<a href="{url}">{anchor}</a>'
+            prose = prose.replace(anchor, linked, 1)
+        else:
+            # Anchor phrase not found verbatim — append a small source link
+            prose = f'{prose} <a href="{url}">[source]</a>'
+        paragraphs.append(f"<p>{prose}</p>")
+    return "".join(paragraphs)
+
+
+def _parse_and_filter(raw_text: str, cutoff: datetime) -> list[dict]:
+    """
+    Parse Claude's JSON output and keep only entries dated on/after cutoff.
+    Entries with an unparseable or "unknown" date are excluded (we never
+    surface a piece we cannot confirm is recent). Caps at 5.
+    """
+    text = raw_text.strip()
+    # Strip markdown fences if present
+    if text.startswith("```"):
+        text = text.split("```", 2)[1] if "```" in text[3:] else text
+        text = text.replace("json", "", 1).strip("`").strip()
+    # Extract the JSON array
+    start = text.find("[")
+    end = text.rfind("]")
+    if start == -1 or end == -1 or end < start:
+        logger.warning("Commentary review: no JSON array found in output")
+        return []
+    try:
+        entries = json.loads(text[start:end + 1])
+    except Exception as e:
+        logger.warning(f"Commentary review: JSON parse failed: {e}")
+        return []
+    if not isinstance(entries, list):
+        return []
+
+    kept = []
+    for e in entries:
+        if not isinstance(e, dict):
+            continue
+        date_str = str(e.get("date", "")).strip()
+        if not date_str or date_str.lower() == "unknown":
+            logger.info(f"Commentary review: dropped piece with no confirmed date: {e.get('url','?')}")
+            continue
+        try:
+            pub = datetime.strptime(date_str, "%Y-%m-%d")
+        except ValueError:
+            logger.info(f"Commentary review: dropped piece with unparseable date '{date_str}': {e.get('url','?')}")
+            continue
+        if pub < cutoff:
+            logger.info(f"Commentary review: dropped stale piece dated {date_str}: {e.get('url','?')}")
+            continue
+        kept.append(e)
+
+    return kept[:5]
 
 
 def generate_commentary_review(api_key: str, end_date,
@@ -94,22 +153,14 @@ def generate_commentary_review(api_key: str, end_date,
     Generate the "Expert Commentary This Week" section.
 
     end_date: a datetime (today, Canberra time). Only commentary published
-    within the 7 days ending on end_date is eligible.
+    within the 7 days ending on end_date survives the Python date filter.
 
-    Returns the HTML string (up to five <p> paragraphs) on success, or an
-    empty string on any failure or if no qualifying pieces were found
-    (caller silently omits the section).
+    Returns HTML (<p> paragraphs) on success, or an empty string on any
+    failure or if no qualifying pieces remain after filtering.
     """
-    from datetime import timedelta
-
-    # Strip timezone for clean date formatting, compute the 7-day cutoff
     today = end_date.replace(tzinfo=None) if getattr(end_date, "tzinfo", None) else end_date
-    cutoff = today - timedelta(days=7)
-    cutoff_date = cutoff.strftime("%d %B %Y")
-    today_date = today.strftime("%d %B %Y")
-    logger.info(f"Commentary review: window {cutoff_date} to {today_date}")
-
-    prompt = COMMENTARY_PROMPT.format(cutoff_date=cutoff_date, today_date=today_date)
+    cutoff = (today - timedelta(days=7)).replace(hour=0, minute=0, second=0, microsecond=0)
+    logger.info(f"Commentary review: cutoff is {cutoff.strftime('%Y-%m-%d')} (pieces older than this are dropped)")
 
     try:
         client = anthropic.Anthropic(api_key=api_key)
@@ -119,11 +170,9 @@ def generate_commentary_review(api_key: str, end_date,
             {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 14},
         ]
 
-        messages = [{"role": "user", "content": prompt}]
+        messages = [{"role": "user", "content": COMMENTARY_PROMPT}]
 
         # Loop while the API pauses for long-running server-side tools.
-        # Cap allows 5 searches + 3 index fetches + ~8 shortlist fetches
-        # plus headroom. Raised from 20 to 24 after adding search backstops.
         for _ in range(24):
             response = client.messages.create(
                 model=model,
@@ -137,35 +186,26 @@ def generate_commentary_review(api_key: str, end_date,
                 messages.append({"role": "assistant", "content": response.content})
                 continue
 
-            text = "".join(
+            raw = "".join(
                 block.text for block in response.content
                 if getattr(block, "type", None) == "text"
-            )
-            text = text.strip()
+            ).strip()
 
-            if not text:
+            if not raw:
                 logger.warning("Commentary review: empty final text, omitting section")
                 return ""
 
-            # Explicit no-content signal from the model
-            if text.upper().startswith("NONE"):
-                logger.info("Commentary review: no qualifying pieces this week, omitting section")
+            entries = _parse_and_filter(raw, cutoff)
+            if not entries:
+                logger.info("Commentary review: no recent qualifying pieces, omitting section")
                 return ""
 
-            # Strip any preamble before the first <p>
-            p_start = text.find("<p>")
-            if p_start == -1:
-                logger.warning("Commentary review: no <p> tags in output, omitting section")
+            html = _build_html(entries)
+            if not html:
+                logger.warning("Commentary review: entries produced no usable HTML, omitting")
                 return ""
-            if p_start > 0:
-                logger.info(f"Commentary review: stripped {p_start} chars of preamble")
-                text = text[p_start:]
-            p_end = text.rfind("</p>")
-            if p_end != -1:
-                text = text[:p_end + 4]
-
-            logger.info(f"Commentary review generated ({len(text)} chars)")
-            return text.strip()
+            logger.info(f"Commentary review generated ({len(entries)} pieces, {len(html)} chars)")
+            return html
 
         logger.warning("Commentary review: tool loop did not converge in 24 iterations")
         return ""
