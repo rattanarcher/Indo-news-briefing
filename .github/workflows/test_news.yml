@@ -65,14 +65,13 @@ jobs:
           EMAIL_TO: "cytosine12@gmail.com"
           SUBSCRIBER_CSV_URL: ""
           ARCHIVE_ENABLED: "false"
-          # FORCE_WEEKLY defaults to false so routine tests are cheap (no
-          # web-search weekly review). Flip to "true" only when you need
-          # to test the Monday "What Happened Last Week" feature itself.
-          FORCE_WEEKLY: "false"
-          # SKIP_WEEKLY suppresses the weekly review even on a real Monday,
-          # so a Monday test run stays cheap. Set to "false" if you do want
-          # to test the weekly review on a Monday.
-          SKIP_WEEKLY: "true"
+          # SET TO TEST THE MONDAY FEATURES (weekly review + expert commentary).
+          # These generate both Monday sections on any day. This is the more
+          # expensive setting (~60c-$1, several minutes). After testing, set
+          # FORCE_WEEKLY back to "false" and SKIP_WEEKLY back to "true" for
+          # cheap routine tests.
+          FORCE_WEEKLY: "true"
+          SKIP_WEEKLY: "false"
           SMTP_USE_TLS: "true"
         run: python main.py
 
