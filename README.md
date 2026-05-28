@@ -83,6 +83,17 @@ The repo has two workflows. **Daily Indonesia News Briefing** is the real one �
 
 To test a change: edit the code, push it, then run the **TEST - News Briefing** workflow from the Actions tab. The test email arrives only to you. Once satisfied, the scheduled daily run picks up the same code automatically. Both workflows always run whatever code is in `main` — the test workflow is a safe way to trigger a run, not an isolated code branch.
 
+### Testing the Monday features
+
+The two Monday sections ("What Happened Last Week" and "Expert Commentary This Week") are controlled by two environment flags in `test_news.yml`. Set them depending on what you want to test:
+
+| What you want to test | `FORCE_WEEKLY` | `SKIP_WEEKLY` | Notes |
+|---|---|---|---|
+| Daily briefing only (summary, appendix) | `false` | `true` | The cheap default. No web search. Any day. ~12c. |
+| The two Monday sections | `true` | `false` | Generates both on any day. Slower, ~60c–$1. Set back afterwards. |
+
+How the flags work: `FORCE_WEEKLY=true` generates the Monday sections even on a non-Monday; `SKIP_WEEKLY=true` suppresses them even on a real Monday. If both are true, `SKIP_WEEKLY` wins. The real `daily_news.yml` sets neither, so production behaves normally: Monday sections on Mondays, daily-only the rest of the week.
+
 ## Project Structure
 
 ```
@@ -95,7 +106,8 @@ indo-news-briefing/
 │   ├── emailer.py                   # HTML email builder + SMTP sender
 │   ├── archive.py                   # AI topic categorisation + Excel archive
 │   ├── subscribers.py               # Google Sheet subscriber list
-│   └── weekly_review.py             # Monday "What Happened Last Week" (web search)
+│   ├── weekly_review.py             # Monday "What Happened Last Week" (web search)
+│   └── commentary_review.py         # Monday "Expert Commentary This Week" (web search/fetch)
 ├── headlines_archive.xlsx           # Growing headline database (auto-updated)
 ├── .github/workflows/
 │   ├── daily_news.yml               # GitHub Actions cron + auto-commit

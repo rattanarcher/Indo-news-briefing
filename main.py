@@ -17,6 +17,7 @@ from src.emailer import build_email_html, send_email
 from src.archive import archive_headlines, categorize_all
 from src.subscribers import build_recipient_list
 from src.weekly_review import generate_weekly_review
+from src.commentary_review import generate_commentary_review
 
 # ─── Configuration (all from environment variables) ─────────────────
 
@@ -41,6 +42,11 @@ ARCHIVE_ENABLED = os.environ.get("ARCHIVE_ENABLED", "true").lower() == "true"
 # Last Week" section even when today is not Monday (used by the test
 # workflow so the Monday format can be tested any day)
 FORCE_WEEKLY = os.environ.get("FORCE_WEEKLY", "false").lower() == "true"
+
+# Weekly review: set SKIP_WEEKLY=true to suppress the weekly review even
+# on a real Monday. Lets the test workflow run cheaply on a Monday
+# (the web-search weekly review is the expensive part of a Monday run).
+SKIP_WEEKLY = os.environ.get("SKIP_WEEKLY", "false").lower() == "true"
 
 
 def main():
@@ -86,7 +92,9 @@ def main():
 
     # ── Step 2b: Weekly review (Mondays, or when FORCE_WEEKLY set) ────
     weekly_review = ""
-    if monday_format:
+    if monday_format and SKIP_WEEKLY:
+        logger.info("SKIP_WEEKLY set — skipping the weekly review (cheap test run)")
+    elif monday_format:
         if FORCE_WEEKLY and not is_monday:
             logger.info("FORCE_WEEKLY set — generating weekly review on a non-Monday (test mode)")
         else:
@@ -104,6 +112,26 @@ def main():
         except Exception as e:
             logger.error(f"Weekly review failed (non-fatal): {e}")
             weekly_review = ""
+
+    # ── Step 2c: Commentary review (Mondays, or when FORCE_WEEKLY set) ────
+    # Surveys expert commentary on Indonesia from five outlets over the
+    # past week. Gated by the same Monday/FORCE_WEEKLY/SKIP_WEEKLY logic.
+    commentary_review = ""
+    if monday_format and SKIP_WEEKLY:
+        logger.info("SKIP_WEEKLY set — skipping the commentary review (cheap test run)")
+    elif monday_format:
+        logger.info("Generating 'Expert Commentary This Week' review...")
+        try:
+            commentary_review = generate_commentary_review(
+                ANTHROPIC_API_KEY, model=CLAUDE_MODEL
+            )
+            if commentary_review:
+                logger.info("Commentary review generated and will be added to the briefing")
+            else:
+                logger.warning("Commentary review empty — 'Expert Commentary' section will be omitted")
+        except Exception as e:
+            logger.error(f"Commentary review failed (non-fatal): {e}")
+            commentary_review = ""
 
     # ── Step 3: Categorise + Archive ─────────────────────────────
     # Categorise headlines once. The result is used both for the Excel
@@ -134,7 +162,7 @@ def main():
 
     html_body = build_email_html(summary, all_headlines, today,
                                  weekly_review=weekly_review, is_monday=monday_format,
-                                 categories=categories)
+                                 categories=categories, commentary_review=commentary_review)
 
     # Combine core recipients with Google Sheet subscribers
     recipients = build_recipient_list(EMAIL_TO, SUBSCRIBER_CSV_URL)

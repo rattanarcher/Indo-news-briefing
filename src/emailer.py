@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def build_email_html(summary: str, all_headlines: dict, date_str: str,
                      weekly_review: str = "", is_monday: bool = False,
-                     categories: list = None) -> str:
+                     categories: list = None, commentary_review: str = "") -> str:
     """
     Build a nicely formatted HTML email with summary + appendix.
 
@@ -96,6 +96,21 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
         </div>
         """
 
+    # Commentary review section (Mondays only, between Key Stories and appendix)
+    commentary_block = ""
+    if is_monday and commentary_review.strip():
+        commentary_html = commentary_review.strip()
+        if not commentary_html.startswith("<"):
+            commentary_html = "".join(
+                f"<p>{p.strip()}</p>" for p in commentary_html.split("\n\n") if p.strip()
+            )
+        commentary_block = f"""
+        <div class="summary-section" style="background:#eef2f4; border-left:4px solid #2c5d6b; padding:16px 20px; margin-bottom:28px;">
+            <h2 style="margin:0 0 12px; font-size:18px; color:#333;">Expert Commentary This Week</h2>
+            {commentary_html}
+        </div>
+        """
+
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -134,6 +149,8 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
             <h2 style="margin:0 0 12px; font-size:18px; color:#333;">Key Stories Today</h2>
             {summary_html}
         </div>
+
+        {commentary_block}
 
         <div>
             <h2 style="font-size:18px; color:#333; border-bottom:2px solid #eee; padding-bottom:6px;">

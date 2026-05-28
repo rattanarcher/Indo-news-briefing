@@ -20,10 +20,11 @@ Scope: actions by the president, cabinet, DPR/MPR, party leadership, coalition d
 - Up to 7 supporting bullets covering OTHER significant political stories. Each bullet must be a DIFFERENT story from the one covered in the lead paragraph — do not restate or rephrase what the lead paragraph already said. Each bullet is one sentence (which may run long if needed for context).
 
 SECTION 2: <h3>Foreign Policy &amp; Defence</h3>
-Scope: Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, security matters, and Indonesian responses to international events.
-- Lead paragraph (3-4 sentences) on the day's single most significant foreign policy or defence story.
-- Up to 5 supporting bullets covering OTHER significant foreign policy or defence stories. Each bullet must be a DIFFERENT story from the lead paragraph.
-- If there are no foreign policy or defence stories, omit this section entirely.
+Scope: Indonesia's foreign relations, diplomacy, ASEAN, bilateral meetings, military operations, defence procurement, TNI leadership, and security matters.
+IMPORTANT - Indonesia link required: Only include a story in this section if it has a direct Indonesian connection (Indonesian officials, Indonesian policy, Indonesian military, Indonesian citizens, or Indonesia's formal response to an international event). Purely international news with no Indonesian angle - for example foreign conflicts, other countries' domestic politics, or international incidents Indonesia is not party to - does NOT belong here and should be excluded, even though it may appear in the source headlines.
+- Lead paragraph (3-4 sentences) on the day's single most significant Indonesia-linked foreign policy or defence story.
+- Up to 5 supporting bullets covering OTHER significant Indonesia-linked foreign policy or defence stories. Each bullet must be a DIFFERENT story from the lead paragraph.
+- If there are few or no Indonesia-linked foreign policy or defence stories on a given day, it is correct for this section to be short or omitted entirely. Do not pad it with purely international news.
 
 SECTION 3: <h3>Other</h3>
 Scope: economy, business, energy, legal/judicial, social affairs, environment, health, education, religion, technology, infrastructure. Includes economic comments by politicians.

@@ -5,9 +5,24 @@
 #   - Manual trigger only (never scheduled)
 #   - Sends ONLY to cytosine12@gmail.com (ignores the core list and subscribers)
 #   - Skips the Excel archive step entirely (ARCHIVE_ENABLED=false)
-#   - FORCE_WEEKLY defaults to false (cheap tests). Set it to "true"
-#     only when testing the Monday "What Happened Last Week" feature.
 #   - Does NOT commit anything back to the repo
+#
+# ─── TESTING DIFFERENT FEATURES: which flags to set below ───────────
+#
+#   To test the DAILY briefing only (summary, appendix, formatting):
+#       FORCE_WEEKLY: "false"   SKIP_WEEKLY: "true"     ← cheap, the default
+#       Cheapest run. No web search. Works any day. ~12 cents.
+#
+#   To test the MONDAY features (weekly review + expert commentary):
+#       FORCE_WEEKLY: "true"    SKIP_WEEKLY: "false"
+#       Generates both Monday sections on ANY day. Uses web search and
+#       fetch, so it is slower (several minutes) and costs more (~60c-$1).
+#       Remember to set the flags back to the cheap default afterwards.
+#
+# The two flags, explained:
+#   FORCE_WEEKLY = true  -> generate the Monday sections even on a non-Monday
+#   SKIP_WEEKLY  = true  -> suppress the Monday sections even on a real Monday
+#                           (SKIP_WEEKLY wins if both are somehow true)
 #
 # Use this to test new features or prompt changes before they reach subscribers.
 
@@ -54,6 +69,10 @@ jobs:
           # web-search weekly review). Flip to "true" only when you need
           # to test the Monday "What Happened Last Week" feature itself.
           FORCE_WEEKLY: "false"
+          # SKIP_WEEKLY suppresses the weekly review even on a real Monday,
+          # so a Monday test run stays cheap. Set to "false" if you do want
+          # to test the weekly review on a Monday.
+          SKIP_WEEKLY: "true"
           SMTP_USE_TLS: "true"
         run: python main.py
 
