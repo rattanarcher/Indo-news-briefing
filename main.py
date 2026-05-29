@@ -38,15 +38,22 @@ CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
 # (used by the test workflow so test runs don't touch the archive)
 ARCHIVE_ENABLED = os.environ.get("ARCHIVE_ENABLED", "true").lower() == "true"
 
-# Weekly review: set FORCE_WEEKLY=true to generate the "What Happened
-# Last Week" section even when today is not Monday (used by the test
-# workflow so the Monday format can be tested any day)
+# Weekly review: set FORCE_WEEKLY=true to generate the Monday-format
+# sections (weekly review + commentary review) on a non-Monday. Used by
+# the test workflow so the Monday format can be exercised any day.
 FORCE_WEEKLY = os.environ.get("FORCE_WEEKLY", "false").lower() == "true"
 
-# Weekly review: set SKIP_WEEKLY=true to suppress the weekly review even
-# on a real Monday. Lets the test workflow run cheaply on a Monday
-# (the web-search weekly review is the expensive part of a Monday run).
+# Independent gates for the two Monday-format sections. Each is checked
+# in addition to monday_format (which already requires Monday or
+# FORCE_WEEKLY=true). The two flags are independent, so any of the four
+# combinations works:
+#   SKIP_WEEKLY=false SKIP_COMMENTARY=false  → both sections run
+#   SKIP_WEEKLY=true  SKIP_COMMENTARY=false  → only commentary runs
+#   SKIP_WEEKLY=false SKIP_COMMENTARY=true   → only weekly runs
+#   SKIP_WEEKLY=true  SKIP_COMMENTARY=true   → neither runs (the old
+#                                              cheap test mode)
 SKIP_WEEKLY = os.environ.get("SKIP_WEEKLY", "false").lower() == "true"
+SKIP_COMMENTARY = os.environ.get("SKIP_COMMENTARY", "false").lower() == "true"
 
 
 def main():
@@ -115,10 +122,11 @@ def main():
 
     # ── Step 2c: Commentary review (Mondays, or when FORCE_WEEKLY set) ────
     # Surveys expert commentary on Indonesia from five outlets over the
-    # past week. Gated by the same Monday/FORCE_WEEKLY/SKIP_WEEKLY logic.
+    # past week. Gated independently of the weekly review by
+    # SKIP_COMMENTARY so each section can be tested in isolation.
     commentary_review = ""
-    if monday_format and SKIP_WEEKLY:
-        logger.info("SKIP_WEEKLY set — skipping the commentary review (cheap test run)")
+    if monday_format and SKIP_COMMENTARY:
+        logger.info("SKIP_COMMENTARY set — skipping the commentary review")
     elif monday_format:
         logger.info("Generating 'Expert Commentary This Week' review...")
         try:

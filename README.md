@@ -87,12 +87,14 @@ To test a change: edit the code, push it, then run the **TEST - News Briefing** 
 
 The two Monday sections ("What Happened Last Week" and "Expert Commentary This Week") are controlled by two environment flags in `test_news.yml`. Set them depending on what you want to test:
 
-| What you want to test | `FORCE_WEEKLY` | `SKIP_WEEKLY` | Notes |
-|---|---|---|---|
-| Daily briefing only (summary, appendix) | `false` | `true` | The cheap default. No web search. Any day. ~12c. |
-| The two Monday sections | `true` | `false` | Generates both on any day. Slower, ~60c–$1. Set back afterwards. |
+| What you want to test | `FORCE_WEEKLY` | `SKIP_WEEKLY` | `SKIP_COMMENTARY` | Notes |
+|---|---|---|---|---|
+| Daily briefing only (summary, appendix) | `false` | `true` | `true` | The cheap default. No web search, no commentary fetches. Any day. ~12c. |
+| The two Monday sections | `true` | `false` | `false` | Generates both on any day. Slower, ~60c–$1. Set back afterwards. |
+| Only the weekly review | `true` | `false` | `true` | Skips commentary, runs the web-search-heavy weekly review. |
+| Only the commentary review | `true` | `true` | `false` | Skips weekly review, runs the cheaper commentary section. |
 
-How the flags work: `FORCE_WEEKLY=true` generates the Monday sections even on a non-Monday; `SKIP_WEEKLY=true` suppresses them even on a real Monday. If both are true, `SKIP_WEEKLY` wins. The real `daily_news.yml` sets neither, so production behaves normally: Monday sections on Mondays, daily-only the rest of the week.
+How the flags work: `FORCE_WEEKLY=true` enables the Monday-format sections even on a non-Monday. `SKIP_WEEKLY=true` then suppresses the weekly review specifically, and `SKIP_COMMENTARY=true` suppresses the commentary review specifically. The two skip flags are independent — set whichever combination matches what you want to exercise. The real `daily_news.yml` sets none of them, so production behaves normally: both Monday sections on Mondays, daily-only the rest of the week.
 
 ## Project Structure
 
