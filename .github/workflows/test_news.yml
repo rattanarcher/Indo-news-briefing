@@ -70,9 +70,9 @@ jobs:
           # SKIP_WEEKLY="true"   = suppress the Monday sections even on a Monday.
           # To test the Monday features (weekly review + expert commentary),
           # set FORCE_WEEKLY="true" and SKIP_WEEKLY="false" (slower, ~60c-$1).
-          FORCE_WEEKLY: "true"
+          FORCE_WEEKLY: "false"
           SKIP_WEEKLY: "true"
-          SKIP_COMMENTARY: 'false'
+          SKIP_COMMENTARY: 'true'
           SMTP_USE_TLS: "true"
         run: python main.py
 
