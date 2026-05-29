@@ -73,7 +73,6 @@ jobs:
           FORCE_WEEKLY: "true"
           SKIP_WEEKLY: "false"
           SKIP_COMMENTARY: 'true'
-          CACHE_FETCH_RESULTS: "false"
           SMTP_USE_TLS: "true"
         run: python main.py
 
