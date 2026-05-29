@@ -72,6 +72,7 @@ jobs:
           # set FORCE_WEEKLY="true" and SKIP_WEEKLY="false" (slower, ~60c-$1).
           FORCE_WEEKLY: "false"
           SKIP_WEEKLY: "true"
+          SKIP_COMMENTARY: 'true'
           SMTP_USE_TLS: "true"
         run: python main.py
 
