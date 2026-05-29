@@ -258,6 +258,88 @@ def _discover_rss() -> list[dict]:
 
 # ─── Discovery: CSIS Indonesia HTML scrape ───────────────────────────
 
+# CSIS article pages list the 5 most recent commentaries in a "Recent"
+# sidebar, each rendered as an anchor followed by a date string like
+# "18 may 2026". This is the only place on CSIS where dates appear
+# machine-readably for commentaries, since the article pages themselves
+# have no article:published_time, JSON-LD datePublished, or itemprop
+# date metadata. We fetch one article page per Monday run and use its
+# sidebar as a URL->date oracle to plug the metadata gap.
+
+_CSIS_MONTH = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+_CSIS_DATE_RE = re.compile(
+    r"\b(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s+(\d{4})\b"
+)
+
+
+def _normalise_csis_url(url: str) -> str:
+    """Canonical form for CSIS publication URLs (for date-map lookups)."""
+    if not url:
+        return ""
+    if url.startswith("/"):
+        url = "https://www.csis.or.id" + url
+    return url.rstrip("/").lower()
+
+
+def _parse_csis_date_string(s: str):
+    """Parse 'DD mon YYYY' (lowercase month abbr) into 'YYYY-MM-DD'. None on failure."""
+    if not s:
+        return None
+    m = _CSIS_DATE_RE.search(s.lower())
+    if not m:
+        return None
+    try:
+        return datetime(int(m.group(3)), _CSIS_MONTH[m.group(2)], int(m.group(1))).strftime("%Y-%m-%d")
+    except (ValueError, KeyError):
+        return None
+
+
+def _fetch_csis_date_map(article_url: str) -> dict:
+    """
+    Fetch a CSIS article page and parse the 'Recent commentaries' sidebar
+    into a URL -> ISO date map. Returns {} on any failure. Only the 5
+    most recent commentaries appear in the sidebar; older CSIS candidates
+    will not get a date from this map and will be dropped at the strict
+    filter (which is the right outcome, since they are stale).
+    """
+    try:
+        r = requests.get(article_url, headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+    except Exception as e:
+        logger.info(f"CSIS date map: fetch failed for {article_url}: {e}")
+        return {}
+
+    out = {}
+    try:
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.find_all("a", href=re.compile(r"/publication/[^/]")):
+            url = _normalise_csis_url((a.get("href") or "").strip())
+            if not url or url in out:
+                continue
+            # Look for a 'DD mon YYYY' in the parent's text AFTER this
+            # anchor's own text. This is robust to whether the date sits
+            # as a sibling text node, in a span, or inline.
+            parent = a.parent
+            if parent is None:
+                continue
+            parent_text = parent.get_text(" ", strip=True)
+            anchor_text = a.get_text(" ", strip=True)
+            idx = parent_text.find(anchor_text) if anchor_text else -1
+            after = parent_text[idx + len(anchor_text):] if idx >= 0 else parent_text
+            iso = _parse_csis_date_string(after)
+            if iso:
+                out[url] = iso
+    except Exception as e:
+        logger.info(f"CSIS date map: parse failed: {e}")
+        return {}
+
+    logger.info(f"CSIS date map: extracted {len(out)} URL->date mappings")
+    return out
+
+
 def _discover_csis() -> list[dict]:
     """
     Scrape the CSIS commentaries index. The index has no dates, so
@@ -325,6 +407,24 @@ def _discover_csis() -> list[dict]:
         return []
 
     logger.info(f"CSIS scrape: {len(out)} candidates after Bahasa filter")
+
+    # Enrich with dates from the "Recent" sidebar of one article page,
+    # since CSIS exposes no machine-readable dates on the article pages
+    # themselves. We fetch one (the first candidate, by index order) and
+    # use its sidebar as a URL->date oracle. Candidates not found in the
+    # map (i.e. not in CSIS's 5 most recent) remain dateless and will be
+    # dropped at the strict filter, which is correct since they are stale.
+    if out:
+        date_map = _fetch_csis_date_map(out[0]["url"])
+        if date_map:
+            enriched = 0
+            for c in out:
+                key = _normalise_csis_url(c["url"])
+                if key in date_map:
+                    c["date"] = date_map[key]
+                    enriched += 1
+            logger.info(f"CSIS scrape: enriched {enriched} of {len(out)} candidate dates from sidebar")
+
     return out
 
 
@@ -456,7 +556,7 @@ Return ONLY a JSON array of objects with these exact fields:
 - "anchor": the 3-7 word anchor phrase that appears verbatim in the paragraph
 - "paragraph": the 3-4 sentence summary
 
-Return at most 5 objects, ordered by significance most-first.
+Return at most 8 objects, ordered by significance most-first.
 
 Shortlisted articles:
 {articles}
@@ -540,7 +640,12 @@ def _shortlist(client, candidates: list[dict], model: str) -> list[dict]:
 
 
 def _write_paragraphs(client, shortlist_with_text: list[dict], model: str) -> list[dict]:
-    """Second Claude call. Returns final entries with anchor + paragraph fields."""
+    """
+    Second Claude call. Returns final entries with anchor + paragraph
+    fields, merged back onto the input items by URL so candidate fields
+    not echoed by the model (most importantly "date" for CSIS pieces
+    enriched from the sidebar map) survive into the strict date filter.
+    """
     if not shortlist_with_text:
         return []
     articles_text = _format_shortlist_for_paragraphs(shortlist_with_text)
@@ -548,7 +653,7 @@ def _write_paragraphs(client, shortlist_with_text: list[dict], model: str) -> li
     try:
         resp = client.messages.create(
             model=model,
-            max_tokens=3500,
+            max_tokens=5000,
             messages=[{"role": "user", "content": prompt}],
         )
     except Exception as e:
@@ -558,7 +663,24 @@ def _write_paragraphs(client, shortlist_with_text: list[dict], model: str) -> li
         b.text for b in resp.content
         if getattr(b, "type", None) == "text"
     ).strip()
-    return _parse_json_array(raw)
+    written = _parse_json_array(raw)
+
+    # Merge model output back onto the input items by URL. Without this,
+    # fields not in the model's JSON schema (such as the candidate's
+    # original "date") get dropped before the strict filter, which would
+    # cause CSIS pieces with sidebar-resolved dates to be wrongly flagged
+    # as "no confirmable date".
+    by_url = {it.get("url", ""): it for it in shortlist_with_text}
+    out = []
+    for entry in written:
+        if not isinstance(entry, dict):
+            continue
+        url = (entry.get("url") or "").strip()
+        base = by_url.get(url, {})
+        merged = dict(base)
+        merged.update({k: v for k, v in entry.items() if v is not None})
+        out.append(merged)
+    return out
 
 
 # ─── Final filtering + HTML build ─────────────────────────────────────

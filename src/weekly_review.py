@@ -52,6 +52,8 @@ HYPERLINK RULES:
 - Every specific, distinctive claim - a named figure, a statistic, a specific announcement - must be hyperlinked to its source.
 - Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable and expected where the archive lacks a good source.
 
+LANGUAGE: The entire output must be in English. If a source quoted an official, politician, or document speaking in Bahasa Indonesia, paraphrase the substance in English or translate the relevant phrase. Do NOT include verbatim Bahasa Indonesia sentences or quoted phrases in the paragraphs. Indonesian proper nouns and established Indonesian terms of art (e.g. bebas aktif, Kartu Prakerja, hilirisasi, Pancasila) may remain in Indonesian where appropriate; the rule targets quoted speech and quoted document text, not these established terms.
+
 Headlines for the week:
 {headlines}
 
