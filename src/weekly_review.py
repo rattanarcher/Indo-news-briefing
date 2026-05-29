@@ -11,12 +11,41 @@ skip the weekly section and continue with the normal daily briefing.
 """
 
 import logging
+import os
 from datetime import datetime, timezone, timedelta
 
 import anthropic
 import pandas as pd
 
 logger = logging.getLogger(__name__)
+
+
+def _view_with_rolling_cache(messages):
+    """
+    Return a shallow copy of `messages` where the LAST message's content
+    blocks are converted to plain dicts and a cache_control breakpoint is
+    placed on the final block. This caches the accumulated conversation
+    (tools, prompt, and all fetched tool results up to this point) so the
+    next pause_turn iteration reads it back at ~10% of the input price
+    instead of reprocessing every fetched article at full price.
+
+    Only the last message is dict-converted, so the known-good block
+    objects in `messages` itself stay untouched and remain available as a
+    fallback if a converted payload is ever rejected. messages[0] keeps
+    its own static-prefix breakpoint, so the view carries two breakpoints
+    (static prefix + rolling), well within the 4-breakpoint limit.
+    """
+    view = list(messages)
+    last = view[-1]
+    content = last.get("content")
+    if isinstance(content, list) and content:
+        new_content = [
+            b if isinstance(b, dict) else b.model_dump(mode="json")
+            for b in content
+        ]
+        new_content[-1] = {**new_content[-1], "cache_control": {"type": "ephemeral"}}
+        view[-1] = {"role": last["role"], "content": new_content}
+    return view
 
 ARCHIVE_FILE = "headlines_archive.xlsx"
 
@@ -146,30 +175,90 @@ def generate_weekly_review(api_key: str, end_date: datetime,
         # with the conversation so far to continue".
         tools = [
             {"type": "web_search_20250305", "name": "web_search", "max_uses": 8},
-            {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 10},
+            # max_content_tokens caps how much of each fetched page enters
+            # the context. Server-side web_fetch otherwise injects the full
+            # page (article + nav + footer + related links), which then gets
+            # re-read on every pause_turn iteration. 2000 tokens comfortably
+            # holds a full 600-1000 word article, including the less
+            # token-efficient Bahasa Indonesia sources and the page padding
+            # that survives extraction, while trimming long features. Raise
+            # to 2500 for zero clipping risk on the longest pieces.
+            {"type": "web_fetch_20250910", "name": "web_fetch", "max_uses": 10,
+             "max_content_tokens": 2000},
         ]
 
+        # The initial prompt (instructions + a week of headlines) plus the
+        # tool definitions are re-sent on every pause_turn iteration of the
+        # loop below. Marking a cache_control breakpoint here caches that
+        # static prefix (tools + this message) so each subsequent iteration
+        # reads it back at ~10% of the input price instead of full price.
+        # The 5-minute cache TTL easily covers a single run's iterations.
         messages = [{
             "role": "user",
-            "content": WEEKLY_PROMPT.format(headlines=headlines_block, date_range=date_range)
+            "content": [{
+                "type": "text",
+                "text": WEEKLY_PROMPT.format(headlines=headlines_block, date_range=date_range),
+                "cache_control": {"type": "ephemeral"},
+            }],
         }]
 
-        # Loop while the API pauses for long-running server-side tools.
-        # A generous cap prevents an infinite loop if something goes wrong.
-        for _ in range(15):
-            response = client.messages.create(
+        # Whether to cache the accumulated fetched content across loop
+        # iterations (Tier 2). On by default; set CACHE_FETCH_RESULTS=false
+        # to disable without a redeploy if it ever misbehaves. The static
+        # prefix cache on messages[0] and the fetch truncation are
+        # independent of this flag and always apply.
+        cache_fetch = os.environ.get("CACHE_FETCH_RESULTS", "true").lower() == "true"
+
+        def _call(msgs):
+            return client.messages.create(
                 model=model,
                 max_tokens=6000,
                 tools=tools,
-                messages=messages,
+                messages=msgs,
                 # web_fetch is a beta feature and needs this header.
                 # web_search is generally available and needs nothing.
                 extra_headers={"anthropic-beta": "web-fetch-2025-09-10"},
             )
 
+        # Loop while the API pauses for long-running server-side tools.
+        # A generous cap prevents an infinite loop if something goes wrong.
+        for _ in range(15):
+            # Build the request. When fetch-caching is on and we already
+            # have appended turns, send a cache-annotated view; otherwise
+            # send the canonical messages (which still carry the static
+            # prefix cache).
+            use_cache_view = cache_fetch and len(messages) > 1
+            request_messages = _view_with_rolling_cache(messages) if use_cache_view else messages
+
+            try:
+                response = _call(request_messages)
+            except Exception as e:
+                # If the cache-annotated payload was rejected, fall back to
+                # the known-good canonical messages and stop trying to cache
+                # fetched content for the rest of this run. The run still
+                # completes, just without the Tier 2 saving.
+                if use_cache_view:
+                    logger.warning(
+                        f"Weekly review: call failed with fetch-caching active "
+                        f"({e}); disabling fetch-caching and retrying"
+                    )
+                    cache_fetch = False
+                    response = _call(messages)
+                else:
+                    raise
+
+            # Log cache effectiveness so test runs show whether it engaged.
+            usage = getattr(response, "usage", None)
+            if usage is not None:
+                created = getattr(usage, "cache_creation_input_tokens", 0) or 0
+                read = getattr(usage, "cache_read_input_tokens", 0) or 0
+                if created or read:
+                    logger.info(f"Weekly review cache: {read} read, {created} written (input tokens)")
+
             if response.stop_reason == "pause_turn":
-                # Server is still working through tool calls. Append the
-                # partial assistant turn and call again to continue.
+                # Append the partial assistant turn as block objects (the
+                # canonical, known-good form). The cache breakpoint is added
+                # only in the per-call view, never in messages itself.
                 messages.append({"role": "assistant", "content": response.content})
                 continue
 
