@@ -73,20 +73,19 @@ Step 4 - Write three paragraphs (about 4-6 sentences each), ONE paragraph per th
 
 CRITICAL OUTPUT RULE: Your final output must contain ONLY the paragraphs, each wrapped in a <p> tag (normally three). Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p>". Anything you need to say about your process belongs in tool calls, never in the final text.
 
-HYPERLINK RULES:
-- Embed hyperlinks using <a href="URL">anchor text</a>, with anchors of 3-7 words.
-- EVERY paragraph must contain at least one hyperlink. A paragraph with no hyperlink is not acceptable. If a thread was assembled mainly from web search rather than the archive, link to the most authoritative source you found for it.
-- Every distinct story or development mentioned should have a hyperlink.
-- Every direct quote MUST be hyperlinked. If you quote a phrase such as "deep state" or "not to take too much initiative", the quoted phrase itself must be wrapped in an <a href> tag pointing to the article that reported it.
-- Every specific, distinctive claim - a named figure, a statistic, a specific announcement - must be hyperlinked to its source.
-- Prefer linking to the archive article URLs provided below; linking to other reputable URLs found via web search is also acceptable and expected where the archive lacks a good source.
+HYPERLINK RULES (these matter as much as the prose itself):
+- Source your claims with inline hyperlinks: <a href="URL">anchor text</a>, anchors 3-7 words. These links are the core value of this section. A paragraph with no hyperlink is a failure, and most paragraphs should carry several.
+- Hyperlink the key claim, name, statistic, or development to the article that reported it. This applies whether you quote OR paraphrase. You will mostly be paraphrasing (see LANGUAGE below), and paraphrasing must NEVER strip the link: wrap the paraphrased claim or its key noun phrase in the <a href> tag pointing to the source.
+- Concretely, write: Golkar's <a href="URL">Sarmuji defended the appointment</a> as an effort to break patronage networks. NOT: Golkar's Sarmuji defended the appointment as an effort to break patronage networks (with no link).
+- Every distinct story, named figure, statistic, and specific announcement must be linked to its source.
+- Prefer the archive article URLs provided below; reputable URLs found via web search are also fine where the archive lacks a good source. If a thread came mainly from web search, link the most authoritative source you found.
 
-LANGUAGE: The entire output must be in English. If a source quoted an official, politician, or document speaking in Bahasa Indonesia, paraphrase the substance in English or translate the relevant phrase. Do NOT include verbatim Bahasa Indonesia sentences or quoted phrases in the paragraphs. Indonesian proper nouns and established Indonesian terms of art (e.g. bebas aktif, Kartu Prakerja, hilirisasi, Pancasila) may remain in Indonesian where appropriate; the rule targets quoted speech and quoted document text, not these established terms.
+LANGUAGE: The entire output must be in English. If a source spoke in Bahasa Indonesia, paraphrase the substance in English or translate the relevant phrase, and still hyperlink that paraphrased claim to its source per the rules above. Do NOT include verbatim Bahasa Indonesia sentences or quoted phrases in the paragraphs. Indonesian proper nouns and established terms of art (e.g. bebas aktif, Kartu Prakerja, hilirisasi, Pancasila) may remain in Indonesian where appropriate; the rule targets quoted speech and quoted document text, not these established terms.
 
 Headlines for the week:
 {headlines}
 
-Produce the final output now. Start immediately with "<p>" - no preamble, no narration."""
+Produce the final output now. Start immediately with "<p>" - no preamble, no narration. Remember: every paragraph needs several inline source hyperlinks, and paraphrasing in English must not drop them."""
 
 
 def _load_week(archive_path: str, end_date: datetime):
@@ -203,11 +202,13 @@ def generate_weekly_review(api_key: str, end_date: datetime,
         }]
 
         # Whether to cache the accumulated fetched content across loop
-        # iterations (Tier 2). On by default; set CACHE_FETCH_RESULTS=false
-        # to disable without a redeploy if it ever misbehaves. The static
-        # prefix cache on messages[0] and the fetch truncation are
-        # independent of this flag and always apply.
-        cache_fetch = os.environ.get("CACHE_FETCH_RESULTS", "true").lower() == "true"
+        # iterations (Tier 2). Off by default: it was ruled out as the
+        # cause of a hyperlink regression and its saving is marginal, so
+        # it is not worth the risk on production runs. Set
+        # CACHE_FETCH_RESULTS=true to re-enable for experiments. The
+        # static prefix cache and the fetch truncation are independent of
+        # this flag and always apply.
+        cache_fetch = os.environ.get("CACHE_FETCH_RESULTS", "false").lower() == "true"
 
         def _call(msgs):
             return client.messages.create(
