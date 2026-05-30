@@ -40,9 +40,18 @@ Step 2 - For each thread, fetch and read the most relevant archive article URLs 
 
 Step 3 - Then run a general web search on each thread to check for the latest developments, including anything that happened after the archived articles.
 
-Step 4 - Write three paragraphs (about 4-6 sentences each), ONE paragraph per thread, in order of importance. Be factual and descriptive; report what happened and how each thread developed over the week. Do not speculate on future implications. If you could only identify two substantive threads, write two paragraphs rather than padding with a weak third.
+Step 4 - For each thread, in order of importance, produce two things: (a) a one-sentence takeaway, then (b) a paragraph of about 4-6 sentences telling the story of how the thread developed over the week. Be factual and descriptive; report what happened, not what it means. If you could only identify two substantive threads, write two threads rather than padding with a weak third.
 
-CRITICAL OUTPUT RULE: Your final output must contain ONLY the paragraphs, each wrapped in a <p> tag (normally three). Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p>". Anything you need to say about your process belongs in tool calls, never in the final text.
+Format each thread as a bold takeaway line followed by its paragraph, exactly like this:
+<p class="thread-takeaway"><strong>One-sentence takeaway here.</strong></p>
+<p>The detailed paragraph here, with its inline source hyperlinks as usual.</p>
+
+The takeaway sentence must:
+- be a SINGLE sentence, ideally under 25 words, that a reader can scan on its own to grasp what the thread is about.
+- state the core development factually. Do not speculate on implications or what it means.
+- contain NO hyperlinks. It is plain bold text inside the <p class="thread-takeaway"> tag. Every source link belongs in the detail paragraph beneath it, never in the takeaway.
+
+CRITICAL OUTPUT RULE: Your final output must contain ONLY these thread blocks and nothing else. Each thread is exactly one bold takeaway line in <p class="thread-takeaway"><strong>...</strong></p> followed by one detail paragraph in <p>...</p>. Do NOT include any narration of your process, any preamble such as "I'll analyze..." or "Based on my research...", any step descriptions, or any heading. The very first characters of your final answer must be "<p class="thread-takeaway">". Anything you need to say about your process belongs in tool calls, never in the final text.
 
 HYPERLINK RULES (these matter as much as the prose itself):
 - Source your claims with inline hyperlinks: <a href="URL">anchor text</a>, anchors 3-7 words. These links are the core value of this section. A paragraph with no hyperlink is a failure, and most paragraphs should carry several.
@@ -56,7 +65,7 @@ LANGUAGE: The entire output must be in English. If a source spoke in Bahasa Indo
 Headlines for the week:
 {headlines}
 
-Produce the final output now. Start immediately with "<p>" - no preamble, no narration. Remember: every paragraph needs several inline source hyperlinks, and paraphrasing in English must not drop them."""
+Produce the final output now. Start immediately with "<p class="thread-takeaway">" - no preamble, no narration. Remember: each thread is a bold one-sentence takeaway with NO links, then a detail paragraph that carries several inline source hyperlinks, and paraphrasing in English must not drop those links."""
 
 
 def _load_week(archive_path: str, end_date: datetime):
@@ -209,12 +218,13 @@ def generate_weekly_review(api_key: str, end_date: datetime,
                 return ""
 
             # Safety net: strip any preamble/narration before the first
-            # <p> tag. During tool use Claude sometimes emits process
-            # narration as text; the real roundup starts at the first <p>.
+            # paragraph tag. During tool use Claude sometimes emits process
+            # narration as text; the real roundup starts at the first <p,
+            # which is now the takeaway line (<p class="thread-takeaway">).
             text = text.strip()
-            p_start = text.find("<p>")
+            p_start = text.find("<p")
             if p_start > 0:
-                logger.info(f"Weekly review: stripped {p_start} chars of preamble before <p>")
+                logger.info(f"Weekly review: stripped {p_start} chars of preamble before first <p")
                 text = text[p_start:]
             # Also trim anything after the last closing </p>
             p_end = text.rfind("</p>")

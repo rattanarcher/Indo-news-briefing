@@ -128,6 +128,7 @@ def build_email_html(summary: str, all_headlines: dict, date_str: str,
         }}
         .summary-section h3:first-child {{ margin-top: 0; }}
         .summary-section p {{ margin: 0 0 10px; line-height: 1.55; }}
+        .summary-section .thread-takeaway {{ font-weight: bold; color: #222; margin: 20px 0 6px; line-height: 1.5; }}
         .summary-section ul {{ margin: 0 0 14px; padding-left: 22px; }}
         .summary-section li {{ margin-bottom: 6px; line-height: 1.5; }}
     </style>
