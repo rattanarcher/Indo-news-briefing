@@ -15,6 +15,7 @@ from src.scraper import fetch_all_headlines, headlines_to_text
 from src.summarizer import summarize_headlines
 from src.emailer import build_email_html, send_email
 from src.archive import archive_headlines, categorize_all
+from src.briefing_archive import archive_briefing
 from src.subscribers import build_recipient_list
 from src.weekly_review import generate_weekly_review
 from src.commentary_review import generate_commentary_review
@@ -37,6 +38,9 @@ CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-5")
 # Archiving: set ARCHIVE_ENABLED=false to skip the Excel archive step
 # (used by the test workflow so test runs don't touch the archive)
 ARCHIVE_ENABLED = os.environ.get("ARCHIVE_ENABLED", "true").lower() == "true"
+# Briefing archive: set BRIEFING_ARCHIVE_ENABLED=false to skip saving the
+# generated briefing to the briefings/ folder (used by the test workflow).
+BRIEFING_ARCHIVE_ENABLED = os.environ.get("BRIEFING_ARCHIVE_ENABLED", "true").lower() == "true"
 
 # Weekly review: set FORCE_WEEKLY=true to generate the Monday-format
 # sections (weekly review + commentary review) on a non-Monday. Used by
@@ -171,6 +175,22 @@ def main():
     html_body = build_email_html(summary, all_headlines, today,
                                  weekly_review=weekly_review, is_monday=monday_format,
                                  categories=categories, commentary_review=commentary_review)
+
+    # Archive the generated briefing before sending, so it is captured even
+    # if the SMTP send fails. Best-effort: never blocks the email.
+    if BRIEFING_ARCHIVE_ENABLED:
+        archive_briefing(
+            date_iso=now_canberra.strftime("%Y-%m-%d"),
+            date_display=today,
+            summary_html=summary,
+            weekly_html=weekly_review,
+            commentary_html=commentary_review,
+            email_html=html_body,
+            model=CLAUDE_MODEL,
+            is_monday=monday_format,
+        )
+    else:
+        logger.info("Briefing archive SKIPPED (BRIEFING_ARCHIVE_ENABLED=false, test mode)")
 
     # Combine core recipients with Google Sheet subscribers
     recipients = build_recipient_list(EMAIL_TO, SUBSCRIBER_CSV_URL)
