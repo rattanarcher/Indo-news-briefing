@@ -52,6 +52,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add headlines_archive.xlsx
+          git add headlines_archive.xlsx briefings/
           git diff --cached --quiet || git commit -m "Update headlines archive — $(date -u +%Y-%m-%d)"
           git push
