@@ -6,3 +6,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-06-15,True,claude-sonnet-4-5,7008,5003,3807,48,Indonesia pledged to restructure its flagship Free Nutritious Meals program within one month amid mounting corruption allegations and budget inefficiencies. || Iran's closure of the Strait of Hormuz stranded two Indonesian Pertamina tankers as Jakarta offered to mediate between Washington and Tehran. || Parliament passed a controversial police law allowing active officers to hold civilian government posts and extending the retirement age.
 2026-06-16,False,claude-sonnet-4-5,8917,0,0,39,
 2026-06-17,False,claude-sonnet-4-5,7214,0,0,29,
+2026-06-18,False,claude-sonnet-4-5,8512,0,0,33,
