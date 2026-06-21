@@ -1,0 +1,147 @@
+# 🇮🇩 Indonesia Daily News Briefing
+
+Automated daily scraper that collects headlines from major Indonesian news outlets, generates an AI-powered English summary with embedded hyperlinks, archives all headlines to a searchable Excel database with AI-assigned topic categories, and emails you a formatted briefing every morning.
+
+## Sources
+
+| Outlet | Method | Language |
+|--------|--------|----------|
+| Detik.com | RSS → HTML → Browser fallback chain | Bahasa Indonesia |
+| Tempo.co | RSS (Nasional + Dunia) | Bahasa Indonesia |
+| Republika | RSS | Bahasa Indonesia |
+| Kompas.com | Browser scrape (Nasional) | Bahasa Indonesia |
+| Antara News | RSS (General) | English |
+| Antara News International | RSS | Bahasa Indonesia |
+
+## What You Get
+
+**Daily email briefing** with:
+- **Executive summary** — 5-paragraph English summary: political news first (2 paragraphs), then foreign policy and defence (1 paragraph), then other key stories (2 paragraphs). All claims include clickable hyperlinks to source articles (AI-generated via Claude)
+- **Appendix** — Every headline with a clickable link, grouped by source
+
+**Growing Excel archive** (`headlines_archive.xlsx`) with:
+- Every headline collected, categorised by AI into topics (e.g., Politics, Economy, Defence/Security, Foreign Affairs, Energy, Legal/Judiciary, etc.)
+- Filterable columns: Date, Source, Headline, Topic
+- Updated automatically after each daily run and committed back to the repo
+
+## Quick Start
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/rattanarcher/Indo-news-briefing.git
+cd Indo-news-briefing
+pip install -r requirements.txt
+playwright install chromium
+```
+
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+# Edit .env with your actual values
+```
+
+You'll need:
+- **Anthropic API key** — Get one at [console.anthropic.com](https://console.anthropic.com/)
+- **SMTP credentials** — For Gmail, generate an [App Password](https://support.google.com/accounts/answer/185833)
+
+### 3. Test locally
+
+```bash
+# Load env vars and run (Linux/Mac)
+export $(cat .env | xargs) && python main.py
+
+# Windows Command Prompt
+for /f "delims=" %a in (.env) do @set "%a"
+python main.py
+```
+
+### 4. Deploy to GitHub Actions (automated daily runs)
+
+1. Push this repo to GitHub
+2. Go to **Settings → Secrets and variables → Actions**
+3. Add these **Repository secrets**:
+
+   | Secret | Value |
+   |--------|-------|
+   | `ANTHROPIC_API_KEY` | Your Claude API key |
+   | `SMTP_HOST` | `smtp.gmail.com` (or your provider) |
+   | `SMTP_PORT` | `587` |
+   | `SMTP_USER` | Your email address |
+   | `SMTP_PASSWORD` | Your email app password |
+   | `EMAIL_FROM` | Sender address |
+   | `EMAIL_TO` | Recipient address(es) — comma-separated for multiple recipients |
+
+4. The workflow runs automatically at **7:00 AM AEDT** every day
+5. You can also trigger it manually from the **Actions** tab → **Run workflow**
+6. The `headlines_archive.xlsx` file is automatically committed back to the repo after each run
+
+## Testing New Features
+
+The repo has two workflows. **Daily Indonesia News Briefing** is the real one — scheduled, sends to all subscribers, archives to Excel. **TEST - News Briefing** runs the exact same code but with safe test inputs: manual trigger only, sends only to the developer's own email, skips archiving, and never commits to the repo.
+
+To test a change: edit the code, push it, then run the **TEST - News Briefing** workflow from the Actions tab. The test email arrives only to you. Once satisfied, the scheduled daily run picks up the same code automatically. Both workflows always run whatever code is in `main` — the test workflow is a safe way to trigger a run, not an isolated code branch.
+
+### Testing the Monday features
+
+The two Monday sections ("What Happened Last Week" and "Expert Commentary This Week") are controlled by two environment flags in `test_news.yml`. Set them depending on what you want to test:
+
+| What you want to test | `FORCE_WEEKLY` | `SKIP_WEEKLY` | `SKIP_COMMENTARY` | Notes |
+|---|---|---|---|---|
+| Daily briefing only (summary, appendix) | `false` | `true` | `true` | The cheap default. No web search, no commentary fetches. Any day. ~12c. |
+| The two Monday sections | `true` | `false` | `false` | Generates both on any day. Slower, ~60c–$1. Set back afterwards. |
+| Only the weekly review | `true` | `false` | `true` | Skips commentary, runs the web-search-heavy weekly review. |
+| Only the commentary review | `true` | `true` | `false` | Skips weekly review, runs the cheaper commentary section. |
+
+How the flags work: `FORCE_WEEKLY=true` enables the Monday-format sections even on a non-Monday. `SKIP_WEEKLY=true` then suppresses the weekly review specifically, and `SKIP_COMMENTARY=true` suppresses the commentary review specifically. The two skip flags are independent — set whichever combination matches what you want to exercise. The real `daily_news.yml` sets none of them, so production behaves normally: both Monday sections on Mondays, daily-only the rest of the week.
+
+## Project Structure
+
+```
+indo-news-briefing/
+├── main.py                          # Pipeline orchestrator (4 steps)
+├── src/
+│   ├── scraper.py                   # Headline fetcher (RSS + HTML fallback)
+│   ├── scraper_browser.py           # Playwright browser scrapers (Kompas)
+│   ├── summarizer.py                # Claude API summarization with hyperlinks
+│   ├── emailer.py                   # HTML email builder + SMTP sender
+│   ├── archive.py                   # AI topic categorisation + Excel archive
+│   ├── subscribers.py               # Google Sheet subscriber list
+│   ├── weekly_review.py             # Monday "What Happened Last Week" (web search)
+│   └── commentary_review.py         # Monday "Expert Commentary This Week" (web search/fetch)
+├── headlines_archive.xlsx           # Growing headline database (auto-updated)
+├── .github/workflows/
+│   ├── daily_news.yml               # GitHub Actions cron + auto-commit
+│   └── test_news.yml                # Manual test run (self only, no archive)
+├── .env.example                     # Environment variable template
+├── requirements.txt                 # Python dependencies
+└── README.md
+```
+
+## Pipeline Steps
+
+1. **Scrape** — Fetch headlines from 4 Indonesian news sources (5 RSS feeds + 2 HTML scrapes), filtered to last 36 hours only
+2. **Summarise** — Send headlines to Claude API for a 5-paragraph English summary (politics → foreign policy/defence → other news) with embedded hyperlinks
+3. **Archive** — Send headlines to Claude API for topic categorisation, then append to Excel database
+4. **Email** — Format and send the briefing to all recipients via SMTP
+
+## Customisation
+
+- **Add/remove sources** — Edit the fetcher functions and `fetchers` list in `src/scraper.py`
+- **Change summary language** — Edit the prompt in `src/summarizer.py`
+- **Change topic categories** — Edit the categorisation prompt in `src/archive.py`
+- **Change schedule** — Edit the cron expression in `.github/workflows/daily_news.yml`
+- **Change Claude model** — Set `CLAUDE_MODEL` env var (default: `claude-sonnet-4-20250514`)
+- **Add email recipients** — Update `EMAIL_TO` secret with comma-separated addresses
+
+## Troubleshooting
+
+- **No headlines from a source?** — RSS feed URL may have changed. Check `scraper.py` and update the feed URLs, or add new HTML fallback selectors.
+- **Email not arriving?** — Check spam folder. For Gmail, ensure you're using an App Password with 2-Step Verification enabled.
+- **API errors?** — Verify your key at [console.anthropic.com](https://console.anthropic.com/).
+- **Excel file not updating?** — Check the Actions tab on GitHub for errors in the commit step.
+
+## Cost
+
+~$0.01/day with Claude Sonnet (summary + categorisation of ~60 headlines). That's roughly **$3–4/year**.

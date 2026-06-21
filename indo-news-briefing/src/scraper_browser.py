@@ -129,64 +129,6 @@ def fetch_kompas_browser() -> list[Headline]:
 
 # ─── Tempo (nasional + dunia) ────────────────────────────────────────
 
-def _dismiss_tempo_overlay(page) -> None:
-    """
-    Tempo serves an interstitial ad overlay that blocks the article feed from
-    lazy-loading. Try the common ways to close it: Escape key, then a series of
-    close-button selectors. Best-effort and silent, never raises.
-    """
-    # Escape often closes modal/interstitial ads
-    try:
-        page.keyboard.press("Escape")
-        page.wait_for_timeout(400)
-    except Exception:
-        pass
-
-    # Common close-button patterns for ad/consent/interstitial overlays
-    selectors = [
-        "[aria-label*='close' i]",
-        "[aria-label*='tutup' i]",          # 'tutup' = close (Indonesian)
-        "button[class*='close' i]",
-        "div[class*='close' i]",
-        "[id*='dismiss' i]",
-        "[class*='dismiss' i]",
-        "[class*='interstitial' i] button",
-        "[class*='overlay' i] button",
-        "[class*='modal' i] button[class*='close' i]",
-        "button:has-text('Tutup')",
-        "button:has-text('Lewati')",        # 'skip'
-        "button:has-text('Close')",
-        "button:has-text('Skip')",
-        ".ads-close, .ad-close, .close-ad",
-    ]
-    for sel in selectors:
-        try:
-            els = page.query_selector_all(sel)
-            for el in els:
-                try:
-                    if el.is_visible():
-                        el.click(timeout=1000)
-                        page.wait_for_timeout(300)
-                except Exception:
-                    continue
-        except Exception:
-            continue
-
-    # Some overlays sit in an iframe; remove obvious ad iframes/overlays from DOM
-    try:
-        page.evaluate(
-            """() => {
-                const kill = sel => document.querySelectorAll(sel).forEach(e => e.remove());
-                ['iframe[src*="ad"]','[class*="interstitial" i]','[id*="interstitial" i]',
-                 '[class*="ad-overlay" i]','[class*="popup" i]'].forEach(kill);
-                document.body && (document.body.style.overflow = 'auto');
-            }"""
-        )
-        page.wait_for_timeout(300)
-    except Exception:
-        pass
-
-
 def fetch_tempo_browser() -> list[Headline]:
     """
     Tempo.co - browser-based scrape of nasional.tempo.co and dunia.tempo.co.
@@ -217,14 +159,11 @@ def fetch_tempo_browser() -> list[Headline]:
         for page_url, section in pages_to_scrape:
             try:
                 page = context.new_page()
-                page.goto(page_url, timeout=45000, wait_until="domcontentloaded")
-                page.wait_for_timeout(2500)
+                # wait_until="networkidle" gives JS-driven link lists time to populate
+                page.goto(page_url, timeout=45000, wait_until="networkidle")
+                page.wait_for_timeout(3000)
 
-                # Tempo shows an interstitial ad overlay that blocks the article
-                # feed from lazy-loading until dismissed. Try to close it.
-                _dismiss_tempo_overlay(page)
-
-                # Scroll to trigger lazy loading of the article feed
+                # Scroll to trigger lazy-loaded article cards
                 try:
                     for frac in (0.3, 0.6, 1.0):
                         page.evaluate(f"window.scrollTo(0, document.body.scrollHeight * {frac})")
@@ -232,48 +171,39 @@ def fetch_tempo_browser() -> list[Headline]:
                 except Exception:
                     pass
 
-                # Wait for real article links to appear (feed populates after the
-                # overlay clears). Retry dismiss+wait a few times before giving up.
-                for attempt in range(4):
-                    n = page.evaluate(
-                        "() => document.querySelectorAll(\"a[href*='/read/']\").length"
-                    )
-                    if n >= 5:
-                        break
-                    _dismiss_tempo_overlay(page)
-                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                    page.wait_for_timeout(2000)
-                logger.info(f"Tempo {section}: {n} /read/ links present after wait")
-
                 # Diagnose a challenge/block page instead of failing silently
                 try:
                     body_text = (page.inner_text("body") or "").lower()[:2000]
                     title_text = (page.title() or "").lower()
-                    if n == 0 and any(m in body_text or m in title_text for m in CHALLENGE_MARKERS):
+                    if any(m in body_text or m in title_text for m in CHALLENGE_MARKERS):
                         logger.error(
                             f"Tempo {section}: looks like a bot-challenge/WAF page "
-                            f"(title={title_text!r})."
+                            f"(title={title_text!r}). Headless browser is being blocked."
                         )
                 except Exception:
                     pass
 
-                # Read hrefs straight from the DOM so an overlay can't hide them
-                hrefs_titles = page.evaluate(
-                    """() => Array.from(document.querySelectorAll("a[href*='/read/']"))
-                        .map(a => [a.href, (a.innerText || a.textContent || '').trim()])"""
-                )
+                anchors = page.query_selector_all("a[href]")
+                logger.info(f"Tempo {section}: {len(anchors)} anchors found on page")
 
                 seen_urls = set(h.url for h in headlines)  # dedup across sections
                 section_count = 0
-                for href, title in hrefs_titles:
+                for a in anchors:
                     try:
-                        if not re.search(r'tempo\.co/read/\d+/', href or ""):
+                        href = a.get_attribute("href") or ""
+                        title = (a.inner_text() or "").strip()
+
+                        # Tempo article URLs contain /read/ followed by a numeric ID
+                        if not re.search(r'tempo\.co/read/\d+/', href):
                             continue
                         if not title or len(title) < 15:
                             continue
                         if href in seen_urls:
                             continue
                         seen_urls.add(href)
+
+                        if not href.startswith("http"):
+                            href = f"https://{section}.tempo.co{href}"
 
                         headlines.append(Headline(
                             title=title,

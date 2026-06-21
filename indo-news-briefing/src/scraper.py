@@ -75,52 +75,13 @@ def is_recent(date_str: str, max_age_hours: int = 36) -> bool:
     return age < timedelta(hours=max_age_hours)
 
 
-def _sanitise_xml(raw: str) -> str:
-    """
-    Repair the most common reasons feedparser reports 'undefined entity' on
-    otherwise-valid feeds: bare ampersands and HTML named entities that are not
-    predefined in XML. XML only predefines amp, lt, gt, quot, apos.
-    """
-    if not raw:
-        return raw
-    # Map common HTML entities to their XML-safe numeric equivalents
-    named = {
-        "&nbsp;": "&#160;", "&mdash;": "&#8212;", "&ndash;": "&#8211;",
-        "&rsquo;": "&#8217;", "&lsquo;": "&#8216;", "&rdquo;": "&#8221;",
-        "&ldquo;": "&#8220;", "&hellip;": "&#8230;", "&eacute;": "&#233;",
-        "&agrave;": "&#224;", "&uuml;": "&#252;", "&copy;": "&#169;",
-        "&reg;": "&#174;", "&trade;": "&#8482;", "&deg;": "&#176;",
-        "&times;": "&#215;", "&middot;": "&#183;", "&bull;": "&#8226;",
-    }
-    for k, v in named.items():
-        raw = raw.replace(k, v)
-    # Escape any remaining bare ampersand that is not already part of a valid
-    # entity (numeric &#123; / &#x1F; or one of the five XML-predefined names).
-    raw = re.sub(r'&(?!#\d+;|#x[0-9A-Fa-f]+;|amp;|lt;|gt;|quot;|apos;)', '&amp;', raw)
-    return raw
-
-
 def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date: bool = True) -> list[Headline]:
     """Fetch headlines from an RSS feed, optionally filtering by recency."""
     headlines = []
     try:
         feed = feedparser.parse(feed_url)
-
-        # If the feed is malformed (e.g. Tempo's 'undefined entity'), fetch the
-        # bytes ourselves, sanitise invalid XML entities, and re-parse.
         if feed.bozo and not feed.entries:
-            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}; retrying with sanitiser")
-            try:
-                resp = requests.get(feed_url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
-                resp.raise_for_status()
-                cleaned = _sanitise_xml(resp.text)
-                feed = feedparser.parse(cleaned)
-                if feed.entries:
-                    logger.info(f"Sanitiser recovered {len(feed.entries)} entries for {source_name}")
-            except Exception as e:
-                logger.warning(f"Sanitised RSS retry failed for {source_name}: {e}")
-
-        if feed.bozo and not feed.entries:
+            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}")
             return headlines
 
         for entry in feed.entries[:max_items]:
@@ -260,6 +221,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         from src.scraper_browser import (
             fetch_kompas_browser,
             fetch_detik_browser,
+            fetch_tempo_browser,
         )
         browser_available = True
     except ImportError as e:
@@ -268,28 +230,30 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
 
     fetchers = [
         ("Detik.com", fetch_detik),
-        ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News International", fetch_antara_international),
         ("Republika", fetch_republika),
     ]
 
     if browser_available:
-        # Kompas is browser-first (it blocks direct requests but not the
-        # browser). Tempo is RSS-only: Cloudflare blocks its homepage, section
-        # pages and sitemap to automated browsers, but rss.tempo.co stays open,
-        # so we read the feed (sanitised for malformed XML) and do not attempt
-        # the browser/HTML paths that Cloudflare denies.
-        fetchers.append(("Kompas.com", fetch_kompas_browser))
+        # Kompas and Tempo are browser-first because both outlets block
+        # direct requests. The RSS/HTML fallback chain still fires if the
+        # browser scraper returns nothing (source_name in FALLBACK_SELECTORS).
+        fetchers.extend([
+            ("Kompas.com", fetch_kompas_browser),
+            ("Tempo.co", fetch_tempo_browser),
+        ])
+    else:
+        # Without Playwright, fall back to RSS + HTML for Tempo.
+        fetchers.append(("Tempo.co", fetch_tempo))
 
     all_headlines = {}
 
     for source_name, fetcher in fetchers:
         headlines = fetcher()
 
-        # If RSS returned nothing, try HTML fallback. Tempo is excluded: its
-        # HTML is behind Cloudflare (403), so only the RSS sanitiser can help.
-        if not headlines and source_name in FALLBACK_SELECTORS and source_name != "Tempo.co":
+        # If RSS returned nothing, try HTML fallback
+        if not headlines and source_name in FALLBACK_SELECTORS:
             fb = FALLBACK_SELECTORS[source_name]
             logger.info(f"RSS empty for {source_name}, trying HTML fallback...")
             headlines = fetch_html(fb["url"], source_name, fb["selector"])
@@ -298,6 +262,12 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         if not headlines and source_name == "Detik.com" and browser_available:
             logger.info(f"RSS and HTML both failed for Detik, trying browser scraper...")
             headlines = fetch_detik_browser()
+
+        # Tempo special case: if browser returned nothing, try RSS before
+        # giving up (the RSS XML error may be intermittent).
+        if not headlines and source_name == "Tempo.co" and browser_available:
+            logger.info(f"Browser empty for Tempo, trying RSS fallback...")
+            headlines = fetch_tempo()
 
         # Deduplicate by URL
         seen_urls = set()
