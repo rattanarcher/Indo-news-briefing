@@ -13,6 +13,7 @@ from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 import logging
 import re
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -104,35 +105,29 @@ def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date:
     """Fetch headlines from an RSS feed, optionally filtering by recency."""
     headlines = []
     try:
-        feed = feedparser.parse(feed_url)
+        # Fetch the feed ONCE with our own request, then parse. We do not call
+        # feedparser.parse(url) because that makes its own request: combined
+        # with a sanitiser re-fetch it produced two rapid hits per feed, and
+        # Cloudflare rate-limits the burst (the 403s on Tempo were a rate trip,
+        # not a header problem, a lone manual request to the same path got 200).
+        # One fetch per feed keeps us under the limiter.
+        try:
+            resp = requests.get(feed_url, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            raw = resp.text
+        except Exception as e:
+            logger.error(f"Error fetching RSS for {source_name}: {e}")
+            return headlines
 
-        # If the feed is malformed (e.g. Tempo's 'undefined entity'), re-fetch
-        # the bytes, sanitise the invalid XML, and re-parse. The re-fetch uses
-        # feed-reader headers, NOT the browser User-Agent, because Cloudflare
-        # 403s a browser UA hitting the raw RSS path while tolerating a feed
-        # reader. We try a small ladder of header strategies.
+        feed = feedparser.parse(raw)
+
+        # If malformed (e.g. Tempo's 'undefined entity'), sanitise the bytes we
+        # already have and re-parse. No extra network request.
         if feed.bozo and not feed.entries:
             logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}; sanitising")
-            raw, last_err = None, None
-            for ua in (
-                {"User-Agent": "feedparser", "Accept": "application/rss+xml, application/xml, text/xml"},
-                {"User-Agent": "Mozilla/5.0 (compatible; rss-reader/1.0)"},
-                None,
-            ):
-                try:
-                    resp = requests.get(feed_url, headers=ua, timeout=REQUEST_TIMEOUT)
-                    resp.raise_for_status()
-                    raw = resp.text
-                    break
-                except Exception as e:
-                    last_err = e
-
-            if raw:
-                feed = feedparser.parse(_sanitise_xml(raw))
-                if feed.entries:
-                    logger.info(f"Sanitiser recovered {len(feed.entries)} entries for {source_name}")
-            else:
-                logger.warning(f"Sanitised RSS re-fetch failed for {source_name}: {last_err}")
+            feed = feedparser.parse(_sanitise_xml(raw))
+            if feed.entries:
+                logger.info(f"Sanitiser recovered {len(feed.entries)} entries for {source_name}")
 
         if feed.bozo and not feed.entries:
             return headlines
@@ -208,6 +203,9 @@ def fetch_tempo() -> list[Headline]:
         feed_url="https://rss.tempo.co/nasional",
         source_name="Tempo.co"
     )
+    # Brief pause: Tempo's Cloudflare rate-limits rapid back-to-back requests,
+    # so space the two feed fetches out rather than firing them instantly.
+    time.sleep(1.5)
     # Tempo's international feed is called "dunia", not "internasional"
     dunia = fetch_rss(
         feed_url="https://rss.tempo.co/dunia",
