@@ -105,16 +105,18 @@ def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date:
     """Fetch headlines from an RSS feed, optionally filtering by recency."""
     headlines = []
     try:
-        # Fetch the feed ONCE with our own request, then parse. We do not call
-        # feedparser.parse(url) because that makes its own request: combined
-        # with a sanitiser re-fetch it produced two rapid hits per feed, and
-        # Cloudflare rate-limits the burst (the 403s on Tempo were a rate trip,
-        # not a header problem, a lone manual request to the same path got 200).
-        # One fetch per feed keeps us under the limiter.
+        # Fetch each feed once, on a FRESH connection. The default requests
+        # connection pool reuses keep-alive connections across calls, and Tempo's
+        # Cloudflare 403s a request that arrives on a connection reused after
+        # earlier fetches in the same run (isolated calls get 200, in-run calls
+        # got 403). A short-lived session with Connection: close avoids that, and
+        # also keeps us to one request per feed for the malformed-XML sanitiser.
         try:
-            resp = requests.get(feed_url, timeout=REQUEST_TIMEOUT)
-            resp.raise_for_status()
-            raw = resp.text
+            with requests.Session() as sess:
+                sess.headers.update({"Connection": "close"})
+                resp = sess.get(feed_url, timeout=REQUEST_TIMEOUT)
+                resp.raise_for_status()
+                raw = resp.text
         except Exception as e:
             logger.error(f"Error fetching RSS for {source_name}: {e}")
             return headlines
