@@ -221,6 +221,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         from src.scraper_browser import (
             fetch_kompas_browser,
             fetch_detik_browser,
+            fetch_tempo_browser,
         )
         browser_available = True
     except ImportError as e:
@@ -229,16 +230,22 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
 
     fetchers = [
         ("Detik.com", fetch_detik),
-        ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News International", fetch_antara_international),
         ("Republika", fetch_republika),
     ]
 
     if browser_available:
+        # Kompas and Tempo are browser-first because both outlets block
+        # direct requests. The RSS/HTML fallback chain still fires if the
+        # browser scraper returns nothing (source_name in FALLBACK_SELECTORS).
         fetchers.extend([
             ("Kompas.com", fetch_kompas_browser),
+            ("Tempo.co", fetch_tempo_browser),
         ])
+    else:
+        # Without Playwright, fall back to RSS + HTML for Tempo.
+        fetchers.append(("Tempo.co", fetch_tempo))
 
     all_headlines = {}
 
@@ -255,6 +262,12 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         if not headlines and source_name == "Detik.com" and browser_available:
             logger.info(f"RSS and HTML both failed for Detik, trying browser scraper...")
             headlines = fetch_detik_browser()
+
+        # Tempo special case: if browser returned nothing, try RSS before
+        # giving up (the RSS XML error may be intermittent).
+        if not headlines and source_name == "Tempo.co" and browser_available:
+            logger.info(f"Browser empty for Tempo, trying RSS fallback...")
+            headlines = fetch_tempo()
 
         # Deduplicate by URL
         seen_urls = set()

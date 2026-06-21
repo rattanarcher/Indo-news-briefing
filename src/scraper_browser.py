@@ -127,6 +127,89 @@ def fetch_kompas_browser() -> list[Headline]:
     return headlines
 
 
+# ─── Tempo (nasional + dunia) ────────────────────────────────────────
+
+def fetch_tempo_browser() -> list[Headline]:
+    """
+    Tempo.co - browser-based scrape of nasional.tempo.co and dunia.tempo.co.
+    URLs follow pattern: nasional.tempo.co/read/NNNNNNN/slug (no date in URL).
+    Tempo added bot protection (403 on direct requests, malformed RSS XML),
+    so this browser path is now the primary method, same fix as Kompas.
+    """
+    headlines = []
+    p = browser = context = None
+
+    pages_to_scrape = [
+        ("https://nasional.tempo.co/", "nasional"),
+        ("https://dunia.tempo.co/", "dunia"),
+    ]
+
+    try:
+        p, browser, context = _launch_browser()
+
+        for page_url, section in pages_to_scrape:
+            try:
+                page = context.new_page()
+                page.goto(page_url, timeout=30000, wait_until="domcontentloaded")
+                # Allow JS to populate article links
+                page.wait_for_timeout(3000)
+
+                anchors = page.query_selector_all("a[href]")
+
+                seen_urls = set(h.url for h in headlines)  # dedup across sections
+                section_count = 0
+                for a in anchors:
+                    try:
+                        href = a.get_attribute("href") or ""
+                        title = (a.inner_text() or "").strip()
+
+                        # Tempo article URLs contain /read/ followed by a numeric ID
+                        if not re.search(r'tempo\.co/read/\d+/', href):
+                            continue
+
+                        # Skip empty titles, very short text, or duplicates
+                        if not title or len(title) < 15:
+                            continue
+                        if href in seen_urls:
+                            continue
+                        seen_urls.add(href)
+
+                        # Ensure absolute URL
+                        if not href.startswith("http"):
+                            href = f"https://{section}.tempo.co{href}"
+
+                        headlines.append(Headline(
+                            title=title,
+                            url=href,
+                            source="Tempo.co",
+                        ))
+                        section_count += 1
+                    except Exception:
+                        continue
+
+                logger.info(f"Fetched {section_count} headlines from Tempo.co/{section} (browser)")
+                page.close()
+
+            except Exception as e:
+                logger.error(f"Browser scrape failed for Tempo {section}: {e}")
+
+    except Exception as e:
+        logger.error(f"Browser scrape failed for Tempo: {e}")
+    finally:
+        try:
+            if context:
+                context.close()
+            if browser:
+                browser.close()
+            if p:
+                p.stop()
+        except Exception:
+            pass
+
+    logger.info(f"Fetched {len(headlines)} total headlines from Tempo.co (browser)")
+    return headlines
+
+
 # ─── CNN Indonesia (national only) ───────────────────────────────────
 
 def fetch_cnn_indonesia_browser() -> list[Headline]:
