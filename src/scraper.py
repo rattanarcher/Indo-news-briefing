@@ -105,20 +105,39 @@ def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date:
     """Fetch headlines from an RSS feed, optionally filtering by recency."""
     headlines = []
     try:
-        # Fetch each feed once, on a FRESH connection. The default requests
-        # connection pool reuses keep-alive connections across calls, and Tempo's
-        # Cloudflare 403s a request that arrives on a connection reused after
-        # earlier fetches in the same run (isolated calls get 200, in-run calls
-        # got 403). A short-lived session with Connection: close avoids that, and
-        # also keeps us to one request per feed for the malformed-XML sanitiser.
-        try:
-            with requests.Session() as sess:
-                sess.headers.update({"Connection": "close"})
-                resp = sess.get(feed_url, timeout=REQUEST_TIMEOUT)
-                resp.raise_for_status()
-                raw = resp.text
-        except Exception as e:
-            logger.error(f"Error fetching RSS for {source_name}: {e}")
+        # Fetch each feed on its OWN fresh connection, and retry transient
+        # network errors. Some sources (Antara, Detik) intermittently reset the
+        # connection mid-run (RemoteDisconnected / WinError 10054). A reset can
+        # otherwise poison the pool and make the NEXT source fail too, which is
+        # what made Tempo look broken when the real fault was the source before
+        # it. Connection: close + a fresh Session per attempt isolates each fetch.
+        raw = None
+        last_err = None
+        for attempt in range(3):
+            try:
+                with requests.Session() as sess:
+                    sess.headers.update({"Connection": "close"})
+                    resp = sess.get(feed_url, timeout=REQUEST_TIMEOUT)
+                    resp.raise_for_status()
+                    raw = resp.text
+                break
+            except requests.exceptions.HTTPError as e:
+                # A real HTTP status (403/404 etc.) will not change on retry
+                last_err = e
+                break
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.ChunkedEncodingError,
+                    requests.exceptions.Timeout) as e:
+                # Transient: reset / aborted connection. Wait and retry fresh.
+                last_err = e
+                time.sleep(1.0 * (attempt + 1))
+                continue
+            except Exception as e:
+                last_err = e
+                break
+
+        if raw is None:
+            logger.error(f"Error fetching RSS for {source_name}: {last_err}")
             return headlines
 
         feed = feedparser.parse(raw)
