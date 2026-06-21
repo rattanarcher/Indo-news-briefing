@@ -106,19 +106,33 @@ def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date:
     try:
         feed = feedparser.parse(feed_url)
 
-        # If the feed is malformed (e.g. Tempo's 'undefined entity'), fetch the
-        # bytes ourselves, sanitise invalid XML entities, and re-parse.
+        # If the feed is malformed (e.g. Tempo's 'undefined entity'), re-fetch
+        # the bytes, sanitise the invalid XML, and re-parse. The re-fetch uses
+        # feed-reader headers, NOT the browser User-Agent, because Cloudflare
+        # 403s a browser UA hitting the raw RSS path while tolerating a feed
+        # reader. We try a small ladder of header strategies.
         if feed.bozo and not feed.entries:
-            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}; retrying with sanitiser")
-            try:
-                resp = requests.get(feed_url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
-                resp.raise_for_status()
-                cleaned = _sanitise_xml(resp.text)
-                feed = feedparser.parse(cleaned)
+            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}; sanitising")
+            raw, last_err = None, None
+            for ua in (
+                {"User-Agent": "feedparser", "Accept": "application/rss+xml, application/xml, text/xml"},
+                {"User-Agent": "Mozilla/5.0 (compatible; rss-reader/1.0)"},
+                None,
+            ):
+                try:
+                    resp = requests.get(feed_url, headers=ua, timeout=REQUEST_TIMEOUT)
+                    resp.raise_for_status()
+                    raw = resp.text
+                    break
+                except Exception as e:
+                    last_err = e
+
+            if raw:
+                feed = feedparser.parse(_sanitise_xml(raw))
                 if feed.entries:
                     logger.info(f"Sanitiser recovered {len(feed.entries)} entries for {source_name}")
-            except Exception as e:
-                logger.warning(f"Sanitised RSS retry failed for {source_name}: {e}")
+            else:
+                logger.warning(f"Sanitised RSS re-fetch failed for {source_name}: {last_err}")
 
         if feed.bozo and not feed.entries:
             return headlines
