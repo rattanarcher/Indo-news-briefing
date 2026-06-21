@@ -10,3 +10,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-06-19,False,claude-sonnet-4-5,8868,0,0,35,
 2026-06-20,False,claude-sonnet-4-5,5993,0,0,23,
 2026-06-21,False,claude-sonnet-4-5,5113,0,0,20,
+2026-06-22,True,claude-sonnet-4-5,6710,5676,3187,44,"Indonesia overhauled its flagship Free Nutritious Meals program mid-week amid corruption allegations, business operator backlash, and mounting student demonstrations. || The United States and Iran signed a preliminary peace deal on June 15 to end their three-month war and reopen the Strait of Hormuz, though implementation quickly became contentious. || Coalition parties pressed PDI-P throughout the week to clarify whether it supports or opposes the Prabowo government, drawing sharp rebukes from the former ruling party."
