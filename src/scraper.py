@@ -14,6 +14,8 @@ from email.utils import parsedate_to_datetime
 import logging
 import re
 import time
+import os
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -218,14 +220,19 @@ def fetch_detik() -> list[Headline]:
     )
 
 
-def fetch_tempo() -> list[Headline]:
-    """Tempo.co - Nasional + Dunia (international) RSS feeds."""
+def fetch_tempo_raw() -> list[Headline]:
+    """
+    Fetch Tempo directly from its RSS feeds. This works from a RESIDENTIAL IP
+    but NOT from the GitHub Actions datacentre IP, which Tempo's Cloudflare
+    403s. The hosted pipeline therefore does not call this; the local
+    tools/refresh_tempo_cache.py script does, and commits the result. See
+    fetch_tempo() below, which reads that cached result.
+    """
     national = fetch_rss(
         feed_url="https://rss.tempo.co/nasional",
         source_name="Tempo.co"
     )
-    # Brief pause: Tempo's Cloudflare rate-limits rapid back-to-back requests,
-    # so space the two feed fetches out rather than firing them instantly.
+    # Brief pause between the two feeds to avoid a rapid back-to-back burst.
     time.sleep(1.5)
     # Tempo's international feed is called "dunia", not "internasional"
     dunia = fetch_rss(
@@ -233,6 +240,66 @@ def fetch_tempo() -> list[Headline]:
         source_name="Tempo.co (Dunia)"
     )
     return national + dunia
+
+
+# Tempo cache: written by your machine (residential IP), read by the pipeline.
+TEMPO_CACHE_PATH = os.environ.get("TEMPO_CACHE_PATH", "tempo_cache.json")
+# Skip cached Tempo headlines older than this many hours (stale safeguard).
+TEMPO_CACHE_MAX_AGE_HOURS = int(os.environ.get("TEMPO_CACHE_MAX_AGE_HOURS", "24"))
+
+
+def fetch_tempo() -> list[Headline]:
+    """
+    Read Tempo headlines from the cache file your machine commits, rather than
+    fetching them here. Tempo blocks the GitHub Actions datacentre IP, so the
+    runner cannot fetch Tempo directly. Your local machine refreshes the cache
+    on a residential IP (see tools/refresh_tempo_cache.py).
+
+    If the cache is missing or older than TEMPO_CACHE_MAX_AGE_HOURS, Tempo is
+    quietly skipped for that run and the other sources carry the briefing.
+    """
+    try:
+        if not os.path.exists(TEMPO_CACHE_PATH):
+            logger.info("Tempo cache not found; skipping Tempo this run "
+                        "(run tools/refresh_tempo_cache.py on your machine to populate it)")
+            return []
+
+        with open(TEMPO_CACHE_PATH, "r", encoding="utf-8") as f:
+            cache = json.load(f)
+
+        fetched_at = cache.get("fetched_at")
+        age_hours = None
+        if fetched_at:
+            try:
+                ts = datetime.fromisoformat(fetched_at)
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                age_hours = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
+            except Exception:
+                age_hours = None
+
+        if age_hours is not None and age_hours > TEMPO_CACHE_MAX_AGE_HOURS:
+            logger.warning(f"Tempo cache is stale ({age_hours:.0f}h old > "
+                           f"{TEMPO_CACHE_MAX_AGE_HOURS}h); skipping Tempo this run")
+            return []
+
+        items = cache.get("headlines", [])
+        headlines = [
+            Headline(
+                title=h.get("title", ""),
+                url=h.get("url", ""),
+                source=h.get("source", "Tempo.co"),
+                published=h.get("published", ""),
+            )
+            for h in items if h.get("title") and h.get("url")
+        ]
+        age_str = f"{age_hours:.0f}h old" if age_hours is not None else "age unknown"
+        logger.info(f"Loaded {len(headlines)} Tempo headlines from cache ({age_str})")
+        return headlines
+
+    except Exception as e:
+        logger.error(f"Error reading Tempo cache (skipping Tempo): {e}")
+        return []
 
 
 def fetch_antara() -> list[Headline]:

@@ -1,4 +1,5 @@
+
+# Local Tempo refresh log (machine-specific, do not commit)
+tempo_refresh.log
 .env
-__pycache__/
-*.pyc
-.venv/
+.env.*
