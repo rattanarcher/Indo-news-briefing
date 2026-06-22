@@ -227,19 +227,42 @@ def fetch_tempo_raw() -> list[Headline]:
     403s. The hosted pipeline therefore does not call this; the local
     tools/refresh_tempo_cache.py script does, and commits the result. See
     fetch_tempo() below, which reads that cached result.
+
+    Covers three streams: Bahasa national (nasional), Bahasa international
+    (dunia), and the English edition (en.tempo.co). Tempo's English RSS path
+    has changed over the years, so we try a few candidates and keep whichever
+    returns items, logging which one worked so it can be pinned later.
     """
-    national = fetch_rss(
-        feed_url="https://rss.tempo.co/nasional",
-        source_name="Tempo.co"
-    )
-    # Brief pause between the two feeds to avoid a rapid back-to-back burst.
-    time.sleep(1.5)
-    # Tempo's international feed is called "dunia", not "internasional"
-    dunia = fetch_rss(
-        feed_url="https://rss.tempo.co/dunia",
-        source_name="Tempo.co (Dunia)"
-    )
-    return national + dunia
+    feeds = [
+        ("https://rss.tempo.co/nasional", "Tempo.co"),
+        ("https://rss.tempo.co/dunia", "Tempo.co (Dunia)"),
+    ]
+
+    headlines = []
+    for i, (url, name) in enumerate(feeds):
+        if i:
+            time.sleep(1.5)  # space requests to avoid a rapid burst
+        headlines += fetch_rss(feed_url=url, source_name=name)
+
+    # English edition: try known candidate feed paths, keep the first that works.
+    english_candidates = [
+        "https://en.tempo.co/rss",
+        "https://rss.tempo.co/en",
+        "https://en.tempo.co/rss/world",
+        "https://en.tempo.co/feed",
+        "https://en.tempo.co/rss/nasional",
+    ]
+    for url in english_candidates:
+        time.sleep(1.5)
+        got = fetch_rss(feed_url=url, source_name="Tempo.co (English)")
+        if got:
+            logger.info(f"Tempo English feed working: {url} ({len(got)} headlines)")
+            headlines += got
+            break
+    else:
+        logger.info("No Tempo English RSS candidate returned items (English edition skipped)")
+
+    return headlines
 
 
 # Tempo cache: written by your machine (residential IP), read by the pipeline.
