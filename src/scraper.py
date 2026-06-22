@@ -150,17 +150,61 @@ def fetch_detik() -> list[Headline]:
 
 
 def fetch_tempo() -> list[Headline]:
-    """Tempo.co - Nasional + Dunia (international) RSS feeds."""
-    national = fetch_rss(
-        feed_url="https://rss.tempo.co/nasional",
-        source_name="Tempo.co"
-    )
-    # Tempo's international feed is called "dunia", not "internasional"
-    dunia = fetch_rss(
-        feed_url="https://rss.tempo.co/dunia",
-        source_name="Tempo.co (Dunia)"
-    )
-    return national + dunia
+    """
+    Read Tempo headlines from the cache file your machine commits, rather than
+    fetching them here. Tempo blocks the GitHub Actions datacentre IP, so the
+    runner cannot fetch Tempo directly. Your local machine refreshes the cache
+    on a residential IP (see tools/refresh_tempo_cache.py).
+
+    If the cache is missing or older than TEMPO_CACHE_MAX_AGE_HOURS, Tempo is
+    quietly skipped for that run and the other sources carry the briefing.
+    """
+    import os, json
+    TEMPO_CACHE_PATH = os.environ.get("TEMPO_CACHE_PATH", "tempo_cache.json")
+    TEMPO_CACHE_MAX_AGE_HOURS = int(os.environ.get("TEMPO_CACHE_MAX_AGE_HOURS", "24"))
+    try:
+        if not os.path.exists(TEMPO_CACHE_PATH):
+            logger.info("Tempo cache not found; skipping Tempo this run "
+                        "(run tools/refresh_tempo_cache.py on your machine to populate it)")
+            return []
+
+        with open(TEMPO_CACHE_PATH, "r", encoding="utf-8") as f:
+            cache = json.load(f)
+
+        fetched_at = cache.get("fetched_at")
+        age_hours = None
+        if fetched_at:
+            try:
+                ts = datetime.fromisoformat(fetched_at)
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=timezone.utc)
+                age_hours = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
+            except Exception:
+                age_hours = None
+
+        if age_hours is not None and age_hours > TEMPO_CACHE_MAX_AGE_HOURS:
+            logger.warning(f"Tempo cache is stale ({age_hours:.0f}h old > "
+                           f"{TEMPO_CACHE_MAX_AGE_HOURS}h); skipping Tempo this run")
+            return []
+
+        items = cache.get("headlines", [])
+        headlines = [
+            Headline(
+                title=h.get("title", ""),
+                url=h.get("url", ""),
+                source=h.get("source", "Tempo.co"),
+                published=h.get("published", ""),
+            )
+            for h in items if h.get("title") and h.get("url")
+        ]
+        age_str = f"{age_hours:.0f}h old" if age_hours is not None else "age unknown"
+        logger.info(f"Loaded {len(headlines)} Tempo headlines from cache ({age_str})")
+        return headlines
+
+    except Exception as e:
+        logger.error(f"Error reading Tempo cache (skipping Tempo): {e}")
+        return []
+
 
 
 def fetch_antara() -> list[Headline]:
@@ -221,7 +265,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         from src.scraper_browser import (
             fetch_kompas_browser,
             fetch_detik_browser,
-            fetch_tempo_browser,
         )
         browser_available = True
     except ImportError as e:
@@ -235,17 +278,11 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         ("Republika", fetch_republika),
     ]
 
+# Tempo reads from the residential-IP cache (see fetch_tempo), so it is
+    # always in the base list. Kompas stays browser-first.
+    fetchers.append(("Tempo.co", fetch_tempo))
     if browser_available:
-        # Kompas and Tempo are browser-first because both outlets block
-        # direct requests. The RSS/HTML fallback chain still fires if the
-        # browser scraper returns nothing (source_name in FALLBACK_SELECTORS).
-        fetchers.extend([
-            ("Kompas.com", fetch_kompas_browser),
-            ("Tempo.co", fetch_tempo_browser),
-        ])
-    else:
-        # Without Playwright, fall back to RSS + HTML for Tempo.
-        fetchers.append(("Tempo.co", fetch_tempo))
+        fetchers.append(("Kompas.com", fetch_kompas_browser))
 
     all_headlines = {}
 
@@ -263,11 +300,7 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
             logger.info(f"RSS and HTML both failed for Detik, trying browser scraper...")
             headlines = fetch_detik_browser()
 
-        # Tempo special case: if browser returned nothing, try RSS before
-        # giving up (the RSS XML error may be intermittent).
-        if not headlines and source_name == "Tempo.co" and browser_available:
-            logger.info(f"Browser empty for Tempo, trying RSS fallback...")
-            headlines = fetch_tempo()
+
 
         # Deduplicate by URL
         seen_urls = set()
