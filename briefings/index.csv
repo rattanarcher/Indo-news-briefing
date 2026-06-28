@@ -17,3 +17,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-06-26,False,claude-sonnet-4-5,6352,0,0,23,
 2026-06-27,False,claude-sonnet-4-5,6317,0,0,25,
 2026-06-28,False,claude-sonnet-4-5,7531,0,0,31,
+2026-06-29,True,claude-sonnet-4-5,7656,5480,2552,45,"Five candidates for Koperasi Desa Merah Putih manager positions died during military-style training between June 17 and 26. || A Bung Karno University student leader admitted receiving 20 million rupiah connected to a June 15 demonstration and meeting with Vice President Gibran. || Former President Jokowi launched a political safari in Lampung wearing PSI party regalia, drawing reactions from PDI-P to Gerindra."
