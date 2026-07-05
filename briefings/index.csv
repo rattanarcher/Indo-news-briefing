@@ -11,3 +11,17 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-06-20,False,claude-sonnet-4-5,5993,0,0,23,
 2026-06-21,False,claude-sonnet-4-5,5113,0,0,20,
 2026-06-22,True,claude-sonnet-4-5,6710,5676,3187,44,"Indonesia overhauled its flagship Free Nutritious Meals program mid-week amid corruption allegations, business operator backlash, and mounting student demonstrations. || The United States and Iran signed a preliminary peace deal on June 15 to end their three-month war and reopen the Strait of Hormuz, though implementation quickly became contentious. || Coalition parties pressed PDI-P throughout the week to clarify whether it supports or opposes the Prabowo government, drawing sharp rebukes from the former ruling party."
+2026-06-23,False,claude-sonnet-4-5,7382,0,0,34,
+2026-06-24,False,claude-sonnet-4-5,6608,0,0,27,
+2026-06-25,False,claude-sonnet-4-5,9181,0,0,37,
+2026-06-26,False,claude-sonnet-4-5,6352,0,0,23,
+2026-06-27,False,claude-sonnet-4-5,6317,0,0,25,
+2026-06-28,False,claude-sonnet-4-5,7531,0,0,31,
+2026-06-29,True,claude-sonnet-4-5,7656,5480,2552,45,"Five candidates for Koperasi Desa Merah Putih manager positions died during military-style training between June 17 and 26. || A Bung Karno University student leader admitted receiving 20 million rupiah connected to a June 15 demonstration and meeting with Vice President Gibran. || Former President Jokowi launched a political safari in Lampung wearing PSI party regalia, drawing reactions from PDI-P to Gerindra."
+2026-06-30,False,claude-sonnet-4-5,7003,0,0,28,
+2026-07-01,False,claude-sonnet-4-5,8353,0,0,34,
+2026-07-02,False,claude-sonnet-4-5,7402,0,0,32,
+2026-07-03,False,claude-sonnet-4-5,7984,0,0,33,
+2026-07-04,False,claude-sonnet-4-5,7124,0,0,30,
+2026-07-05,False,claude-sonnet-4-5,7121,0,0,29,
+2026-07-06,True,claude-sonnet-4-5,6968,3519,2515,30,"Five trainees died during military drills for village cooperative managers, prompting Indonesia to scale back the program amid criticism it militarized civilian roles. || Former President Jokowi launched a political tour with PSI across Lampung and announced plans for Central Java, fueling speculation about the 2029 elections. || Papuan separatists shot and killed American pilot Nicholas Goselin and burned his aircraft on July 2, escalating conflict in Indonesia's restive highlands."
