@@ -149,6 +149,27 @@ def fetch_detik() -> list[Headline]:
     )
 
 
+def fetch_tempo_raw() -> list[Headline]:
+    """
+    Fetch Tempo directly from its RSS feeds. Works from a RESIDENTIAL IP but
+    NOT from the GitHub Actions datacentre IP (Cloudflare 403). The hosted
+    pipeline never calls this; the local tools/refresh_tempo_cache.py script
+    does, on your home connection, and commits the result. fetch_tempo() (the
+    cache reader) is what the pipeline uses.
+    """
+    import time
+    national = fetch_rss(
+        feed_url="https://rss.tempo.co/nasional",
+        source_name="Tempo.co"
+    )
+    time.sleep(1.5)  # space the two requests to avoid a rapid burst
+    dunia = fetch_rss(
+        feed_url="https://rss.tempo.co/dunia",
+        source_name="Tempo.co (Dunia)"
+    )
+    return national + dunia
+
+
 def fetch_tempo() -> list[Headline]:
     """
     Read Tempo headlines from the cache file your machine commits, rather than
