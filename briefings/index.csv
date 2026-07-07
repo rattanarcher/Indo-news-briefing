@@ -26,3 +26,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-07-05,False,claude-sonnet-4-5,7121,0,0,29,
 2026-07-06,True,claude-sonnet-4-5,6968,3519,2515,30,"Five trainees died during military drills for village cooperative managers, prompting Indonesia to scale back the program amid criticism it militarized civilian roles. || Former President Jokowi launched a political tour with PSI across Lampung and announced plans for Central Java, fueling speculation about the 2029 elections. || Papuan separatists shot and killed American pilot Nicholas Goselin and burned his aircraft on July 2, escalating conflict in Indonesia's restive highlands."
 2026-07-07,False,claude-sonnet-4-5,6646,0,0,28,
+2026-07-08,False,claude-sonnet-4-5,11318,0,0,48,
