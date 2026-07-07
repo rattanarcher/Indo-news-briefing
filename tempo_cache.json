@@ -1,7 +1,85 @@
 {
-  "fetched_at": "2026-07-06T12:41:48.998042+00:00",
-  "count": 27,
+  "fetched_at": "2026-07-07T04:00:06.543489+00:00",
+  "count": 24,
   "headlines": [
+    {
+      "title": "DPR Jelaskan Alasan TNI Bisa Jadi Penyidik Siber dalam RUU KKS",
+      "url": "https://nasional.tempo.co/read/2112258/dpr-jelaskan-alasan-tni-bisa-jadi-penyidik-siber-dalam-ruu-kks",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 10:52:14 +0700"
+    },
+    {
+      "title": "Wamensos Dorong Percepatan Sekolah Rakyat di Wilayah 3T",
+      "url": "https://nasional.tempo.co/read/2112255/wamensos-dorong-percepatan-sekolah-rakyat-di-wilayah-3t",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 10:23:59 +0700"
+    },
+    {
+      "title": "Menteri Sosial Ingatkan Kepala Sekolah Rakyat Utamakan Empati dan Integritas",
+      "url": "https://nasional.tempo.co/read/2112254/menteri-sosial-ingatkan-kepala-sekolah-rakyat-utamakan-empati-dan-integritas",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 10:18:29 +0700"
+    },
+    {
+      "title": "SMA Unggul Garuda Rampungkan Kurikulum hingga Aturan Asrama",
+      "url": "https://nasional.tempo.co/read/2112253/sma-unggul-garuda-rampungkan-kurikulum-hingga-aturan-asrama",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 10:18:00 +0700"
+    },
+    {
+      "title": "Menkum Bertemu Dirjen WIPO Perkuat Pengembangan Ekosistem Kekayaan Intelektual",
+      "url": "https://nasional.tempo.co/read/2112249/menkum-bertemu-dirjen-wipo-perkuat-pengembangan-ekosistem-kekayaan-intelektual",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 10:10:17 +0700"
+    },
+    {
+      "title": "Poin-poin Pertemuan Prabowo dengan PM Singapura dan India",
+      "url": "https://nasional.tempo.co/read/2112245/poin-poin-pertemuan-prabowo-dengan-pm-singapura-dan-india",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 09:42:15 +0700"
+    },
+    {
+      "title": "RI-Singapura Sepakati Pembangunan Fasilitas Latihan Militer",
+      "url": "https://nasional.tempo.co/read/2112241/ri-singapura-sepakati-pembangunan-fasilitas-latihan-militer",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 08:56:01 +0700"
+    },
+    {
+      "title": "Sugiono dan Muzani Berencana Hadiri Pemakaman Ali Khamenei",
+      "url": "https://nasional.tempo.co/read/2112240/sugiono-dan-muzani-berencana-hadiri-pemakaman-ali-khamenei",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 08:49:34 +0700"
+    },
+    {
+      "title": "Mahasiswa UI Usul RUU Sisdiknas Hapus Hak Menteri di Pemilihan Rektor",
+      "url": "https://nasional.tempo.co/read/2112226/mahasiswa-ui-usul-ruu-sisdiknas-hapus-hak-menteri-di-pemilihan-rektor",
+      "source": "Tempo.co",
+      "published": "Tue, 7 Jul 2026 07:01:43 +0700"
+    },
+    {
+      "title": "Alasan PM India Narendra Modi Akan Kunjungi Candi Prambanan",
+      "url": "https://nasional.tempo.co/read/2112210/alasan-pm-india-narendra-modi-akan-kunjungi-candi-prambanan",
+      "source": "Tempo.co",
+      "published": "Mon, 6 Jul 2026 23:19:00 +0700"
+    },
+    {
+      "title": "Ketua Banggar DPR Bantah TKD 2027 Akan Turun",
+      "url": "https://nasional.tempo.co/read/2112200/ketua-banggar-dpr-bantah-tkd-2027-akan-turun",
+      "source": "Tempo.co",
+      "published": "Mon, 6 Jul 2026 21:08:44 +0700"
+    },
+    {
+      "title": "Temui Prabowo, PM Singapura Bahas SMA Taruna Nusantara",
+      "url": "https://nasional.tempo.co/read/2112199/temui-prabowo-pm-singapura-bahas-sma-taruna-nusantara",
+      "source": "Tempo.co",
+      "published": "Mon, 6 Jul 2026 20:53:00 +0700"
+    },
+    {
+      "title": "Prabowo Sambut PM India Narendra Modi di Bandara Halim",
+      "url": "https://nasional.tempo.co/read/2112195/prabowo-sambut-pm-india-narendra-modi-di-bandara-halim",
+      "source": "Tempo.co",
+      "published": "Mon, 6 Jul 2026 20:19:16 +0700"
+    },
     {
       "title": "PKB Undang Prabowo di Puncak Harlah ke-28",
       "url": "https://nasional.tempo.co/read/2112182/pkb-undang-prabowo-di-puncak-harlah-ke-28",
@@ -45,124 +123,28 @@
       "published": "Mon, 6 Jul 2026 17:06:27 +0700"
     },
     {
-      "title": "Kemenpan: PPPK Paruh Waktu Bisa Diangkat Tanpa Seleksi Ulang",
-      "url": "https://nasional.tempo.co/read/2112145/kemenpan-pppk-paruh-waktu-bisa-diangkat-tanpa-seleksi-ulang",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 16:49:00 +0700"
-    },
-    {
-      "title": "Polri Jadi Lembaga yang Paling Sering Diadukan ke Komnas HAM",
-      "url": "https://nasional.tempo.co/read/2112141/polri-jadi-lembaga-yang-paling-sering-diadukan-ke-komnas-ham",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 16:34:30 +0700"
-    },
-    {
-      "title": "Rencana Induk Rampung dan Anggaran Siap, Saatnya Jalankan Program Pemulihan",
-      "url": "https://nasional.tempo.co/read/2112140/rencana-induk-rampung-dan-anggaran-siap-saatnya-jalankan-program-pemulihan",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 16:30:00 +0700"
-    },
-    {
-      "title": "Kemenko PMK Dorong Proyek Prioritas Segera Terlihat di Lapangan",
-      "url": "https://nasional.tempo.co/read/2112136/kemenko-pmk-dorong-proyek-prioritas-segera-terlihat-di-lapangan",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 16:26:00 +0700"
-    },
-    {
-      "title": "Penjelasan Dasco soal Unggahan Ucapan Ulang Tahun ke Nadiem",
-      "url": "https://nasional.tempo.co/read/2112135/penjelasan-dasco-soal-unggahan-ucapan-ulang-tahun-ke-nadiem",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 16:15:19 +0700"
-    },
-    {
-      "title": "Banggar DPR: Anggaran MBG 2027 Jadi Rp 174 Triliun",
-      "url": "https://nasional.tempo.co/read/2112131/banggar-dpr-anggaran-mbg-2027-jadi-rp-174-triliun",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 15:29:16 +0700"
-    },
-    {
-      "title": "Ketua Banggar DPR Tolak Usul Kenaikan Gaji Kepala Daerah",
-      "url": "https://nasional.tempo.co/read/2112128/ketua-banggar-dpr-tolak-usul-kenaikan-gaji-kepala-daerah",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 15:12:46 +0700"
-    },
-    {
-      "title": "Riset Unair: Air Galon Guna Ulang Tak Picu Gangguan Hormon dan Kanker",
-      "url": "https://nasional.tempo.co/read/2112125/riset-unair-air-galon-guna-ulang-tak-picu-gangguan-hormon-dan-kanker",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 14:56:53 +0700"
-    },
-    {
-      "title": "SPK: Ada Dugaan Tekanan ke Dosen Unair Seusai Bersaksi di MK",
-      "url": "https://nasional.tempo.co/read/2112124/spk-ada-dugaan-tekanan-ke-dosen-unair-seusai-bersaksi-di-mk",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 14:56:00 +0700"
-    },
-    {
-      "title": "Yusril Persilakan Komnas HAM Selidiki Penembakan Ibu Hamil di Papua",
-      "url": "https://nasional.tempo.co/read/2112121/yusril-persilakan-komnas-ham-selidiki-penembakan-ibu-hamil-di-papua",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 14:37:15 +0700"
-    },
-    {
-      "title": "Komnas HAM Terima 3.003 Aduan Pelanggaran HAM pada 2025",
-      "url": "https://nasional.tempo.co/read/2112119/komnas-ham-terima-3-003-aduan-pelanggaran-ham-pada-2025",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 14:33:29 +0700"
-    },
-    {
-      "title": "Said PDIP Respons PSI yang Mengincar Jateng Jadi Kandang 'Gajah'",
-      "url": "https://nasional.tempo.co/read/2112116/said-pdip-respons-psi-yang-mengincar-jateng-jadi-kandang-gajah",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 13:54:49 +0700"
-    },
-    {
-      "title": "Komnas HAM Dorong Gencatan Senjata di Papua",
-      "url": "https://nasional.tempo.co/read/2112106/komnas-ham-dorong-gencatan-senjata-di-papua",
-      "source": "Tempo.co",
-      "published": "Mon, 6 Jul 2026 13:01:02 +0700"
-    },
-    {
-      "title": "Xi Jinping Janji Jaga Hubungan Jangka Panjang dengan Korut",
-      "url": "https://dunia.tempo.co/read/2112023/xi-jinping-janji-jaga-hubungan-jangka-panjang-dengan-korut",
+      "title": "Korban Jiwa akibat Ebola di Kongo Tembus 500 Orang",
+      "url": "https://dunia.tempo.co/read/2112194/korban-jiwa-akibat-ebola-di-kongo-tembus-500-orang",
       "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 21:07:57 +0700"
+      "published": "Mon, 6 Jul 2026 21:09:00 +0700"
     },
     {
-      "title": "Inggris-Prancis Siap Pimpin Misi Militer di Selat Hormuz",
-      "url": "https://dunia.tempo.co/read/2112021/inggris-prancis-siap-pimpin-misi-militer-di-selat-hormuz",
+      "title": "Teheran Tutup Wilayah Udara Selama Pemakaman Khamenei",
+      "url": "https://dunia.tempo.co/read/2112193/teheran-tutup-wilayah-udara-selama-pemakaman-khamenei",
       "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 20:57:48 +0700"
+      "published": "Mon, 6 Jul 2026 20:38:00 +0700"
     },
     {
-      "title": "Trump Isyaratkan Netanyahu ke Gedung Putih Pekan Depan",
-      "url": "https://dunia.tempo.co/read/2112008/trump-isyaratkan-netanyahu-ke-gedung-putih-pekan-depan",
+      "title": "Survei: Dua Pertiga Warga AS Ragukan Kesepakatan dengan Iran",
+      "url": "https://dunia.tempo.co/read/2112189/survei-dua-pertiga-warga-as-ragukan-kesepakatan-dengan-iran",
       "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 18:00:00 +0700"
+      "published": "Mon, 6 Jul 2026 20:08:00 +0700"
     },
     {
-      "title": "Hizbullah dan Hamas Hadiri Pemakaman Khamenei di Teheran",
-      "url": "https://dunia.tempo.co/read/2112002/hizbullah-dan-hamas-hadiri-pemakaman-khamenei-di-teheran",
+      "title": "Senat Filipina Gelar Sidang Pemakzulan Wapres Sara Duterte",
+      "url": "https://dunia.tempo.co/read/2112185/senat-filipina-gelar-sidang-pemakzulan-wapres-sara-duterte",
       "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 17:13:29 +0700"
-    },
-    {
-      "title": "Lantunan Doa Warnai Hari Kedua Rangkaian Pemakaman Khamenei",
-      "url": "https://dunia.tempo.co/read/2111955/lantunan-doa-warnai-hari-kedua-rangkaian-pemakaman-khamenei",
-      "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 12:00:00 +0700"
-    },
-    {
-      "title": "Mojtaba Khamenei Dilarang Hadiri Pemakaman Ayahnya, Kenapa?",
-      "url": "https://dunia.tempo.co/read/2111954/mojtaba-khamenei-dilarang-hadiri-pemakaman-ayahnya-kenapa",
-      "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 11:00:00 +0700"
-    },
-    {
-      "title": "Libanon: Kesepakatan dengan Israel Tak Akui Pendudukan",
-      "url": "https://dunia.tempo.co/read/2111950/libanon-kesepakatan-dengan-israel-tak-akui-pendudukan",
-      "source": "Tempo.co (Dunia)",
-      "published": "Sun, 5 Jul 2026 10:29:14 +0700"
+      "published": "Mon, 6 Jul 2026 19:49:23 +0700"
     }
   ]
 }
