@@ -1,7 +1,103 @@
 {
-  "fetched_at": "2026-07-10T12:00:07.536011+00:00",
-  "count": 23,
+  "fetched_at": "2026-07-11T04:00:08.162186+00:00",
+  "count": 29,
   "headlines": [
+    {
+      "title": "Jampidsus Mundur, DPR: Penegakan Hukum Jangan Kendur",
+      "url": "https://nasional.tempo.co/read/2113094/jampidsus-mundur-dpr-penegakan-hukum-jangan-kendur",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 10:29:03 +0700"
+    },
+    {
+      "title": "Ada Mobil Klinik Hewan Keliling, Pramono: Yang Pertama",
+      "url": "https://nasional.tempo.co/read/2113091/ada-mobil-klinik-hewan-keliling-pramono-yang-pertama",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 09:54:55 +0700"
+    },
+    {
+      "title": "Apa Itu Jalur RPL yang Diambil Jeje Govinda untuk S1",
+      "url": "https://nasional.tempo.co/read/2113084/apa-itu-jalur-rpl-yang-diambil-jeje-govinda-untuk-s1",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 08:53:17 +0700"
+    },
+    {
+      "title": "DPR Usul Gaji PPPK Daerah Fiskal Rendah Ditanggung APBN",
+      "url": "https://nasional.tempo.co/read/2113078/dpr-usul-gaji-pppk-daerah-fiskal-rendah-ditanggung-apbn",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 07:46:32 +0700"
+    },
+    {
+      "title": "Rachmat Gobel di Mata JK: Hampir Sama dengan Saya",
+      "url": "https://nasional.tempo.co/read/2113070/rachmat-gobel-di-mata-jk-hampir-sama-dengan-saya",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 07:12:07 +0700"
+    },
+    {
+      "title": "Soal OTT Bupati Sukoharjo, Luthfi: Ikan Busuk dari Kepala",
+      "url": "https://nasional.tempo.co/read/2113067/soal-ott-bupati-sukoharjo-luthfi-ikan-busuk-dari-kepala",
+      "source": "Tempo.co",
+      "published": "Sat, 11 Jul 2026 07:00:23 +0700"
+    },
+    {
+      "title": "Cerita Prabowo Tentang BUMN Pernah Mau Dijual ke Asing",
+      "url": "https://nasional.tempo.co/read/2113055/cerita-prabowo-tentang-bumn-pernah-mau-dijual-ke-asing",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 22:09:04 +0700"
+    },
+    {
+      "title": "Taspen Salurkan Manfaat JKK dan JKM Kepada Dua Keluarga ASN di Kepulauan Riau",
+      "url": "https://nasional.tempo.co/read/2113053/taspen-salurkan-manfaat-jkk-dan-jkm-kepada-dua-keluarga-asn-di-kepulauan-riau",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 21:57:01 +0700"
+    },
+    {
+      "title": "Prabowo: Percayalah ke Pemimpin, Medsos Belum Tentu Benar",
+      "url": "https://nasional.tempo.co/read/2113049/prabowo-percayalah-ke-pemimpin-medsos-belum-tentu-benar",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 21:44:21 +0700"
+    },
+    {
+      "title": "Pindad Akan Buat Senapan untuk Tentara Arab Saudi",
+      "url": "https://nasional.tempo.co/read/2113048/pindad-akan-buat-senapan-untuk-tentara-arab-saudi",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 21:35:57 +0700"
+    },
+    {
+      "title": "Prabowo Persilakan Tentara dan Polisi Periksa Dapur MBG",
+      "url": "https://nasional.tempo.co/read/2113039/prabowo-persilakan-tentara-dan-polisi-periksa-dapur-mbg",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 21:04:44 +0700"
+    },
+    {
+      "title": "Pemimpin Timor-Leste Soroti Peran Historis PDIP dalam Perjuangan Demokrasi",
+      "url": "https://nasional.tempo.co/read/2113037/pemimpin-timor-leste-soroti-peran-historis-pdip-dalam-perjuangan-demokrasi",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 20:54:22 +0700"
+    },
+    {
+      "title": "Megawati Bertemu Pemimpin Timor-Leste, Bahas Kerja Sama Maritim hingga Kaderisasi Partai",
+      "url": "https://nasional.tempo.co/read/2113034/megawati-bertemu-pemimpin-timor-leste-bahas-kerja-sama-maritim-hingga-kaderisasi-partai",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 20:44:47 +0700"
+    },
+    {
+      "title": "Pemprov DKI Luncurkan Layanan Mobil Klinik Hewan Keliling",
+      "url": "https://nasional.tempo.co/read/2113029/pemprov-dki-luncurkan-layanan-mobil-klinik-hewan-keliling",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 20:30:13 +0700"
+    },
+    {
+      "title": "Prabowo di NTB: Anda Mau Saya Bicara Sopan atau Jujur?",
+      "url": "https://nasional.tempo.co/read/2113027/prabowo-di-ntb-anda-mau-saya-bicara-sopan-atau-jujur",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 20:19:04 +0700"
+    },
+    {
+      "title": "BPJS Ketenagakerjaan Dorong Kemandirian Ahli Waris Lewat Program PEKA",
+      "url": "https://nasional.tempo.co/read/2113022/bpjs-ketenagakerjaan-dorong-kemandirian-ahli-waris-lewat-program-peka",
+      "source": "Tempo.co",
+      "published": "Fri, 10 Jul 2026 19:22:02 +0700"
+    },
     {
       "title": "Jimly Kritik Penjelasan Muzani soal Diutus Prabowo ke Iran",
       "url": "https://nasional.tempo.co/read/2113012/jimly-kritik-penjelasan-muzani-soal-diutus-prabowo-ke-iran",
@@ -27,118 +123,58 @@
       "published": "Fri, 10 Jul 2026 17:35:30 +0700"
     },
     {
-      "title": "Dari Jalan Putus hingga Huntap, Satgas PRR Kawal Bankeu Pemulihan di Aceh Utara",
-      "url": "https://nasional.tempo.co/read/2112999/dari-jalan-putus-hingga-huntap-satgas-prr-kawal-bankeu-pemulihan-di-aceh-utara",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 17:32:00 +0700"
-    },
-    {
-      "title": "Kesan Jimly soal Rachmat Gobel: Orangnya Luwes",
-      "url": "https://nasional.tempo.co/read/2112997/kesan-jimly-soal-rachmat-gobel-orangnya-luwes",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 17:27:12 +0700"
-    },
-    {
-      "title": "Pramono Buka Posko Pembebasan Lahan Kali Ciliwung",
-      "url": "https://nasional.tempo.co/read/2112994/pramono-buka-posko-pembebasan-lahan-kali-ciliwung",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 16:48:10 +0700"
-    },
-    {
-      "title": "Pramono Tawarkan Rusun bagi Warga di Sekitar Kali Ciliwung",
-      "url": "https://nasional.tempo.co/read/2112993/pramono-tawarkan-rusun-bagi-warga-di-sekitar-kali-ciliwung",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 16:39:54 +0700"
-    },
-    {
-      "title": "Hadapi Lonjakan Migrasi, Wali Kota Batam Minta Dukungan DPR Susun Lex Specialis Kependudukan",
-      "url": "https://nasional.tempo.co/read/2112989/hadapi-lonjakan-migrasi-wali-kota-batam-minta-dukungan-dpr-susun-lex-specialis-kependudukan",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 16:22:44 +0700"
-    },
-    {
-      "title": "Prabowo Resmikan 5 Bendungan Bernilai Rp 9,79 Triliun",
-      "url": "https://nasional.tempo.co/read/2112982/prabowo-resmikan-5-bendungan-bernilai-rp-979-triliun",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 15:44:28 +0700"
-    },
-    {
-      "title": "Saan Mustopa Memimpin Upacara Pemakaman Rachmat Gobel",
-      "url": "https://nasional.tempo.co/read/2112979/saan-mustopa-memimpin-upacara-pemakaman-rachmat-gobel",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 15:25:02 +0700"
-    },
-    {
-      "title": "Dana Rp 20 Triliun untuk BPJS Kesehatan Terganjal Regulasi",
-      "url": "https://nasional.tempo.co/read/2112977/dana-rp-20-triliun-untuk-bpjs-kesehatan-terganjal-regulasi",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 15:18:01 +0700"
-    },
-    {
-      "title": "Kesan Bahlil soal Rachmat Gobel: Panutan bagi Pengusaha Muda",
-      "url": "https://nasional.tempo.co/read/2112976/kesan-bahlil-soal-rachmat-gobel-panutan-bagi-pengusaha-muda",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 15:10:32 +0700"
-    },
-    {
-      "title": "Menkes: Banyak Aduan Perundungan Dokter Spesialis di Manado",
-      "url": "https://nasional.tempo.co/read/2112975/menkes-banyak-aduan-perundungan-dokter-spesialis-di-manado",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 15:07:59 +0700"
-    },
-    {
-      "title": "Doa Anies kepada Pelaku Kejahatan terhadap Rakyat",
-      "url": "https://nasional.tempo.co/read/2112969/doa-anies-kepada-pelaku-kejahatan-terhadap-rakyat",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 14:51:51 +0700"
-    },
-    {
-      "title": "Pramono Targetkan Normalisasi Kali Ciliwung Selesai Tahun Depan",
-      "url": "https://nasional.tempo.co/read/2112963/pramono-targetkan-normalisasi-kali-ciliwung-selesai-tahun-depan",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 14:32:15 +0700"
-    },
-    {
-      "title": "Kejanggalan Label Hoaks dari Kementerian Pertahanan",
-      "url": "https://nasional.tempo.co/read/2112962/kejanggalan-label-hoaks-dari-kementerian-pertahanan",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 14:31:44 +0700"
-    },
-    {
-      "title": "Pemerintah Bantah Perpres 111 Legalkan Diskriminasi LGBT",
-      "url": "https://nasional.tempo.co/read/2112960/pemerintah-bantah-perpres-111-legalkan-diskriminasi-lgbt",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 14:25:45 +0700"
-    },
-    {
-      "title": "Pemakaman Rachmat Gobel Digelar Secara Militer",
-      "url": "https://nasional.tempo.co/read/2112958/pemakaman-rachmat-gobel-digelar-secara-militer",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 14:24:00 +0700"
-    },
-    {
-      "title": "Pramono Kenang Rachmat Gobel: Dia Berkawan dengan Siapa Saja",
-      "url": "https://nasional.tempo.co/read/2112951/pramono-kenang-rachmat-gobel-dia-berkawan-dengan-siapa-saja",
-      "source": "Tempo.co",
-      "published": "Fri, 10 Jul 2026 13:36:00 +0700"
-    },
-    {
-      "title": "Kemlu: Timor Leste Tangkap 61 WNI karena Penipuan Online",
-      "url": "https://dunia.tempo.co/read/2112861/kemlu-timor-leste-tangkap-61-wni-karena-penipuan-online",
+      "title": "Sekjen ASEAN Ajak Pererat Kerja Sama di Tingkat Kawasan",
+      "url": "https://dunia.tempo.co/read/2113064/sekjen-asean-ajak-pererat-kerja-sama-di-tingkat-kawasan",
       "source": "Tempo.co (Dunia)",
-      "published": "Thu, 9 Jul 2026 22:05:00 +0700"
+      "published": "Fri, 10 Jul 2026 23:45:05 +0700"
     },
     {
-      "title": "Menlu Sugiono Bertolak ke Iran, Hadiri Pemakaman Khamenei",
-      "url": "https://dunia.tempo.co/read/2112858/menlu-sugiono-bertolak-ke-iran-hadiri-pemakaman-khamenei",
+      "title": "Pesan Ayat Al-Quran saat Upacara Pemakaman Ali Khamenei",
+      "url": "https://dunia.tempo.co/read/2113060/pesan-ayat-al-quran-saat-upacara-pemakaman-ali-khamenei",
       "source": "Tempo.co (Dunia)",
-      "published": "Thu, 9 Jul 2026 21:49:31 +0700"
+      "published": "Fri, 10 Jul 2026 22:53:39 +0700"
     },
     {
-      "title": "Puluhan Ribu Warga Hadiri Pemakaman Khamenei di Mashhad Iran",
-      "url": "https://dunia.tempo.co/read/2112855/puluhan-ribu-warga-hadiri-pemakaman-khamenei-di-mashhad-iran",
+      "title": "5 Pemakaman yang Jadi Sorotan Dunia Selain Ali Khamenei",
+      "url": "https://dunia.tempo.co/read/2113052/5-pemakaman-yang-jadi-sorotan-dunia-selain-ali-khamenei",
       "source": "Tempo.co (Dunia)",
-      "published": "Thu, 9 Jul 2026 21:38:19 +0700"
+      "published": "Fri, 10 Jul 2026 21:56:34 +0700"
+    },
+    {
+      "title": "Perdana, Prancis Aktifkan Langkah Darurat Gelombang Panas",
+      "url": "https://dunia.tempo.co/read/2113050/perdana-prancis-aktifkan-langkah-darurat-gelombang-panas",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:52:07 +0700"
+    },
+    {
+      "title": "PM Malaysia Anwar Ibrahim akan Luncurkan Avatar AI",
+      "url": "https://dunia.tempo.co/read/2113046/pm-malaysia-anwar-ibrahim-akan-luncurkan-avatar-ai",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:35:39 +0700"
+    },
+    {
+      "title": "Ali Khamenei Dikebumikan di Makam Imam Reza Mashhad Iran",
+      "url": "https://dunia.tempo.co/read/2113045/ali-khamenei-dikebumikan-di-makam-imam-reza-mashhad-iran",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:26:44 +0700"
+    },
+    {
+      "title": "Media: AS Tunda Serangan ke Iran untuk Buka Ruang Diplomasi",
+      "url": "https://dunia.tempo.co/read/2113042/media-as-tunda-serangan-ke-iran-untuk-buka-ruang-diplomasi",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:19:43 +0700"
+    },
+    {
+      "title": "Netanyahu: Perang dengan Iran Belum Berakhir",
+      "url": "https://dunia.tempo.co/read/2113041/netanyahu-perang-dengan-iran-belum-berakhir",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:12:52 +0700"
+    },
+    {
+      "title": "AS-Iran Saling Serang Lagi, Ancam Gencatan Senjata",
+      "url": "https://dunia.tempo.co/read/2113040/as-iran-saling-serang-lagi-ancam-gencatan-senjata",
+      "source": "Tempo.co (Dunia)",
+      "published": "Fri, 10 Jul 2026 21:06:26 +0700"
     }
   ]
 }
