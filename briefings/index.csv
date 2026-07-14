@@ -32,3 +32,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-07-11,False,claude-sonnet-4-5,7139,0,0,32,
 2026-07-12,False,claude-sonnet-4-5,7154,0,0,28,
 2026-07-13,True,claude-sonnet-4-5,6980,4879,2767,43,"Indonesia sent Foreign Minister Sugiono to Iran's holy city of Mashhad to attend the burial of Supreme Leader Ali Khamenei amid escalating U.S.-Iran military strikes. || Indonesia and India signed a defense deal for BrahMos supersonic cruise missiles and Astra air-to-air missiles during Modi's state visit to Jakarta. || Prabowo inaugurated five dams across four provinces on Friday, projects the government expects to add one million tons of rice production annually."
+2026-07-14,False,claude-sonnet-4-5,7341,0,0,27,
