@@ -38,3 +38,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-07-17,False,claude-sonnet-4-5,9105,0,0,40,
 2026-07-18,False,claude-sonnet-4-5,7339,0,0,29,
 2026-07-19,False,claude-sonnet-4-5,9640,0,0,42,
+2026-07-20,True,claude-sonnet-4-5,6633,5752,2395,43,"President Prabowo authorized a comprehensive review of the flagship free nutritious meals program after partner associations threatened to shut down kitchens nationwide over governance disputes. || The United States and Iran exchanged intensifying strikes for eight consecutive nights after their June ceasefire collapsed over control of the Strait of Hormuz. || Parliamentary leaders sharply criticized civil servant work culture, prompting the minister to issue a public letter defending millions of government employees."
