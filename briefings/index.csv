@@ -44,3 +44,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-07-23,False,claude-sonnet-4-5,9000,0,0,42,
 2026-07-24,False,claude-sonnet-4-5,7818,0,0,34,
 2026-07-25,False,claude-sonnet-4-5,8339,0,0,38,
+2026-07-26,False,claude-sonnet-4-5,8537,0,0,38,
