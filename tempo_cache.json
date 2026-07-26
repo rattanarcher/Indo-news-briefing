@@ -1,7 +1,49 @@
 {
-  "fetched_at": "2026-07-25T12:00:05.133778+00:00",
-  "count": 21,
+  "fetched_at": "2026-07-26T04:00:05.870823+00:00",
+  "count": 20,
   "headlines": [
+    {
+      "title": "Kemenpan RB  Buka 76 Formasi Magang Nasional",
+      "url": "https://nasional.tempo.co/read/2115464/kemenpan-rbbuka-76-formasi-magang-nasional",
+      "source": "Tempo.co",
+      "published": "Sun, 26 Jul 2026 10:16:20 +0700"
+    },
+    {
+      "title": "Radea Respati Dorong Penghapusan Dokumen Ganda, Dukung Smart City dan Pengurangan Sampah",
+      "url": "https://nasional.tempo.co/read/2115461/radea-respati-dorong-penghapusan-dokumen-ganda-dukung-smart-city-dan-pengurangan-sampah",
+      "source": "Tempo.co",
+      "published": "Sun, 26 Jul 2026 10:01:24 +0700"
+    },
+    {
+      "title": "Bersama PNM Mekaar, Mesin Jahit Tua Menghidupi Lima Keluarga",
+      "url": "https://nasional.tempo.co/read/2115456/bersama-pnm-mekaar-mesin-jahit-tua-menghidupi-lima-keluarga",
+      "source": "Tempo.co",
+      "published": "Sun, 26 Jul 2026 09:47:56 +0700"
+    },
+    {
+      "title": "Muncul Petisi soal Keraton Surakarta, Dua Kubu Merespons",
+      "url": "https://nasional.tempo.co/read/2115448/muncul-petisi-soal-keraton-surakarta-dua-kubu-merespons",
+      "source": "Tempo.co",
+      "published": "Sun, 26 Jul 2026 07:51:44 +0700"
+    },
+    {
+      "title": "Kaesang Pangarep Bidik Kursi DPR di Pemilu 2029",
+      "url": "https://nasional.tempo.co/read/2115442/kaesang-pangarep-bidik-kursi-dpr-di-pemilu-2029",
+      "source": "Tempo.co",
+      "published": "Sun, 26 Jul 2026 06:24:06 +0700"
+    },
+    {
+      "title": "Kata Anggota DPR soal Kebijakan ASN Kerja Dekat Rumah",
+      "url": "https://nasional.tempo.co/read/2115434/kata-anggota-dpr-soal-kebijakan-asn-kerja-dekat-rumah",
+      "source": "Tempo.co",
+      "published": "Sat, 25 Jul 2026 20:02:00 +0700"
+    },
+    {
+      "title": "Sulit Akses Layanan Kesehatan, Warga Jelbuk Kini Disambangi Nakes Lewat Homecare",
+      "url": "https://nasional.tempo.co/read/2115428/sulit-akses-layanan-kesehatan-warga-jelbuk-kini-disambangi-nakes-lewat-homecare",
+      "source": "Tempo.co",
+      "published": "Sat, 25 Jul 2026 19:12:03 +0700"
+    },
     {
       "title": "Kementrans Gelar Cek Kesehatan Gratis, Wamen Viva Yoga: Bentuk Tanggung Jawab Negara",
       "url": "https://nasional.tempo.co/read/2115423/kementrans-gelar-cek-kesehatan-gratis-wamen-viva-yoga-bentuk-tanggung-jawab-negara",
@@ -79,54 +121,6 @@
       "url": "https://nasional.tempo.co/read/2115381/kala-prabowo-sebut-londo-ireng-kini-berbaju-wartawan-lsm",
       "source": "Tempo.co",
       "published": "Sat, 25 Jul 2026 10:03:58 +0700"
-    },
-    {
-      "title": "Komdigi Bakal Kaji Putusan MK Soal Aturan Kuota Internet",
-      "url": "https://nasional.tempo.co/read/2115378/komdigi-bakal-kaji-putusan-mk-soal-aturan-kuota-internet",
-      "source": "Tempo.co",
-      "published": "Sat, 25 Jul 2026 09:16:39 +0700"
-    },
-    {
-      "title": "Pramono Anung Bentuk Tim Investigasi Bangunan Sekolah",
-      "url": "https://nasional.tempo.co/read/2115375/pramono-anung-bentuk-tim-investigasi-bangunan-sekolah",
-      "source": "Tempo.co",
-      "published": "Sat, 25 Jul 2026 09:02:50 +0700"
-    },
-    {
-      "title": "Pramono Anung Minta Satpam Penegur Sopir Alphard Tak Dipecat",
-      "url": "https://nasional.tempo.co/read/2115371/pramono-anung-minta-satpam-penegur-sopir-alphard-tak-dipecat",
-      "source": "Tempo.co",
-      "published": "Sat, 25 Jul 2026 08:25:25 +0700"
-    },
-    {
-      "title": "Apresiasi Program Homecare Jember, Wamenkes: Bakal Jadi Pilot Projek Nasional",
-      "url": "https://nasional.tempo.co/read/2115346/apresiasi-program-homecare-jember-wamenkes-bakal-jadi-pilot-projek-nasional",
-      "source": "Tempo.co",
-      "published": "Fri, 24 Jul 2026 21:35:20 +0700"
-    },
-    {
-      "title": "Rehabilitasi Gedung SDN Kebayoran Lama Dimulai September",
-      "url": "https://nasional.tempo.co/read/2115343/rehabilitasi-gedung-sdn-kebayoran-lama-dimulai-september",
-      "source": "Tempo.co",
-      "published": "Fri, 24 Jul 2026 20:46:00 +0700"
-    },
-    {
-      "title": "Celios Surati Russell Group Soal Risiko Proyek 10 Kampus URI",
-      "url": "https://nasional.tempo.co/read/2115339/celios-surati-russell-group-soal-risiko-proyek-10-kampus-uri",
-      "source": "Tempo.co",
-      "published": "Fri, 24 Jul 2026 20:00:37 +0700"
-    },
-    {
-      "title": "Bakom: 182 Sekolah Rakyat Berdiri Tahun ini",
-      "url": "https://nasional.tempo.co/read/2115316/bakom-182-sekolah-rakyat-berdiri-tahun-ini",
-      "source": "Tempo.co",
-      "published": "Fri, 24 Jul 2026 17:39:00 +0700"
-    },
-    {
-      "title": "Turki dan Otoritas Libya Timur Tingkatkan Kerja Sama Militer",
-      "url": "https://dunia.tempo.co/read/2115210/turki-dan-otoritas-libya-timur-tingkatkan-kerja-sama-militer",
-      "source": "Tempo.co (Dunia)",
-      "published": "Fri, 24 Jul 2026 08:47:56 +0700"
     }
   ]
 }
