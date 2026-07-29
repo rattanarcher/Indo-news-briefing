@@ -47,3 +47,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-07-26,False,claude-sonnet-4-5,8537,0,0,38,
 2026-07-27,True,claude-sonnet-4-5,8098,5143,2713,50,"Nanik Deyang resigned as head of Indonesia's National Nutrition Agency after 44 days, citing heart treatment, and was replaced by former deputy agriculture minister Sudaryono. || Armed separatists in Papua's Yahukimo district killed three indigenous civilians on July 20, accusing them of intelligence work, and security forces evacuated two bodies by week's end. || Foreign Minister Sugiono pressed Japan and ASEAN partners to strengthen support for Palestine during a week of meetings in Manila tied to the 59th ASEAN ministerial summit."
 2026-07-28,False,claude-sonnet-4-5,7016,0,0,27,
+2026-07-29,False,claude-sonnet-4-5,7790,0,0,30,
