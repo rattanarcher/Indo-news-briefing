@@ -1,7 +1,91 @@
 {
-  "fetched_at": "2026-07-29T12:01:39.372199+00:00",
-  "count": 24,
+  "fetched_at": "2026-07-30T04:00:05.306809+00:00",
+  "count": 29,
   "headlines": [
+    {
+      "title": "Prabowo Naikkan Tukin TNI, Bintang 4 Jadi Rp 48 Juta",
+      "url": "https://nasional.tempo.co/read/2116068/prabowo-naikkan-tukin-tni-bintang-4-jadi-rp-48-juta",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 10:35:09 +0700"
+    },
+    {
+      "title": "Gubernur Lampung Dukung Pemberantasan Narkotika dan Senjata Api Ilegal",
+      "url": "https://nasional.tempo.co/read/2116058/gubernur-lampung-dukung-pemberantasan-narkotika-dan-senjata-api-ilegal",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 09:38:37 +0700"
+    },
+    {
+      "title": "DKI Siapkan Modifikasi Cuaca Antisipasi Kemarau Ekstrem",
+      "url": "https://nasional.tempo.co/read/2116054/dki-siapkan-modifikasi-cuaca-antisipasi-kemarau-ekstrem",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 09:12:09 +0700"
+    },
+    {
+      "title": "23 Ribu Hektare Masuk Kontrak Konstruksi di 16 Kabupaten, Pemulihan Sawah kian Merata di Aceh",
+      "url": "https://nasional.tempo.co/read/2116047/23-ribu-hektare-masuk-kontrak-konstruksi-di-16-kabupaten-pemulihan-sawah-kian-merata-di-aceh",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 08:28:00 +0700"
+    },
+    {
+      "title": "Daftar 11 Tokoh dengan Elektabilitas Tertinggi Versi SMRC",
+      "url": "https://nasional.tempo.co/read/2116044/daftar-11-tokoh-dengan-elektabilitas-tertinggi-versi-smrc",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 08:19:48 +0700"
+    },
+    {
+      "title": "Sinergi BAZNAS - BPJS Ketenagakerjaan Hadirkan Jaminan Sosial Ketenagakerjaan bagi Mustahik",
+      "url": "https://nasional.tempo.co/read/2116002/sinergi-baznas-bpjs-ketenagakerjaan-hadirkan-jaminan-sosial-ketenagakerjaan-bagi-mustahik",
+      "source": "Tempo.co",
+      "published": "Thu, 30 Jul 2026 08:00:00 +0700"
+    },
+    {
+      "title": "Hadiri Sinergi PLN Batam dan Altiva, Amsakar-Li Claudia Dukung Investasi Berbasis Teknologi",
+      "url": "https://nasional.tempo.co/read/2116004/hadiri-sinergi-pln-batam-dan-altiva-amsakar-li-claudia-dukung-investasi-berbasis-teknologi",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 20:53:17 +0700"
+    },
+    {
+      "title": "Bank Bahteramas Kendari Perkuat Program KEJAR, Fasilitasi 10.282 Rekening SimPel Siswa",
+      "url": "https://nasional.tempo.co/read/2116001/bank-bahteramas-kendari-perkuat-program-kejar-fasilitasi-10-282-rekening-simpel-siswa",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 20:31:44 +0700"
+    },
+    {
+      "title": "Kepercayaan Investor Terhadap Kota Batam Menguat, Investasi Tumbuh 62,75 Persen",
+      "url": "https://nasional.tempo.co/read/2115999/kepercayaan-investor-terhadap-kota-batam-menguat-investasi-tumbuh-6275-persen",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 20:21:38 +0700"
+    },
+    {
+      "title": "BNI Perkuat Fondasi Bisnis untuk Mendukung Transformasi BUMN",
+      "url": "https://nasional.tempo.co/read/2115995/bni-perkuat-fondasi-bisnis-untuk-mendukung-transformasi-bumn",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 19:46:55 +0700"
+    },
+    {
+      "title": "Komitmen Siloam Hospitals Lippo Village Majukan Masa Depan Layanan Onkologi",
+      "url": "https://nasional.tempo.co/read/2115994/komitmen-siloam-hospitals-lippo-village-majukan-masa-depan-layanan-onkologi",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 19:36:28 +0700"
+    },
+    {
+      "title": "SPBUN-SGN Apresiasi Langkah DPR Selesaikan Polemik Ketenagakerjaan",
+      "url": "https://nasional.tempo.co/read/2115993/spbun-sgn-apresiasi-langkah-dpr-selesaikan-polemik-ketenagakerjaan",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 19:27:34 +0700"
+    },
+    {
+      "title": "Bank Bjb Bukukan Kinerja Positif, Aset Tembus Rp228,2 Triliun dan Laba Tumbuh 58,8 Persen",
+      "url": "https://nasional.tempo.co/read/2115992/bank-bjb-bukukan-kinerja-positif-aset-tembus-rp2282-triliun-dan-laba-tumbuh-588-persen",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 19:23:02 +0700"
+    },
+    {
+      "title": "Teras Cihampelas Jadi Aset Pemprov Jabar, Gubernur Dedi Mulyadi: Oktober Sudah Bersih",
+      "url": "https://nasional.tempo.co/read/2116005/teras-cihampelas-jadi-aset-pemprov-jabar-gubernur-dedi-mulyadi-oktober-sudah-bersih",
+      "source": "Tempo.co",
+      "published": "Wed, 29 Jul 2026 19:01:00 +0700"
+    },
     {
       "title": "Menkes Siapkan Riset Dampak MBG terhadap Pemenuhan Gizi",
       "url": "https://nasional.tempo.co/read/2115988/menkes-siapkan-riset-dampak-mbg-terhadap-pemenuhan-gizi",
@@ -39,88 +123,34 @@
       "published": "Wed, 29 Jul 2026 15:44:00 +0700"
     },
     {
-      "title": "Zulhas Bicara Nasib 13 Ribu Titik Dapur MBG Baru",
-      "url": "https://nasional.tempo.co/read/2115954/zulhas-bicara-nasib-13-ribu-titik-dapur-mbg-baru",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 15:28:00 +0700"
+      "title": "Korea Selatan Terbitkan RUU Kapal Selam Tenaga Nuklir",
+      "url": "https://dunia.tempo.co/read/2116057/korea-selatan-terbitkan-ruu-kapal-selam-tenaga-nuklir",
+      "source": "Tempo.co (Dunia)",
+      "published": "Thu, 30 Jul 2026 09:45:00 +0700"
     },
     {
-      "title": "Gatra Akasa, Transformasi Digital di Pangkalan TNI I Gusti Ngurah Rai",
-      "url": "https://nasional.tempo.co/read/2115952/gatra-akasa-transformasi-digital-di-pangkalan-tni-i-gusti-ngurah-rai",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 15:05:00 +0700"
+      "title": "Media AS: Konflik AS-Iran Bisa Berlanjut Berbulan-bulan",
+      "url": "https://dunia.tempo.co/read/2116050/media-as-konflik-as-iran-bisa-berlanjut-berbulan-bulan",
+      "source": "Tempo.co (Dunia)",
+      "published": "Thu, 30 Jul 2026 09:15:00 +0700"
     },
     {
-      "title": "Program PDP Antar Telkom Raih Lestari Award 2026",
-      "url": "https://nasional.tempo.co/read/2115946/program-pdp-antar-telkom-raih-lestari-award-2026",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 14:15:28 +0700"
+      "title": "Rusia Berusaha Tangkap Bos Telegram, Dakwaannya Terorisme",
+      "url": "https://dunia.tempo.co/read/2116049/rusia-berusaha-tangkap-bos-telegram-dakwaannya-terorisme",
+      "source": "Tempo.co (Dunia)",
+      "published": "Thu, 30 Jul 2026 08:44:27 +0700"
     },
     {
-      "title": "Guru Besar UI Desak Perlindungan Dokter Muda Diperkuat",
-      "url": "https://nasional.tempo.co/read/2115945/guru-besar-ui-desak-perlindungan-dokter-muda-diperkuat",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 14:14:00 +0700"
+      "title": "Mal AEON Jepang Meledak Pascagempa, 3 Orang Tewas",
+      "url": "https://dunia.tempo.co/read/2116045/mal-aeon-jepang-meledak-pascagempa-3-orang-tewas",
+      "source": "Tempo.co (Dunia)",
+      "published": "Thu, 30 Jul 2026 08:23:27 +0700"
     },
     {
-      "title": "Perkuat Kesiapan Post-Quantum Cryptography, Telkom Gelar Forum Kolaborasi Nasional",
-      "url": "https://nasional.tempo.co/read/2115942/perkuat-kesiapan-post-quantum-cryptography-telkom-gelar-forum-kolaborasi-nasional",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 13:55:03 +0700"
-    },
-    {
-      "title": "Mentrans: SDM Unggul Kunci Transformasi Transmigrasi",
-      "url": "https://nasional.tempo.co/read/2115940/mentrans-sdm-unggul-kunci-transformasi-transmigrasi",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 13:23:00 +0700"
-    },
-    {
-      "title": "Badan Pengarah Papua: Papua Bukan Tanah Kosong",
-      "url": "https://nasional.tempo.co/read/2115933/badan-pengarah-papua-papua-bukan-tanah-kosong",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 12:37:14 +0700"
-    },
-    {
-      "title": "Prabowo Instruksikan BMKG Perkuat Antisipasi El Nino",
-      "url": "https://nasional.tempo.co/read/2115925/prabowo-instruksikan-bmkg-perkuat-antisipasi-el-nino",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 11:16:51 +0700"
-    },
-    {
-      "title": "Provinsi Lampung Siap Jadi Sentra Pengembangan Singkong Nasional",
-      "url": "https://nasional.tempo.co/read/2115924/provinsi-lampung-siap-jadi-sentra-pengembangan-singkong-nasional",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 11:16:33 +0700"
-    },
-    {
-      "title": "Prabowo Bangga Anak Petani dan Buruh Lulusan Terbaik IPDN",
-      "url": "https://nasional.tempo.co/read/2115922/prabowo-bangga-anak-petani-dan-buruh-lulusan-terbaik-ipdn",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 11:10:49 +0700"
-    },
-    {
-      "title": "Sumarsih Khawatir Kembalinya Era Militerisme",
-      "url": "https://nasional.tempo.co/read/2115918/sumarsih-khawatir-kembalinya-era-militerisme",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 10:46:45 +0700"
-    },
-    {
-      "title": "Strategi Pemerintah untuk Hadapi Ancaman El Nino",
-      "url": "https://nasional.tempo.co/read/2115913/strategi-pemerintah-untuk-hadapi-ancaman-el-nino",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 09:40:55 +0700"
-    },
-    {
-      "title": "Prabowo Lantik 1.204 Lulusan IPDN Jadi Pamong Praja Muda",
-      "url": "https://nasional.tempo.co/read/2115912/prabowo-lantik-1-204-lulusan-ipdn-jadi-pamong-praja-muda",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 09:36:59 +0700"
-    },
-    {
-      "title": "SMRC: Mayoritas Responden Tak Yakin dengan Masa Depan Kopdes",
-      "url": "https://nasional.tempo.co/read/2115888/smrc-mayoritas-responden-tak-yakin-dengan-masa-depan-kopdes",
-      "source": "Tempo.co",
-      "published": "Wed, 29 Jul 2026 07:09:46 +0700"
+      "title": "Survei: Mayoritas Warga AS Nilai Netanyahu Negatif",
+      "url": "https://dunia.tempo.co/read/2115978/survei-mayoritas-warga-as-nilai-netanyahu-negatif",
+      "source": "Tempo.co (Dunia)",
+      "published": "Wed, 29 Jul 2026 19:00:00 +0700"
     },
     {
       "title": "Irak: 20 Milisi Tewas akibat Serangan AS-Arab Saudi",
