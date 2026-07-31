@@ -1,126 +1,126 @@
 {
-  "fetched_at": "2026-07-31T04:00:05.965353+00:00",
+  "fetched_at": "2026-07-31T12:25:23.754533+00:00",
   "count": 25,
   "headlines": [
+    {
+      "title": "Jumlah Manajer Koperasi Desa Merah Putih Masih Timpang",
+      "url": "https://nasional.tempo.co/read/2116337/jumlah-manajer-koperasi-desa-merah-putih-masih-timpang",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 18:51:43 +0700"
+    },
+    {
+      "title": "Prabowo Upacara HUT ke-81 RI di Jakarta",
+      "url": "https://nasional.tempo.co/read/2116336/prabowo-upacara-hut-ke-81-ri-di-jakarta",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 18:38:32 +0700"
+    },
+    {
+      "title": "BGN Akan Serahkan Skema Anggaran MBG ke Kementerian Keuangan",
+      "url": "https://nasional.tempo.co/read/2116333/bgn-akan-serahkan-skema-anggaran-mbg-ke-kementerian-keuangan",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 18:25:22 +0700"
+    },
+    {
+      "title": "Prabowo Siap Berangkat ke Korea Utara",
+      "url": "https://nasional.tempo.co/read/2116331/prabowo-siap-berangkat-ke-korea-utara",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 18:07:50 +0700"
+    },
+    {
+      "title": "Pelatihan Calon Manajer Kopdes Habiskan Rp 1 Triliun",
+      "url": "https://nasional.tempo.co/read/2116330/pelatihan-calon-manajer-kopdes-habiskan-rp-1-triliun",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 18:05:11 +0700"
+    },
+    {
+      "title": "Fakta di Balik Video Viral Siswa Menyeberang Sungai Tripe di Gayo Lues",
+      "url": "https://nasional.tempo.co/read/2116323/fakta-di-balik-video-viral-siswa-menyeberang-sungai-tripe-di-gayo-lues",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 17:03:00 +0700"
+    },
+    {
+      "title": "VandS Clinic Berikan Diskon Perawatan bagi Turis",
+      "url": "https://nasional.tempo.co/read/2116318/vands-clinic-berikan-diskon-perawatan-bagi-turis",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 16:47:39 +0700"
+    },
+    {
+      "title": "DJKI: Mulai 1 Agustus Pencatatan Hak Cipta Lagu dan Musik Nol Rupiah",
+      "url": "https://nasional.tempo.co/read/2116317/djki-mulai-1-agustus-pencatatan-hak-cipta-lagu-dan-musik-nol-rupiah",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 16:30:20 +0700"
+    },
+    {
+      "title": "Prabowo Kumpulkan Pengusaha Kadin di Istana Negara",
+      "url": "https://nasional.tempo.co/read/2116310/prabowo-kumpulkan-pengusaha-kadin-di-istana-negara",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 15:33:31 +0700"
+    },
+    {
+      "title": "Komitmen Le Minerale Hadirkan Galon Bebas BPA demi #GenerasiBebasBPA",
+      "url": "https://nasional.tempo.co/read/2116297/komitmen-le-minerale-hadirkan-galon-bebas-bpa-demi-generasibebasbpa",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 14:29:18 +0700"
+    },
+    {
+      "title": "Akreditasi Rumah Sakit Bakal Berbasis Keselamatan Pasien",
+      "url": "https://nasional.tempo.co/read/2116295/akreditasi-rumah-sakit-bakal-berbasis-keselamatan-pasien",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 13:56:27 +0700"
+    },
+    {
+      "title": "Rapor IKP 2025: Pengawasan dan Integritas DPR Raih Grade D",
+      "url": "https://nasional.tempo.co/read/2116290/rapor-ikp-2025-pengawasan-dan-integritas-dpr-raih-grade-d",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 13:23:26 +0700"
+    },
+    {
+      "title": "Calon Manajer Kopdes yang Lulus Pelatihan Masih Menanti Nominal Gaji",
+      "url": "https://nasional.tempo.co/read/2116285/calon-manajer-kopdes-yang-lulus-pelatihan-masih-menanti-nominal-gaji",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 12:53:53 +0700"
+    },
+    {
+      "title": "33.758 Peserta SPPI Lulus Jadi Manajer Kopdes dan Kampung Nelayan",
+      "url": "https://nasional.tempo.co/read/2116281/33-758-peserta-sppi-lulus-jadi-manajer-kopdes-dan-kampung-nelayan",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 12:26:11 +0700"
+    },
+    {
+      "title": "Istana Tanggapi Putusan MK soal MBG: Kita Hormati, Nanti Kita Pelajari",
+      "url": "https://nasional.tempo.co/read/2116277/istana-tanggapi-putusan-mk-soal-mbg-kita-hormati-nanti-kita-pelajari",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 11:51:39 +0700"
+    },
+    {
+      "title": "Prabowo akan Buat Sayembara Kota Terbersih dengan Hadiah Rp 20 Miliar",
+      "url": "https://nasional.tempo.co/read/2116276/prabowo-akan-buat-sayembara-kota-terbersih-dengan-hadiah-rp-20-miliar",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 11:45:12 +0700"
+    },
+    {
+      "title": "Istana Tegaskan Belum Ada Rencana Reshuffle Kabinet Awal Agustus",
+      "url": "https://nasional.tempo.co/read/2116270/istana-tegaskan-belum-ada-rencana-reshuffle-kabinet-awal-agustus",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 11:36:17 +0700"
+    },
+    {
+      "title": "Istana Tanggapi Hasil Survei Prabowo Turun di SMRC",
+      "url": "https://nasional.tempo.co/read/2116265/istana-tanggapi-hasil-survei-prabowo-turun-di-smrc",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 11:25:33 +0700"
+    },
+    {
+      "title": "Air Minum Biru Raih Top Brand Award 2026",
+      "url": "https://nasional.tempo.co/read/2116271/air-minum-biru-raih-top-brand-award-2026",
+      "source": "Tempo.co",
+      "published": "Fri, 31 Jul 2026 11:00:00 +0700"
+    },
     {
       "title": "Kementrans lepas 1.476 peserta TEP 2026, Dorong Kawasan Transmigrasi Berbasis Keilmuan",
       "url": "https://nasional.tempo.co/read/2116256/kementrans-lepas-1-476-peserta-tep-2026-dorong-kawasan-transmigrasi-berbasis-keilmuan",
       "source": "Tempo.co",
       "published": "Fri, 31 Jul 2026 10:16:02 +0700"
-    },
-    {
-      "title": "Pagi Ini, Jokowi Berangkat ke NTT untuk Menghadiri Rakorda PSI",
-      "url": "https://nasional.tempo.co/read/2116245/pagi-ini-jokowi-berangkat-ke-ntt-untuk-menghadiri-rakorda-psi",
-      "source": "Tempo.co",
-      "published": "Fri, 31 Jul 2026 09:06:26 +0700"
-    },
-    {
-      "title": "BMKG Ungkap Upaya Mitigasi Karhutla dan Kekeringan Akibat El Nino",
-      "url": "https://nasional.tempo.co/read/2116235/bmkg-ungkap-upaya-mitigasi-karhutla-dan-kekeringan-akibat-el-nino",
-      "source": "Tempo.co",
-      "published": "Fri, 31 Jul 2026 08:06:47 +0700"
-    },
-    {
-      "title": "DPR Minta Pemda Selesaikan Status PPPK selama Relaksasi Belanja Pegawai",
-      "url": "https://nasional.tempo.co/read/2116232/dpr-minta-pemda-selesaikan-status-pppk-selama-relaksasi-belanja-pegawai",
-      "source": "Tempo.co",
-      "published": "Fri, 31 Jul 2026 07:41:25 +0700"
-    },
-    {
-      "title": "MBG Watch: MK Gagal Berperan sebagai Judicial Protection Hak Warga",
-      "url": "https://nasional.tempo.co/read/2116228/mbg-watch-mk-gagal-berperan-sebagai-judicial-protection-hak-warga",
-      "source": "Tempo.co",
-      "published": "Fri, 31 Jul 2026 07:06:15 +0700"
-    },
-    {
-      "title": "Pramono Klaim Pembangunan Sejumlah Fasilitas Publik DKI Tanpa APBD",
-      "url": "https://nasional.tempo.co/read/2116214/pramono-klaim-pembangunan-sejumlah-fasilitas-publik-dki-tanpa-apbd",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 21:41:12 +0700"
-    },
-    {
-      "title": "BAZNAS Hadirkan Kalkulator Zakat dan Menu BAZNAS di LinkAja Syariah",
-      "url": "https://nasional.tempo.co/read/2116213/baznas-hadirkan-kalkulator-zakat-dan-menu-baznas-di-linkaja-syariah",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 21:31:53 +0700"
-    },
-    {
-      "title": "Program Desa Sarjana Unggul Kabupaten Malinau Siap Bangun Bangsa dari Desa",
-      "url": "https://nasional.tempo.co/read/2116211/program-desa-sarjana-unggul-kabupaten-malinau-siap-bangun-bangsa-dari-desa",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 21:26:48 +0700"
-    },
-    {
-      "title": "Gebyar Bakti Wanita Nusantara Semarakkan Alun-Alun Cilegon",
-      "url": "https://nasional.tempo.co/read/2116210/gebyar-bakti-wanita-nusantara-semarakkan-alun-alun-cilegon",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 20:51:48 +0700"
-    },
-    {
-      "title": "Kemenhan Ungkap Pertimbangan Kenaikan Tukin TNI dan Pegawainya",
-      "url": "https://nasional.tempo.co/read/2116209/kemenhan-ungkap-pertimbangan-kenaikan-tukin-tni-dan-pegawainya",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 20:50:25 +0700"
-    },
-    {
-      "title": "Sinergi Kementrans dan Pemda Majukan Kawasan Transmigrasi",
-      "url": "https://nasional.tempo.co/read/2116208/sinergi-kementrans-dan-pemda-majukan-kawasan-transmigrasi",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 20:38:45 +0700"
-    },
-    {
-      "title": "Cara Malinau Wujudkan Universal Health Coverage",
-      "url": "https://nasional.tempo.co/read/2116201/cara-malinau-wujudkan-universal-health-coverage",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 20:17:41 +0700"
-    },
-    {
-      "title": "Prabowo Antisipasi Perang di Timur Tengah Meluas: Kita Harus Siap Mental",
-      "url": "https://nasional.tempo.co/read/2116199/prabowo-antisipasi-perang-di-timur-tengah-meluas-kita-harus-siap-mental",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 20:13:03 +0700"
-    },
-    {
-      "title": "Prabowo: Jangan Jadi Jenderal Salon",
-      "url": "https://nasional.tempo.co/read/2116195/prabowo-jangan-jadi-jenderal-salon",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 19:49:55 +0700"
-    },
-    {
-      "title": "Prabowo Ingin Rel Kereta Api Dibangun dari Lampung hingga Aceh",
-      "url": "https://nasional.tempo.co/read/2116193/prabowo-ingin-rel-kereta-api-dibangun-dari-lampung-hingga-aceh",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 19:43:37 +0700"
-    },
-    {
-      "title": "Prabowo: Tak Perlu Kerahkan Rakyat untuk Sambut Saya",
-      "url": "https://nasional.tempo.co/read/2116186/prabowo-tak-perlu-kerahkan-rakyat-untuk-sambut-saya",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 19:08:25 +0700"
-    },
-    {
-      "title": "BNPP Hadiri Sidang Sosek Malindo, Perkuat Kolaborasi Pengelolaan Perbatasan RI-Malaysia",
-      "url": "https://nasional.tempo.co/read/2116184/bnpp-hadiri-sidang-sosek-malindo-perkuat-kolaborasi-pengelolaan-perbatasan-ri-malaysia",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 19:05:36 +0700"
-    },
-    {
-      "title": "Dikelola Baznas, Sedekah Kembalian Konsumen Alfamart Dimanfaatkan untuk Pembangunan Jembatan",
-      "url": "https://nasional.tempo.co/read/2116178/dikelola-baznas-sedekah-kembalian-konsumen-alfamart-dimanfaatkan-untuk-pembangunan-jembatan",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 18:19:46 +0700"
-    },
-    {
-      "title": "Pramono Ungkap Alasan Pembangunan SDN 01 Cipete Belum Rampung",
-      "url": "https://nasional.tempo.co/read/2116165/pramono-ungkap-alasan-pembangunan-sdn-01-cipete-belum-rampung",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 17:19:41 +0700"
-    },
-    {
-      "title": "Pemkab Malinau Subsidi Rujukan Udara bagi Pasien Gawat Darurat di Perbatasan",
-      "url": "https://nasional.tempo.co/read/2116159/pemkab-malinau-subsidi-rujukan-udara-bagi-pasien-gawat-darurat-di-perbatasan",
-      "source": "Tempo.co",
-      "published": "Thu, 30 Jul 2026 17:14:46 +0700"
     },
     {
       "title": "NYT: Netanyahu dan Lindsey Graham Bersekongkol Lemahkan ICC",
