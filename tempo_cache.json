@@ -1,7 +1,31 @@
 {
-  "fetched_at": "2026-08-02T04:00:06.144369+00:00",
-  "count": 17,
+  "fetched_at": "2026-08-02T12:23:19.562861+00:00",
+  "count": 20,
   "headlines": [
+    {
+      "title": "DAIKIN Perkenalkan Air Purifier Terbaru, Tawarkan Solusi Kualitas Udara Lebih Optimal",
+      "url": "https://nasional.tempo.co/read/2116511/daikin-perkenalkan-air-purifier-terbaru-tawarkan-solusi-kualitas-udara-lebih-optimal",
+      "source": "Tempo.co",
+      "published": "Sun, 2 Aug 2026 16:20:14 +0700"
+    },
+    {
+      "title": "Kekeringan dan Karhutla Masih Terjadi di Sejumlah Daerah",
+      "url": "https://nasional.tempo.co/read/2116509/kekeringan-dan-karhutla-masih-terjadi-di-sejumlah-daerah",
+      "source": "Tempo.co",
+      "published": "Sun, 2 Aug 2026 16:02:00 +0700"
+    },
+    {
+      "title": "BGN Suspend SPPG di Semarang Setelah 707 Orang Keracunan MBG",
+      "url": "https://nasional.tempo.co/read/2116496/bgn-suspend-sppg-di-semarang-setelah-707-orang-keracunan-mbg",
+      "source": "Tempo.co",
+      "published": "Sun, 2 Aug 2026 13:14:00 +0700"
+    },
+    {
+      "title": "Kata BPJS Ketenagakerjaan soal Video Latihan Calon Pegawai Jalan di Atas Api",
+      "url": "https://nasional.tempo.co/read/2116495/kata-bpjs-ketenagakerjaan-soal-video-latihan-calon-pegawai-jalan-di-atas-api",
+      "source": "Tempo.co",
+      "published": "Sun, 2 Aug 2026 12:41:00 +0700"
+    },
     {
       "title": "Pelindo Operasikan Terminal 2 Petikemas di Pelabuhan Tanjung Priok",
       "url": "https://nasional.tempo.co/read/2116475/pelindo-operasikan-terminal-2-petikemas-di-pelabuhan-tanjung-priok",
@@ -97,12 +121,6 @@
       "url": "https://nasional.tempo.co/read/2116382/bgn-usut-5-355-dapur-sppg-yang-diduga-melanggar",
       "source": "Tempo.co",
       "published": "Sat, 1 Aug 2026 09:13:00 +0700"
-    },
-    {
-      "title": "Bupati Bantul Segera Menerbitkan Izin Sementara GMS",
-      "url": "https://nasional.tempo.co/read/2116364/bupati-bantul-segera-menerbitkan-izin-sementara-gms",
-      "source": "Tempo.co",
-      "published": "Fri, 31 Jul 2026 23:07:51 +0700"
     }
   ]
 }
