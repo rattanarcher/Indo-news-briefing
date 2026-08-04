@@ -54,3 +54,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-08-02,False,claude-sonnet-4-5,5682,0,0,26,
 2026-08-03,True,claude-sonnet-4-5,6833,4677,2713,42,"Indonesia's Constitutional Court ruled that the flagship free nutritious meals program must be separated from the education budget by 2028. || President Prabowo's electability plunged from 34.9 percent to 14.5 percent over nine months, according to a survey released Thursday. || Kaesang Pangarep declared he would run for parliament from Central Java's fifth district in the 2029 elections."
 2026-08-04,False,claude-sonnet-4-5,6863,0,0,28,
+2026-08-05,False,claude-sonnet-4-5,8132,0,0,31,
