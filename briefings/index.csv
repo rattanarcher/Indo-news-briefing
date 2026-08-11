@@ -60,3 +60,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-08-08,False,claude-sonnet-4-5,6938,0,0,28,
 2026-08-09,False,claude-sonnet-4-5,7993,0,0,31,
 2026-08-10,True,claude-sonnet-4-5,7491,4332,1946,44,"Seventy-nine local governments face payroll shortfalls requiring Rp 3.7 trillion, prompting the central government to offer a three-step solution. || The Constitutional Court ruled that the Free Nutritious Meals program budget must be separated from the education allocation by 2028. || Indonesia cut first steel for its domestically-built Scorpene submarine at PT PAL's Surabaya shipyard on August 7."
+2026-08-11,False,claude-sonnet-4-5,8198,0,0,31,
