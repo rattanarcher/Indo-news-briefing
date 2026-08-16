@@ -1,30 +1,18 @@
 {
-  "fetched_at": "2026-08-16T04:00:05.398430+00:00",
-  "count": 4,
+  "fetched_at": "2026-08-16T22:02:06.629310+00:00",
+  "count": 2,
   "headlines": [
+    {
+      "title": "Elnusa Petrofin Percepat Distribusi Energi Pascagempa Nusa Tenggara Timur",
+      "url": "https://nasional.tempo.co/read/2117632/elnusa-petrofin-percepat-distribusi-energi-pascagempa-nusa-tenggara-timur",
+      "source": "Tempo.co",
+      "published": "Sun, 16 Aug 2026 17:24:06 +0700"
+    },
     {
       "title": "DPR Sampaikan Duka Gempa NTT, Koordinasikan Bantuan-Evakuasi Korban",
       "url": "https://nasional.tempo.co/read/2117578/dpr-sampaikan-duka-gempa-ntt-koordinasikan-bantuan-evakuasi-korban",
       "source": "Tempo.co",
       "published": "Sat, 15 Aug 2026 17:47:00 +0700"
-    },
-    {
-      "title": "Sinergi PNM dan OJK Perkuat UMKM Perempuan Aceh Naik Kelas",
-      "url": "https://nasional.tempo.co/read/2117571/sinergi-pnm-dan-ojk-perkuat-umkm-perempuan-aceh-naik-kelas",
-      "source": "Tempo.co",
-      "published": "Sat, 15 Aug 2026 13:53:00 +0700"
-    },
-    {
-      "title": "Rumah Sehat Baznas ke-33 Hadir, Akses Kesehatan Masyarakat Jepara Bertambah",
-      "url": "https://nasional.tempo.co/read/2117569/rumah-sehat-baznas-ke-33-hadir-akses-kesehatan-masyarakat-jepara-bertambah",
-      "source": "Tempo.co",
-      "published": "Sat, 15 Aug 2026 13:03:00 +0700"
-    },
-    {
-      "title": "Telkom Perkuat Bisnis Enterprise, Kontribusi Diperkirakan 30 Persen",
-      "url": "https://nasional.tempo.co/read/2117562/telkom-perkuat-bisnis-enterprise-kontribusi-diperkirakan-30-persen",
-      "source": "Tempo.co",
-      "published": "Sat, 15 Aug 2026 10:30:00 +0700"
     }
   ]
 }
