@@ -73,3 +73,5 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-08-21,False,claude-sonnet-4-5,8667,0,0,36,
 2026-08-22,False,claude-sonnet-4-5,6498,0,0,22,
 2026-08-23,False,claude-sonnet-4-5,7778,0,0,34,
+2026-08-24,True,claude-sonnet-4-5,6093,4932,3635,41,"Tensions erupted in Aceh on August 15 when a man replaced the Indonesian flag with a GAM-linked crescent flag during a peace anniversary event, triggering clashes and warning shots. || One Indonesian soldier died and two were wounded in a firefight with armed separatists in Papua's Mimika district during Independence Day celebrations. || Chinese Foreign Minister Wang Yi and Defense Minister Dong Jun met President Prabowo on Friday following strategic talks focused on deepening bilateral cooperation."
+2026-08-25,False,claude-sonnet-4-5,7460,0,0,32,
