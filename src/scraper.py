@@ -13,6 +13,9 @@ from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 import logging
 import re
+import time
+import os
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -75,13 +78,81 @@ def is_recent(date_str: str, max_age_hours: int = 36) -> bool:
     return age < timedelta(hours=max_age_hours)
 
 
+def _sanitise_xml(raw: str) -> str:
+    """
+    Repair the most common reasons feedparser reports 'undefined entity' on
+    otherwise-valid feeds: bare ampersands and HTML named entities that are not
+    predefined in XML. XML only predefines amp, lt, gt, quot, apos.
+    """
+    if not raw:
+        return raw
+    # Map common HTML entities to their XML-safe numeric equivalents
+    named = {
+        "&nbsp;": "&#160;", "&mdash;": "&#8212;", "&ndash;": "&#8211;",
+        "&rsquo;": "&#8217;", "&lsquo;": "&#8216;", "&rdquo;": "&#8221;",
+        "&ldquo;": "&#8220;", "&hellip;": "&#8230;", "&eacute;": "&#233;",
+        "&agrave;": "&#224;", "&uuml;": "&#252;", "&copy;": "&#169;",
+        "&reg;": "&#174;", "&trade;": "&#8482;", "&deg;": "&#176;",
+        "&times;": "&#215;", "&middot;": "&#183;", "&bull;": "&#8226;",
+    }
+    for k, v in named.items():
+        raw = raw.replace(k, v)
+    # Escape any remaining bare ampersand that is not already part of a valid
+    # entity (numeric &#123; / &#x1F; or one of the five XML-predefined names).
+    raw = re.sub(r'&(?!#\d+;|#x[0-9A-Fa-f]+;|amp;|lt;|gt;|quot;|apos;)', '&amp;', raw)
+    return raw
+
+
 def fetch_rss(feed_url: str, source_name: str, max_items: int = 20, filter_date: bool = True) -> list[Headline]:
     """Fetch headlines from an RSS feed, optionally filtering by recency."""
     headlines = []
     try:
-        feed = feedparser.parse(feed_url)
+        # Fetch each feed on its OWN fresh connection, and retry transient
+        # network errors. Some sources (Antara, Detik) intermittently reset the
+        # connection mid-run (RemoteDisconnected / WinError 10054). A reset can
+        # otherwise poison the pool and make the NEXT source fail too, which is
+        # what made Tempo look broken when the real fault was the source before
+        # it. Connection: close + a fresh Session per attempt isolates each fetch.
+        raw = None
+        last_err = None
+        for attempt in range(3):
+            try:
+                with requests.Session() as sess:
+                    sess.headers.update({"Connection": "close"})
+                    resp = sess.get(feed_url, timeout=REQUEST_TIMEOUT)
+                    resp.raise_for_status()
+                    raw = resp.text
+                break
+            except requests.exceptions.HTTPError as e:
+                # A real HTTP status (403/404 etc.) will not change on retry
+                last_err = e
+                break
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.ChunkedEncodingError,
+                    requests.exceptions.Timeout) as e:
+                # Transient: reset / aborted connection. Wait and retry fresh.
+                last_err = e
+                time.sleep(1.0 * (attempt + 1))
+                continue
+            except Exception as e:
+                last_err = e
+                break
+
+        if raw is None:
+            logger.error(f"Error fetching RSS for {source_name}: {last_err}")
+            return headlines
+
+        feed = feedparser.parse(raw)
+
+        # If malformed (e.g. Tempo's 'undefined entity'), sanitise the bytes we
+        # already have and re-parse. No extra network request.
         if feed.bozo and not feed.entries:
-            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}")
+            logger.warning(f"RSS parse error for {source_name}: {feed.bozo_exception}; sanitising")
+            feed = feedparser.parse(_sanitise_xml(raw))
+            if feed.entries:
+                logger.info(f"Sanitiser recovered {len(feed.entries)} entries for {source_name}")
+
+        if feed.bozo and not feed.entries:
             return headlines
 
         for entry in feed.entries[:max_items]:
@@ -151,23 +222,36 @@ def fetch_detik() -> list[Headline]:
 
 def fetch_tempo_raw() -> list[Headline]:
     """
-    Fetch Tempo directly from its RSS feeds. Works from a RESIDENTIAL IP but
-    NOT from the GitHub Actions datacentre IP (Cloudflare 403). The hosted
-    pipeline never calls this; the local tools/refresh_tempo_cache.py script
-    does, on your home connection, and commits the result. fetch_tempo() (the
-    cache reader) is what the pipeline uses.
+    Fetch Tempo directly from its RSS feeds. This works from a RESIDENTIAL IP
+    but NOT from the GitHub Actions datacentre IP, which Tempo's Cloudflare
+    403s. The hosted pipeline therefore does not call this; the local
+    tools/refresh_tempo_cache.py script does, and commits the result. See
+    fetch_tempo() below, which reads that cached result.
+
+    Covers the Bahasa national (nasional) and Bahasa international (dunia)
+    desks, which carry the Indonesian political and policy coverage the
+    briefing is built on. The English edition (en.tempo.co) was trialled and
+    dropped: it is a general-interest international/sport product whose useful
+    political items merely duplicate the Bahasa feeds.
     """
-    import time
-    national = fetch_rss(
-        feed_url="https://rss.tempo.co/nasional",
-        source_name="Tempo.co"
-    )
-    time.sleep(1.5)  # space the two requests to avoid a rapid burst
-    dunia = fetch_rss(
-        feed_url="https://rss.tempo.co/dunia",
-        source_name="Tempo.co (Dunia)"
-    )
-    return national + dunia
+    feeds = [
+        ("https://rss.tempo.co/nasional", "Tempo.co"),
+        ("https://rss.tempo.co/dunia", "Tempo.co (Dunia)"),
+    ]
+
+    headlines = []
+    for i, (url, name) in enumerate(feeds):
+        if i:
+            time.sleep(1.5)  # space requests to avoid a rapid burst
+        headlines += fetch_rss(feed_url=url, source_name=name)
+
+    return headlines
+
+
+# Tempo cache: written by your machine (residential IP), read by the pipeline.
+TEMPO_CACHE_PATH = os.environ.get("TEMPO_CACHE_PATH", "tempo_cache.json")
+# Skip cached Tempo headlines older than this many hours (stale safeguard).
+TEMPO_CACHE_MAX_AGE_HOURS = int(os.environ.get("TEMPO_CACHE_MAX_AGE_HOURS", "24"))
 
 
 def fetch_tempo() -> list[Headline]:
@@ -180,9 +264,6 @@ def fetch_tempo() -> list[Headline]:
     If the cache is missing or older than TEMPO_CACHE_MAX_AGE_HOURS, Tempo is
     quietly skipped for that run and the other sources carry the briefing.
     """
-    import os, json
-    TEMPO_CACHE_PATH = os.environ.get("TEMPO_CACHE_PATH", "tempo_cache.json")
-    TEMPO_CACHE_MAX_AGE_HOURS = int(os.environ.get("TEMPO_CACHE_MAX_AGE_HOURS", "24"))
     try:
         if not os.path.exists(TEMPO_CACHE_PATH):
             logger.info("Tempo cache not found; skipping Tempo this run "
@@ -227,7 +308,6 @@ def fetch_tempo() -> list[Headline]:
         return []
 
 
-
 def fetch_antara() -> list[Headline]:
     """Antara News - English general news feed."""
     headlines = fetch_rss(
@@ -255,6 +335,15 @@ def fetch_republika() -> list[Headline]:
     return fetch_rss(
         feed_url="https://www.republika.co.id/rss/",
         source_name="Republika"
+    )
+
+
+def fetch_mediaindonesia() -> list[Headline]:
+    """Media Indonesia - main RSS feed. National daily, strong politics/law
+    coverage. Fetches directly (no cache or browser needed); feed is current."""
+    return fetch_rss(
+        feed_url="https://mediaindonesia.com/feed",
+        source_name="Media Indonesia"
     )
 
 
@@ -294,15 +383,19 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
 
     fetchers = [
         ("Detik.com", fetch_detik),
+        ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News International", fetch_antara_international),
         ("Republika", fetch_republika),
+        ("Media Indonesia", fetch_mediaindonesia),
     ]
 
-# Tempo reads from the residential-IP cache (see fetch_tempo), so it is
-    # always in the base list. Kompas stays browser-first.
-    fetchers.append(("Tempo.co", fetch_tempo))
     if browser_available:
+        # Kompas is browser-first (it blocks direct requests but not the
+        # browser). Tempo is RSS-only: Cloudflare blocks its homepage, section
+        # pages and sitemap to automated browsers, but rss.tempo.co stays open,
+        # so we read the feed (sanitised for malformed XML) and do not attempt
+        # the browser/HTML paths that Cloudflare denies.
         fetchers.append(("Kompas.com", fetch_kompas_browser))
 
     all_headlines = {}
@@ -310,8 +403,9 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
     for source_name, fetcher in fetchers:
         headlines = fetcher()
 
-        # If RSS returned nothing, try HTML fallback
-        if not headlines and source_name in FALLBACK_SELECTORS:
+        # If RSS returned nothing, try HTML fallback. Tempo is excluded: its
+        # HTML is behind Cloudflare (403), so only the RSS sanitiser can help.
+        if not headlines and source_name in FALLBACK_SELECTORS and source_name != "Tempo.co":
             fb = FALLBACK_SELECTORS[source_name]
             logger.info(f"RSS empty for {source_name}, trying HTML fallback...")
             headlines = fetch_html(fb["url"], source_name, fb["selector"])
@@ -320,8 +414,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
         if not headlines and source_name == "Detik.com" and browser_available:
             logger.info(f"RSS and HTML both failed for Detik, trying browser scraper...")
             headlines = fetch_detik_browser()
-
-
 
         # Deduplicate by URL
         seen_urls = set()
