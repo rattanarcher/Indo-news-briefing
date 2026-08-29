@@ -1,15 +1,13 @@
 # Indonesia Daily News Briefing
-# Runs every day at 7:00 AM Canberra time
+# Runs every day at 7:37 AM Singapore time (SGT)
 #
-# Canberra is AEDT (UTC+11) in summer, AEST (UTC+10) in winter.
 # We use 23:37 UTC (= 7:37am SGT, UTC+8, no daylight saving) as the cron time.
-# During AEST months this will arrive at 6am — adjust if needed.
 
 name: Daily Indonesia News Briefing
 
 on:
   schedule:
-    # 20:00 UTC = 07:00 AEDT (Canberra summer time)
+    # 23:37 UTC = 07:37 SGT (UTC+8, no DST)
     - cron: "37 23 * * *"
   workflow_dispatch: # Allow manual trigger from GitHub UI
 
