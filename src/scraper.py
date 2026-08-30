@@ -1,6 +1,6 @@
 """
 Scraper module for Indonesian news headlines.
-Fetches from: Detik, Tempo, Antara News, CNN Indonesia
+Fetches from: Detik, Media Indonesia, Antara News, CNN Indonesia
 Uses RSS feeds where available, falls back to HTML scraping.
 Filters out articles older than 36 hours.
 """
@@ -383,7 +383,6 @@ def fetch_all_headlines() -> dict[str, list[Headline]]:
 
     fetchers = [
         ("Detik.com", fetch_detik),
-        ("Tempo.co", fetch_tempo),
         ("Antara News", fetch_antara),
         ("Antara News International", fetch_antara_international),
         ("Republika", fetch_republika),
