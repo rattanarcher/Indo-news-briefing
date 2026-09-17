@@ -97,3 +97,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-09-14,True,claude-sonnet-4-5,6485,6687,1753,50,"President Prabowo attended the 18th BRICS Summit in New Delhi, calling for Global South unity and emphasizing Indonesia's role in multilateral forums. || Partai Demokrat leader AHY's speech about limits to power sparked coalition tensions and interpretations that he was signaling a 2029 presidential run. || A proposal by village heads to extend or eliminate term limits drew pushback from DPR members and experts who warned it would undermine democracy. || Three civil servants from the Agriculture Office were shot dead in Jayawijaya, prompting a manhunt by security forces."
 2026-09-15,False,claude-sonnet-4-5,8838,0,0,40,
 2026-09-16,False,claude-sonnet-4-5,6825,0,0,29,
+2026-09-17,False,claude-sonnet-4-5,8829,0,0,37,
