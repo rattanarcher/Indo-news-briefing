@@ -103,3 +103,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-09-20,False,claude-sonnet-4-5,7692,0,0,33,
 2026-09-21,True,claude-sonnet-4-5,8834,4917,3499,48,"Coalition parties agreed to raise the parliamentary threshold to 5 percent, but the proposal split allies and triggered opposition from smaller parties. || Indonesia's first aircraft carrier, the former Italian vessel Giuseppe Garibaldi, arrived in Jakarta on September 18 to be commissioned as KRI Sriwijaya. || President Prabowo conducted his sixth cabinet reshuffle in two years, replacing Finance Minister Purbaya after internal tensions over personnel rotations."
 2026-09-22,False,claude-sonnet-4-5,7251,0,0,28,
+2026-09-23,False,claude-sonnet-4-5,6998,0,0,22,
