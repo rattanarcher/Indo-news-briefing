@@ -108,3 +108,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-09-25,False,claude-sonnet-4-5,8748,0,0,34,
 2026-09-26,False,claude-sonnet-4-5,8573,0,0,34,
 2026-09-27,False,claude-sonnet-4-5,8850,0,0,40,
+2026-09-28,True,claude-sonnet-4-5,7341,5465,1692,46,Vice President Gibran faced a Constitutional Court challenge over whether his educational credentials met the high school diploma requirement for presidential candidates. || Political parties debated a proposed rule requiring presidential candidates to be backed by at least two parliamentary factions ahead of the 2029 election. || Indonesia's delegation walked out of the UN General Assembly as Israeli Prime Minister Netanyahu began his address on September 24.
