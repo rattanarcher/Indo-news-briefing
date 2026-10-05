@@ -115,3 +115,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-10-02,False,claude-sonnet-4-5,7513,0,0,30,
 2026-10-03,False,claude-sonnet-4-5,9179,0,0,36,
 2026-10-04,False,claude-sonnet-4-5,8234,0,0,32,
+2026-10-05,True,claude-sonnet-4-5,6960,5542,3439,47,"President Prabowo carried out his seventh cabinet reshuffle on October 1st, replacing National Police Chief Listyo Sigit with Suyudi Ario Seto and rotating 16 senior positions. || New National Police Chief Suyudi Ario Seto launched a sweeping personnel shake-up just one day after taking office, rotating 88 officers including 19 regional police chiefs. || Prabowo appointed 26 members to the Presidential Advisory Council on October 2nd, including former Constitutional Court chief Anwar Usman and academic Rocky Gerung."
