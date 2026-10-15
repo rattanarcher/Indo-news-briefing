@@ -125,3 +125,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-10-12,True,claude-sonnet-4-5,7800,5762,1761,51,"The Constitutional Court ruled it found no proof Vice President Gibran held a high school diploma but could not disqualify him from office. || Parliament passed the Labor Protection Law on October 6, fulfilling a Constitutional Court deadline and introducing new rules on contracts, severance, and oversight. || National Police Chief Suyudi Ario Seto launched sweeping personnel changes one day after his October 1 inauguration, rotating 88 officers including 19 regional police chiefs."
 2026-10-13,False,claude-sonnet-4-5,7039,0,0,24,
 2026-10-14,False,claude-sonnet-4-5,6949,0,0,30,
+2026-10-15,False,claude-sonnet-4-5,5329,0,0,17,
