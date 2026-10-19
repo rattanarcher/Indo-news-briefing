@@ -129,3 +129,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-10-16,False,claude-sonnet-4-5,6997,0,0,28,
 2026-10-17,False,claude-sonnet-4-5,7520,0,0,32,
 2026-10-18,False,claude-sonnet-4-5,8225,0,0,34,
+2026-10-19,True,claude-sonnet-4-5,6382,5626,1582,45,"The Constitutional Court found no proof of Vice President Gibran's high school diploma but declined to disqualify him, leaving the matter to parliament. || President Prabowo conducted three major reshuffles in October, culminating in a swap between army chief Maruli Simanjuntak and deputy TNI commander Tandyo Budi Revita. || UN Secretary-General António Guterres arrived in Indonesia for a three-day visit to strengthen multilateral cooperation and honor Indonesian peacekeepers."
