@@ -138,3 +138,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-10-25,False,claude-sonnet-4-5,7763,0,0,33,
 2026-10-26,True,claude-sonnet-4-5,8222,5210,1902,51,"Students and civil society groups protested across Indonesia on October 20 to mark two years of the Prabowo-Gibran administration. || President Prabowo's 26-member advisory council faced a Constitutional Court challenge over claims the bloated structure burdens the state budget. || Indonesia signed the Badr Memorandum with Turkey, Qatar, and Pakistan on October 21 to boost joint defense production and reduce reliance on foreign suppliers."
 2026-10-27,False,claude-sonnet-4-5,7927,0,0,33,
+2026-10-28,False,claude-sonnet-4-5,6855,0,0,25,
