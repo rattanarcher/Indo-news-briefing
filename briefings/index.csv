@@ -146,3 +146,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-11-02,True,claude-sonnet-4-5,7211,4729,1619,47,The Supreme Court on October 30 canceled the high school equivalency certificate used by Vice President Gibran Rakabuming Raka in his 2024 candidacy. || Singapore and Indonesia agreed on October 27 to establish a joint task force to address transboundary haze from Indonesian forest fires that reached hazardous levels. || Kopassus designated First Lieutenant AG as a suspect on October 28 in the death of First Lieutenant Jihad Ahmad at a weapons depot four days earlier.
 2026-11-03,False,claude-sonnet-4-5,7611,0,0,31,
 2026-11-04,False,claude-sonnet-4-5,7811,0,0,31,
+2026-11-05,False,claude-sonnet-4-5,6328,0,0,23,
