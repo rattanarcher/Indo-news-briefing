@@ -150,3 +150,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-11-06,False,claude-sonnet-4-5,6598,0,0,28,
 2026-11-07,False,claude-sonnet-4-5,9855,0,0,43,
 2026-11-08,False,claude-sonnet-4-5,8764,0,0,36,
+2026-11-09,True,claude-sonnet-4-5,6792,5721,4292,49,"President Prabowo dismissed his chief of staff Listyo Sigit Prabowo after police named him a suspect in allegedly wiretapping the president and other senior officials. || Indonesia's military deployed more than 20,000 troops to Jakarta in a four-phase operation as the wiretapping scandal unfolded. || New national police chief Suyudi Ario Seto conducted five major personnel mutations within his first month, reassigning hundreds of officers across all levels."
