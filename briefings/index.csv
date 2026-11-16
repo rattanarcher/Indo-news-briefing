@@ -157,3 +157,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-11-13,False,claude-sonnet-4-5,6061,0,0,26,
 2026-11-14,False,claude-sonnet-4-5,6914,0,0,27,
 2026-11-15,False,claude-sonnet-4-5,9259,0,0,41,
+2026-11-16,True,claude-sonnet-4-5,303,0,0,0,

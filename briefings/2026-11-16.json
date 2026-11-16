@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-16",
+  "date_display": "Monday, 16 November 2026",
+  "is_monday": true,
+  "model": "claude-sonnet-4-5",
+  "generated_at": "2026-11-16T03:03:08.938269+00:00",
+  "sections": {
+    "daily_summary": {
+      "html": "ERROR: Could not generate summary. Reason: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ch5s2WTy5X3Bna91AbcxH'}",
+      "text": "ERROR: Could not generate summary. Reason: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ch5s2WTy5X3Bna91AbcxH'}"
+    },
+    "weekly_review": {
+      "html": "",
+      "text": "",
+      "takeaways": []
+    },
+    "commentary_review": {
+      "html": "",
+      "text": ""
+    }
+  },
+  "cited_urls": [],
+  "n_cited_urls": 0
+}
