@@ -165,3 +165,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-11-21,False,claude-sonnet-4-5,7662,0,0,30,
 2026-11-22,False,claude-sonnet-4-5,7379,0,0,32,
 2026-11-23,True,claude-sonnet-4-5,8152,5536,3611,51,"President Prabowo Subianto is expected to submit two vice presidential candidates to parliament on November 25 to replace Gibran Rakabuming Raka, who resigned earlier this month. || Former police chief Listyo Sigit Prabowo remained in detention this week following his November 3 arrest for allegedly wiretapping President Prabowo and dozens of other officials. || Indonesia and the European Union signed the IEU-CEPA trade agreement in Brussels on November 21, eliminating tariffs on over 90 percent of bilateral trade."
+2026-11-24,False,claude-sonnet-4-5,7506,0,0,29,
