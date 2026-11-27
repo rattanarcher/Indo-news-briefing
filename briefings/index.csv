@@ -168,3 +168,4 @@ date,is_monday,model,summary_chars,weekly_chars,commentary_chars,n_cited_urls,we
 2026-11-24,False,claude-sonnet-4-5,7506,0,0,29,
 2026-11-25,False,claude-sonnet-4-5,8065,0,0,31,
 2026-11-26,False,claude-sonnet-4-5,6059,0,0,27,
+2026-11-27,False,claude-sonnet-4-5,8529,0,0,38,
